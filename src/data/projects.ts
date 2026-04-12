@@ -158,6 +158,37 @@ export const projects: ProjectEntry[] = [
     stack: ['Chrome Extension', 'Claude API'],
   },
   {
+    slug: 'jobpin-ai',
+    category: 'ai-systems',
+    tags: ['AI', 'SaaS', 'Agent'],
+    year: 2025,
+    featured: true,
+    order: 3,
+    name: 'Jobpin AI',
+    client: 'JR Academy',
+    summary: {
+      en: 'AI-powered job matching platform with intelligent agent that searches across the web for hidden opportunities, auto-generates tailored resumes and cover letters, and connects candidates to insider referral networks. Trusted by 100+ companies.',
+      zh: 'AI 驱动的智能求职平台。AI Agent 全网搜索隐藏岗位机会，自动生成定制简历和求职信，连接内推人脉网络。已获 100+ 企业信任。',
+    },
+    outcomes: {
+      en: [
+        'AI Job Agent scanning web + company networks for off-market roles',
+        'Resume & cover letter generator tailored per JD with keyword optimization',
+        'Insider referral network connecting candidates to target companies',
+        'Daily personalized job recommendations with compatibility scoring',
+      ],
+      zh: [
+        'AI Job Agent 全网 + 企业内网扫描 off-market 岗位',
+        '按 JD 定制的简历和求职信生成器，带关键词优化',
+        '内推人脉网络，连接候选人与目标公司',
+        '每日个性化岗位推荐 + 匹配度评分',
+      ],
+    },
+    stack: ['Next.js', 'AI Agent', 'LLM', 'RAG'],
+    url: 'https://jobpin.ai',
+  },
+
+  {
     slug: 'forma-property',
     category: 'property',
     tags: ['Property', 'Web'],
