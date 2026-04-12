@@ -28,33 +28,6 @@ export interface ProjectEntry {
 
 export const projects: ProjectEntry[] = [
   {
-    slug: 'training-rag',
-    category: 'ai-systems',
-    tags: ['AI', 'RAG'],
-    year: 2025,
-    featured: true,
-    order: 1,
-    name: 'training-rag',
-    client: 'JR Academy',
-    summary: {
-      en: 'Production RAG powering personalised learning paths at JR Academy. LangChain orchestration over pgvector on AWS Lambda, serving learners across Australia, North America and APAC.',
-      zh: '为匠人学院生成个性化学习路径的生产级 RAG。LangChain 编排 + AWS Lambda 上的 pgvector，服务澳洲、北美、亚太学员。',
-    },
-    outcomes: {
-      en: [
-        'Personalised path generation for 5+ content domains',
-        'Sub-500ms retrieval latency p95',
-        'Fully automated re-indexing pipeline',
-      ],
-      zh: [
-        '覆盖 5+ 内容领域的个性化路径生成',
-        'p95 检索延迟 < 500ms',
-        '全自动重建索引流水线',
-      ],
-    },
-    stack: ['LangChain', 'pgvector', 'Supabase', 'AWS Lambda', 'OpenAI'],
-  },
-  {
     slug: 'sigmaq',
     category: 'ai-systems',
     tags: ['AI', 'SaaS'],

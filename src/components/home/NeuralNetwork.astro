@@ -1,161 +1,231 @@
 ---
 /**
- * NeuralNetwork — visibly layered, branching network that starts near the
- * text block and expands outward with denser tiers.
+ * NeuralNetwork — irregular tiered strand field.
+ *
+ * Goals:
+ * - starts under the headline area
+ * - tiers become denser toward the right
+ * - tiers feel offset / organic instead of evenly gridded
+ * - white fiber bundles dominate, with light signal pulses on some paths
  */
 
-const VB_WIDTH = 1280;
+const VB_WIDTH = 1400;
 const VB_HEIGHT = 760;
 
-type Node = {
+type Point = {
   id: string;
   x: number;
   y: number;
-  r: number;
-  tierIdx: number;
-  nodeIdx: number;
-  pulseDelay: number;
+  size: number;
+  delay: number;
 };
 
-type Tier = {
-  x: number;
-  ys: number[];
-  nodeRadius: number;
-};
-
-const core: Node = {
-  id: 'core',
-  x: 360,
-  y: 470,
-  r: 8.8,
-  tierIdx: -1,
-  nodeIdx: 0,
-  pulseDelay: 0,
-};
-
-const tiers: Tier[] = [
-  { x: 470, ys: [410, 520], nodeRadius: 4.8 },
-  { x: 610, ys: [330, 420, 520, 620], nodeRadius: 5.0 },
-  { x: 780, ys: [246, 328, 412, 500, 588, 672], nodeRadius: 4.8 },
-  { x: 962, ys: [178, 250, 324, 402, 484, 564, 640, 710], nodeRadius: 4.4 },
-  { x: 1146, ys: [126, 190, 252, 318, 384, 452, 518, 584, 648, 714], nodeRadius: 4.0 },
-];
-
-const nodesByTier: Node[][] = tiers.map((tier, tierIdx) =>
-  tier.ys.map((y, nodeIdx) => ({
-    id: `tier-${tierIdx}-${nodeIdx}`,
-    x: tier.x,
-    y,
-    r: tier.nodeRadius,
-    tierIdx,
-    nodeIdx,
-    pulseDelay: (tierIdx * 0.42 + nodeIdx * 0.11) % 3.6,
-  }))
-);
-
-type Connection = {
+type Strand = {
   id: string;
   d: string;
-  delay: number;
   width: number;
+  delay: number;
 };
 
-const buildCurve = (from: Node, to: Node, arcA: number, arcB: number) => {
+type TierContour = {
+  d: string;
+  delay: number;
+};
+
+const seeds: Point[] = [
+  { id: 's1', x: 360, y: 286, size: 3.2, delay: 0.1 },
+  { id: 's2', x: 402, y: 370, size: 4.2, delay: 0.4 },
+  { id: 's3', x: 434, y: 494, size: 3.8, delay: 0.7 },
+  { id: 's4', x: 456, y: 620, size: 3.4, delay: 1.0 },
+];
+
+const tier1: Point[] = [
+  { id: 't1-1', x: 560, y: 250, size: 2.8, delay: 0.2 },
+  { id: 't1-2', x: 586, y: 348, size: 3.1, delay: 0.5 },
+  { id: 't1-3', x: 616, y: 438, size: 2.7, delay: 0.8 },
+];
+
+const tier2: Point[] = [
+  { id: 't2-1', x: 720, y: 184, size: 2.8, delay: 0.2 },
+  { id: 't2-2', x: 742, y: 266, size: 3.4, delay: 0.5 },
+  { id: 't2-3', x: 780, y: 354, size: 3.0, delay: 0.8 },
+  { id: 't2-4', x: 804, y: 466, size: 3.2, delay: 1.1 },
+  { id: 't2-5', x: 782, y: 602, size: 3.0, delay: 1.4 },
+];
+
+const tier3: Point[] = [
+  { id: 't3-1', x: 914, y: 126, size: 2.9, delay: 0.3 },
+  { id: 't3-2', x: 950, y: 206, size: 3.5, delay: 0.6 },
+  { id: 't3-3', x: 986, y: 286, size: 2.9, delay: 0.9 },
+  { id: 't3-4', x: 1028, y: 378, size: 3.6, delay: 1.2 },
+  { id: 't3-5', x: 998, y: 492, size: 3.1, delay: 1.5 },
+  { id: 't3-6', x: 946, y: 596, size: 3.0, delay: 1.8 },
+  { id: 't3-7', x: 1026, y: 662, size: 2.7, delay: 2.1 },
+];
+
+const tier4: Point[] = [
+  { id: 't4-1', x: 1124, y: 96, size: 3.2, delay: 0.4 },
+  { id: 't4-2', x: 1188, y: 154, size: 2.7, delay: 0.7 },
+  { id: 't4-3', x: 1212, y: 236, size: 3.3, delay: 1.0 },
+  { id: 't4-4', x: 1164, y: 324, size: 2.8, delay: 1.3 },
+  { id: 't4-5', x: 1232, y: 402, size: 3.8, delay: 1.6 },
+  { id: 't4-6', x: 1186, y: 486, size: 3.0, delay: 1.9 },
+  { id: 't4-7', x: 1260, y: 560, size: 3.4, delay: 2.2 },
+  { id: 't4-8', x: 1208, y: 634, size: 2.9, delay: 2.5 },
+  { id: 't4-9', x: 1298, y: 700, size: 3.3, delay: 2.8 },
+];
+
+const tiers = [tier1, tier2, tier3, tier4];
+
+const curve = (from: Point, to: Point, a: number, b: number) => {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
-  const c1x = from.x + dx * 0.28;
-  const c1y = from.y + dy * 0.1 + arcA;
-  const c2x = from.x + dx * 0.76;
-  const c2y = from.y + dy * 0.92 + arcB;
+  const c1x = from.x + dx * 0.26;
+  const c1y = from.y + dy * 0.08 + a;
+  const c2x = from.x + dx * 0.74;
+  const c2y = from.y + dy * 0.94 + b;
   return `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`;
 };
 
-const connections: Connection[] = [];
+const addBundle = (
+  acc: Strand[],
+  from: Point,
+  to: Point,
+  bundleOffsets: number[],
+  baseDelay: number
+) => {
+  bundleOffsets.forEach((offset, idx) => {
+    acc.push({
+      id: `${from.id}-${to.id}-${idx}`,
+      d: curve(from, to, offset * 0.9, offset * -0.5),
+      width: idx === Math.floor(bundleOffsets.length / 2) ? 1.15 : 0.78,
+      delay: (baseDelay + idx * 0.08) % 5.8,
+    });
+  });
+};
 
-nodesByTier[0].forEach((to, idx) => {
-  connections.push({
-    id: `core-${to.id}`,
-    d: buildCurve(core, to, idx === 0 ? -38 : 34, idx === 0 ? -18 : 20),
-    delay: idx * 0.24,
-    width: 1.55,
+const strands: Strand[] = [];
+
+const seedTargets = [
+  [tier1[0], tier1[1]],
+  [tier1[0], tier1[1], tier1[2]],
+  [tier1[1], tier1[2]],
+  [tier1[2]],
+];
+
+seeds.forEach((seed, idx) => {
+  seedTargets[idx].forEach((target, targetIdx) => {
+    addBundle(strands, seed, target, [-18, -10, -4, 0, 6, 12], idx * 0.3 + targetIdx * 0.14);
   });
 });
 
-for (let tierIdx = 0; tierIdx < nodesByTier.length - 1; tierIdx++) {
-  const fromTier = nodesByTier[tierIdx];
-  const toTier = nodesByTier[tierIdx + 1];
-  const ratio = toTier.length / fromTier.length;
+const mapping = [
+  [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+  ],
+  [
+    [0, 1, 2],
+    [1, 2, 3],
+    [2, 3, 4],
+    [3, 4, 5],
+    [4, 5, 6],
+  ],
+  [
+    [0, 1, 2],
+    [1, 2, 3],
+    [2, 3, 4],
+    [3, 4, 5],
+    [4, 5, 6],
+    [5, 6, 7],
+    [6, 7, 8],
+  ],
+];
 
+for (let tierIdx = 0; tierIdx < tiers.length - 1; tierIdx++) {
+  const fromTier = tiers[tierIdx];
+  const toTier = tiers[tierIdx + 1];
   fromTier.forEach((from, fromIdx) => {
-    const anchor = Math.round(fromIdx * ratio);
-    const targets = [anchor - 1, anchor, anchor + 1, anchor + 2].filter(
-      (targetIdx, idx, arr) =>
-        targetIdx >= 0 && targetIdx < toTier.length && arr.indexOf(targetIdx) === idx
-    );
-
-    targets.forEach((targetIdx, localIdx) => {
+    const targetIndexes = mapping[tierIdx][fromIdx];
+    targetIndexes.forEach((targetIdx, localIdx) => {
       const to = toTier[targetIdx];
-      const spread = localIdx - (targets.length - 1) / 2;
-      const arcA = spread * 22 - 10 + tierIdx * 4;
-      const arcB = spread * 18 + 8 - tierIdx * 2;
-      connections.push({
-        id: `${from.id}-${to.id}`,
-        d: buildCurve(from, to, arcA, arcB),
-        delay: (tierIdx * 0.84 + fromIdx * 0.09 + localIdx * 0.16) % 5.8,
-        width: tierIdx < 2 ? 1.26 : 1.02,
-      });
+      const laterBundle = tierIdx >= 1;
+      addBundle(
+        strands,
+        from,
+        to,
+        laterBundle ? [-16, -10, -4, 0, 5, 10, 16] : [-12, -6, 0, 6, 12],
+        tierIdx * 0.9 + fromIdx * 0.11 + localIdx * 0.15
+      );
     });
   });
 }
 
-const allNodes = [core, ...nodesByTier.flat()];
-
-const tierBands = [
-  { x: 470, y: 468, rx: 84, ry: 152, delay: 0 },
-  { x: 616, y: 476, rx: 122, ry: 224, delay: 0.5 },
-  { x: 792, y: 472, rx: 146, ry: 292, delay: 1.1 },
-  { x: 978, y: 456, rx: 158, ry: 336, delay: 1.7 },
-  { x: 1142, y: 438, rx: 140, ry: 360, delay: 2.2 },
+const skipLinks: Array<[Point, Point, number]> = [
+  [tier1[0], tier3[1], 0.8],
+  [tier1[2], tier3[4], 1.3],
+  [tier2[1], tier4[2], 1.9],
+  [tier2[4], tier4[7], 2.2],
+  [tier3[2], tier4[4], 2.6],
+  [tier3[5], tier4[8], 3.0],
 ];
+
+skipLinks.forEach(([from, to, delay]) => {
+  addBundle(strands, from, to, [-10, -4, 0, 6, 12], delay);
+});
+
+const tierContours: TierContour[] = [
+  {
+    d: 'M 500 226 C 604 188, 694 194, 792 248 S 972 358, 1108 330',
+    delay: 0.2,
+  },
+  {
+    d: 'M 512 342 C 636 290, 772 300, 914 378 S 1122 508, 1284 470',
+    delay: 0.8,
+  },
+  {
+    d: 'M 528 480 C 676 432, 818 448, 980 544 S 1184 664, 1342 628',
+    delay: 1.4,
+  },
+];
+
+const labels = [
+  { x: 648, y: 170, text: 'TIER / 02' },
+  { x: 922, y: 112, text: 'TIER / 03' },
+  { x: 1184, y: 78, text: 'TIER / 04' },
+];
+
+const allPoints = [...seeds, ...tier1, ...tier2, ...tier3, ...tier4];
 ---
 
 <div class="nn" aria-hidden="true">
-  <div class="nn__mist nn__mist--a"></div>
-  <div class="nn__mist nn__mist--b"></div>
-
   <svg
     viewBox={`0 0 ${VB_WIDTH} ${VB_HEIGHT}`}
     xmlns="http://www.w3.org/2000/svg"
     class="nn__svg"
   >
     <defs>
-      <linearGradient id="nnEdgeStroke" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#00E5A0" stop-opacity="0.1" />
-        <stop offset="44%" stop-color="#7DF9C5" stop-opacity="0.34" />
-        <stop offset="100%" stop-color="#00B4D8" stop-opacity="0.12" />
+      <linearGradient id="nnFiber" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.14" />
+        <stop offset="52%" stop-color="#FFFFFF" stop-opacity="0.78" />
+        <stop offset="100%" stop-color="#D6FFF3" stop-opacity="0.14" />
       </linearGradient>
 
-      <linearGradient id="nnSignalStroke" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="nnSignal" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
         <stop offset="30%" stop-color="#FFFFFF" stop-opacity="1" />
-        <stop offset="65%" stop-color="#A5FFE4" stop-opacity="0.96" />
-        <stop offset="100%" stop-color="#00B4D8" stop-opacity="0" />
+        <stop offset="68%" stop-color="#9BFFE4" stop-opacity="0.94" />
+        <stop offset="100%" stop-color="#00E5A0" stop-opacity="0" />
       </linearGradient>
 
-      <radialGradient id="nnNodeFill" cx="50%" cy="50%" r="72%">
+      <radialGradient id="nnNode" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" />
-        <stop offset="28%" stop-color="#D0FFF1" stop-opacity="0.98" />
-        <stop offset="70%" stop-color="#00E5A0" stop-opacity="0.84" />
-        <stop offset="100%" stop-color="#00B4D8" stop-opacity="0.2" />
+        <stop offset="40%" stop-color="#C9FFF0" stop-opacity="0.98" />
+        <stop offset="100%" stop-color="#00E5A0" stop-opacity="0.2" />
       </radialGradient>
 
-      <radialGradient id="nnHalo" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#00E5A0" stop-opacity="0.52" />
-        <stop offset="60%" stop-color="#00B4D8" stop-opacity="0.15" />
-        <stop offset="100%" stop-color="#00B4D8" stop-opacity="0" />
-      </radialGradient>
-
-      <filter id="nnGlow" x="-160%" y="-160%" width="420%" height="420%">
+      <filter id="nnGlow" x="-140%" y="-140%" width="380%" height="380%">
         <feGaussianBlur stdDeviation="4" result="blur" />
         <feMerge>
           <feMergeNode in="blur" />
@@ -164,83 +234,57 @@ const tierBands = [
       </filter>
     </defs>
 
-    <g class="nn__bands">
+    <g class="nn__tiers">
       {
-        tierBands.map((band) => (
-          <ellipse
-            cx={band.x}
-            cy={band.y}
-            rx={band.rx}
-            ry={band.ry}
-            class="nn__band"
-            style={`animation-delay:${band.delay}s`}
-          />
+        tierContours.map((contour) => (
+          <path d={contour.d} class="nn__tier" style={`animation-delay:${contour.delay}s`} />
         ))
       }
     </g>
 
-    <g class="nn__edges">
+    <g class="nn__fibers">
       {
-        connections.map((connection) => (
-          <path d={connection.d} class="nn__edge" stroke-width={connection.width} />
+        strands.map((strand) => (
+          <path d={strand.d} class="nn__fiber" stroke-width={strand.width} />
         ))
       }
     </g>
 
     <g class="nn__signals" filter="url(#nnGlow)">
       {
-        connections.map((connection) => (
-          <path
-            d={connection.d}
-            class="nn__signal"
-            stroke-width={connection.width + 2}
-            style={`animation-delay:${connection.delay}s`}
-          />
-        ))
-      }
-    </g>
-
-    <g class="nn__halos" filter="url(#nnGlow)">
-      {
-        allNodes.map((node) => (
-          <circle
-            cx={node.x}
-            cy={node.y}
-            r={node.tierIdx === -1 ? 34 : node.r * 3.4}
-            fill="url(#nnHalo)"
-            class="nn__halo"
-            style={`animation-delay:${node.pulseDelay}s`}
-          />
-        ))
+        strands
+          .filter((_, idx) => idx % 5 === 0)
+          .map((strand) => (
+            <path
+              d={strand.d}
+              class="nn__signal"
+              stroke-width={strand.width + 0.95}
+              style={`animation-delay:${strand.delay}s`}
+            />
+          ))
       }
     </g>
 
     <g class="nn__nodes" filter="url(#nnGlow)">
       {
-        allNodes.map((node) => (
+        allPoints.map((point) => (
           <circle
-            cx={node.x}
-            cy={node.y}
-            r={node.r}
-            fill="url(#nnNodeFill)"
-            class:list={['nn__node', node.tierIdx === -1 && 'nn__node--core']}
-            style={`animation-delay:${node.pulseDelay}s`}
+            cx={point.x}
+            cy={point.y}
+            r={point.size}
+            fill="url(#nnNode)"
+            class="nn__node"
+            style={`animation-delay:${point.delay}s`}
           />
         ))
       }
     </g>
 
-    <g class="nn__cores">
+    <g class="nn__labels">
+      <text x="286" y="132" class="nn__label nn__label--main">NEURAL NETWORK</text>
       {
-        allNodes.map((node) => (
-          <circle
-            cx={node.x}
-            cy={node.y}
-            r={node.tierIdx === -1 ? 3.8 : Math.max(1.4, node.r * 0.34)}
-            fill="#FFFFFF"
-            class="nn__core"
-            style={`animation-delay:${node.pulseDelay}s`}
-          />
+        labels.map((label) => (
+          <text x={label.x} y={label.y} class="nn__label nn__label--tier">{label.text}</text>
         ))
       }
     </g>
@@ -253,161 +297,114 @@ const tierBands = [
     inset: 0;
     width: 100%;
     height: 100%;
-    isolation: isolate;
+    pointer-events: none;
   }
 
   .nn__svg {
-    position: relative;
-    z-index: 2;
     width: 100%;
     height: 100%;
     display: block;
     overflow: visible;
   }
 
-  .nn__mist {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    mix-blend-mode: screen;
-    filter: blur(62px);
-  }
-
-  .nn__mist--a {
-    inset: 34% 38% 10% 18%;
-    background:
-      radial-gradient(circle at 18% 58%, rgba(0, 229, 160, 0.18), transparent 18%),
-      radial-gradient(circle at 48% 52%, rgba(125, 249, 197, 0.14), transparent 24%),
-      radial-gradient(circle at 78% 44%, rgba(0, 180, 216, 0.1), transparent 22%);
-    animation: nnMistA 10s ease-in-out infinite;
-  }
-
-  .nn__mist--b {
-    inset: 8% 2% 0 48%;
-    background:
-      radial-gradient(circle at 28% 48%, rgba(0, 180, 216, 0.12), transparent 20%),
-      radial-gradient(circle at 70% 34%, rgba(125, 249, 197, 0.1), transparent 18%);
-    animation: nnMistB 14s ease-in-out infinite;
-  }
-
-  .nn__band {
+  .nn__tier {
     fill: none;
-    stroke: rgba(125, 249, 197, 0.08);
-    stroke-width: 1;
-    stroke-dasharray: 8 15;
-    opacity: 0.24;
-    animation: nnBandPulse 6.4s ease-in-out infinite;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 0.95;
+    stroke-dasharray: 8 18;
+    animation: tierDrift 8s ease-in-out infinite;
   }
 
-  .nn__edge,
+  .nn__fiber,
   .nn__signal {
     fill: none;
     stroke-linecap: round;
   }
 
-  .nn__edge {
-    stroke: url(#nnEdgeStroke);
-    opacity: 0.92;
+  .nn__fiber {
+    stroke: url(#nnFiber);
+    opacity: 0.88;
   }
 
   .nn__signal {
-    stroke: url(#nnSignalStroke);
-    stroke-dasharray: 1 240;
+    stroke: url(#nnSignal);
+    stroke-dasharray: 1 220;
     opacity: 0;
-    animation: nnSignalRun 4.7s linear infinite;
-  }
-
-  .nn__halo {
-    opacity: 0.18;
-    animation: nnHaloPulse 3.2s ease-in-out infinite;
+    animation: signalRun 4.7s linear infinite;
   }
 
   .nn__node {
-    opacity: 0.95;
-    transform-origin: center;
-    animation: nnNodePulse 3.2s ease-in-out infinite;
+    opacity: 0.9;
+    animation: nodePulse 3.2s ease-in-out infinite;
   }
 
-  .nn__node--core {
-    animation-duration: 2.6s;
+  .nn__label {
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
   }
 
-  .nn__core {
-    opacity: 0.88;
-    animation: nnCoreBlink 2.6s ease-in-out infinite;
+  .nn__label--main {
+    fill: rgba(255, 255, 255, 0.78);
+    font-size: 14px;
   }
 
-  @keyframes nnMistA {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(0.96); opacity: 0.62; }
-    50% { transform: translate3d(0.6rem, -1rem, 0) scale(1.08); opacity: 0.96; }
+  .nn__label--tier {
+    fill: rgba(117, 240, 225, 0.52);
+    font-size: 11px;
   }
 
-  @keyframes nnMistB {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(0.98); opacity: 0.45; }
-    50% { transform: translate3d(-1rem, 0.5rem, 0) scale(1.05); opacity: 0.76; }
-  }
-
-  @keyframes nnBandPulse {
-    0%, 100% { opacity: 0.14; stroke-dashoffset: 0; }
-    50% { opacity: 0.36; stroke-dashoffset: -20; }
-  }
-
-  @keyframes nnSignalRun {
-    0% {
-      opacity: 0;
-      stroke-dasharray: 1 240;
+  @keyframes tierDrift {
+    0%, 100% {
+      opacity: 0.12;
       stroke-dashoffset: 0;
     }
-    10% { opacity: 1; }
+    50% {
+      opacity: 0.28;
+      stroke-dashoffset: -20;
+    }
+  }
+
+  @keyframes signalRun {
+    0% {
+      opacity: 0;
+      stroke-dasharray: 1 220;
+      stroke-dashoffset: 0;
+    }
+    12% {
+      opacity: 1;
+    }
     54% {
       opacity: 1;
-      stroke-dasharray: 56 240;
+      stroke-dasharray: 42 220;
     }
     100% {
       opacity: 0;
-      stroke-dasharray: 1 240;
-      stroke-dashoffset: -290;
+      stroke-dasharray: 1 220;
+      stroke-dashoffset: -270;
     }
   }
 
-  @keyframes nnHaloPulse {
-    0%, 100% { opacity: 0.1; transform: scale(0.82); transform-origin: center; }
-    50% { opacity: 0.32; transform: scale(1.22); }
-  }
-
-  @keyframes nnNodePulse {
-    0%, 100% { opacity: 0.82; transform: scale(0.92); }
-    50% { opacity: 1; transform: scale(1.14); }
-  }
-
-  @keyframes nnCoreBlink {
-    0%, 100% { opacity: 0.72; }
-    50% { opacity: 1; }
-  }
-
-  @media (max-width: 991px) {
-    .nn__mist--a {
-      inset: 34% 28% 12% 4%;
+  @keyframes nodePulse {
+    0%, 100% {
+      opacity: 0.7;
+      transform: scale(0.92);
+      transform-origin: center;
     }
-
-    .nn__mist--b {
-      inset: 10% -6% 0 42%;
+    50% {
+      opacity: 1;
+      transform: scale(1.16);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nn__mist,
-    .nn__band,
+    .nn__tier,
     .nn__signal,
-    .nn__halo,
-    .nn__node,
-    .nn__core {
+    .nn__node {
       animation: none;
     }
 
     .nn__signal {
-      opacity: 0.3;
+      opacity: 0.26;
       stroke-dasharray: none;
     }
   }
