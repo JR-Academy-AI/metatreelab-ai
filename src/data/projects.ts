@@ -166,6 +166,7 @@ export const projects: ProjectEntry[] = [
     order: 8,
     name: 'Forma Property',
     client: 'Forma Group',
+    cover: '/work/forma-property.png',
     summary: {
       en: 'Developer group main site for a Sydney-based property firm. Editorial minimal aesthetic with commercial + residential project showcases and investor-grade positioning.',
       zh: '悉尼一家房地产开发商集团的主站。编辑级极简美学，商业 + 住宅项目集合展示，投资级品牌定位。',

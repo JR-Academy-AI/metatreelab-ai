@@ -12,6 +12,21 @@ const t = useTranslations(locale);
 ---
 
 <section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__aurora hero__aurora--a"></div>
+    <div class="hero__aurora hero__aurora--b"></div>
+    <div class="hero__aurora hero__aurora--c"></div>
+    <div class="hero__ring hero__ring--outer"></div>
+    <div class="hero__ring hero__ring--inner"></div>
+    <div class="hero__beam hero__beam--a"></div>
+    <div class="hero__beam hero__beam--b"></div>
+    <div class="hero__grid-glow"></div>
+  </div>
+
+  <div class="hero__network-layer" aria-hidden="true">
+    <NeuralNetwork />
+  </div>
+
   <div class="hero__inner container-x">
     <div class="hero__content">
       <span class="section-label">{t.hero.sectionLabel}</span>
@@ -37,7 +52,6 @@ const t = useTranslations(locale);
       </div>
     </div>
 
-    <NeuralNetwork />
   </div>
 </section>
 
@@ -49,19 +63,160 @@ const t = useTranslations(locale);
     display: flex;
     align-items: center;
     z-index: 2;
+    overflow: clip;
   }
 
   .hero__inner {
+    position: relative;
+    z-index: 3;
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: minmax(0, 66rem) 1fr;
     gap: var(--space-6);
     align-items: center;
+  }
+
+  .hero__network-layer {
+    position: absolute;
+    inset: 7rem 0 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: -12rem -8rem -8rem;
+    pointer-events: none;
+    z-index: 1;
+    isolation: isolate;
+  }
+
+  .hero__aurora,
+  .hero__ring,
+  .hero__beam,
+  .hero__grid-glow {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .hero__aurora {
+    border-radius: 999px;
+    filter: blur(46px);
+    mix-blend-mode: screen;
+    opacity: 0.9;
+  }
+
+  .hero__aurora--a {
+    top: -2rem;
+    left: -8rem;
+    width: 54rem;
+    height: 54rem;
+    background:
+      radial-gradient(circle at 32% 40%, rgba(0, 229, 160, 0.28), transparent 42%),
+      radial-gradient(circle at 64% 58%, rgba(0, 180, 216, 0.22), transparent 48%);
+    animation: heroAuroraA 16s ease-in-out infinite;
+  }
+
+  .hero__aurora--b {
+    top: 8rem;
+    right: -10rem;
+    width: 72rem;
+    height: 72rem;
+    background:
+      radial-gradient(circle at 42% 34%, rgba(125, 249, 197, 0.18), transparent 30%),
+      radial-gradient(circle at 58% 54%, rgba(0, 180, 216, 0.2), transparent 40%),
+      radial-gradient(circle at 50% 72%, rgba(0, 229, 160, 0.12), transparent 44%);
+    filter: blur(68px);
+    animation: heroAuroraB 22s linear infinite;
+  }
+
+  .hero__aurora--c {
+    bottom: -12rem;
+    left: 28%;
+    width: 64rem;
+    height: 34rem;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(0, 229, 160, 0.16), transparent 44%),
+      radial-gradient(circle at 76% 40%, rgba(0, 180, 216, 0.12), transparent 34%);
+    filter: blur(58px);
+    animation: heroAuroraC 14s ease-in-out infinite;
+  }
+
+  .hero__ring {
+    top: 50%;
+    right: 2%;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    border: 1px solid rgba(125, 249, 197, 0.1);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+      0 0 60px rgba(0, 229, 160, 0.06);
+    mask-image: linear-gradient(135deg, transparent 8%, rgba(0, 0, 0, 0.95) 24%, rgba(0, 0, 0, 0.95) 76%, transparent 92%);
+    -webkit-mask-image: linear-gradient(135deg, transparent 8%, rgba(0, 0, 0, 0.95) 24%, rgba(0, 0, 0, 0.95) 76%, transparent 92%);
+  }
+
+  .hero__ring--outer {
+    width: 82rem;
+    height: 82rem;
+    opacity: 0.42;
+    animation: heroSpin 28s linear infinite;
+  }
+
+  .hero__ring--inner {
+    width: 58rem;
+    height: 58rem;
+    right: 10%;
+    opacity: 0.3;
+    border-style: dashed;
+    border-color: rgba(0, 180, 216, 0.14);
+    animation: heroSpinReverse 20s linear infinite;
+  }
+
+  .hero__beam {
+    inset-block: -10%;
+    width: 22rem;
+    background:
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.03) 16%,
+        rgba(200, 255, 233, 0.16) 48%,
+        rgba(0, 180, 216, 0.14) 56%,
+        transparent 100%
+      );
+    filter: blur(18px);
+    opacity: 0;
+    transform: skewX(-16deg);
+    mix-blend-mode: screen;
+  }
+
+  .hero__beam--a {
+    left: 48%;
+    animation: heroBeamA 9s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .hero__beam--b {
+    left: 58%;
+    width: 14rem;
+    animation: heroBeamB 11s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .hero__grid-glow {
+    inset: 8rem 0 -2rem;
+    background:
+      linear-gradient(90deg, transparent 0%, rgba(125, 249, 197, 0.04) 48%, transparent 100%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 36%);
+    opacity: 0.7;
+    mask-image: radial-gradient(circle at 66% 42%, rgba(0, 0, 0, 1), transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 66% 42%, rgba(0, 0, 0, 1), transparent 72%);
   }
 
   .hero__content {
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+    position: relative;
+    z-index: 4;
   }
 
   .hero__title {
@@ -71,6 +226,17 @@ const t = useTranslations(locale);
     letter-spacing: -0.03em;
     display: flex;
     flex-direction: column;
+    text-wrap: balance;
+  }
+
+  .hero__title span {
+    opacity: 0;
+    transform: translateY(2.2rem);
+    animation: heroTitleIn 900ms var(--ease-out) forwards;
+  }
+
+  .hero__title span:nth-child(2) {
+    animation-delay: 120ms;
   }
 
   .hero__subtitle {
@@ -78,24 +244,165 @@ const t = useTranslations(locale);
     color: var(--text-secondary);
     max-width: 52rem;
     line-height: var(--lh-normal);
+    opacity: 0;
+    transform: translateY(1.6rem);
+    animation: heroContentIn 900ms var(--ease-out) 240ms forwards;
   }
 
   .hero__cta {
     display: flex;
     gap: var(--space-3);
     flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(1.8rem);
+    animation: heroContentIn 900ms var(--ease-out) 360ms forwards;
   }
 
   .hero__backing {
     margin-top: var(--space-2);
+    opacity: 0;
+    transform: translateY(1.2rem);
+    animation: heroContentIn 900ms var(--ease-out) 480ms forwards;
   }
 
   @media (max-width: 991px) {
     .hero__title { font-size: var(--fs-h1); }
     .hero__inner { grid-template-columns: 1fr; }
+    .hero__network-layer {
+      inset: 22rem -6rem 0 -6rem;
+      opacity: 0.82;
+    }
+    .hero__bg {
+      inset: -8rem -8rem 0;
+    }
+    .hero__ring--outer {
+      width: 62rem;
+      height: 62rem;
+      right: 50%;
+      top: 58%;
+      transform: translate(50%, -50%);
+    }
+    .hero__ring--inner {
+      width: 44rem;
+      height: 44rem;
+      right: 50%;
+      top: 58%;
+      transform: translate(50%, -50%);
+    }
+    .hero__beam--a,
+    .hero__beam--b {
+      left: 50%;
+    }
   }
 
   @media (max-width: 767px) {
     .hero__title { font-size: var(--fs-display-m); }
+    .hero {
+      padding-block: calc(var(--space-8) + 2rem) var(--space-7);
+    }
+    .hero__network-layer {
+      inset: 26rem -10rem 2rem -10rem;
+      opacity: 0.7;
+    }
+    .hero__aurora--a {
+      width: 36rem;
+      height: 36rem;
+      left: -10rem;
+    }
+    .hero__aurora--b {
+      width: 44rem;
+      height: 44rem;
+      right: -12rem;
+    }
+    .hero__ring--outer {
+      width: 46rem;
+      height: 46rem;
+    }
+    .hero__ring--inner {
+      width: 32rem;
+      height: 32rem;
+    }
+  }
+
+  @keyframes heroAuroraA {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(0.94); opacity: 0.82; }
+    50% { transform: translate3d(2rem, -1.6rem, 0) scale(1.08); opacity: 1; }
+  }
+
+  @keyframes heroAuroraB {
+    0% { transform: rotate(0deg) scale(0.96); opacity: 0.6; }
+    50% { transform: rotate(180deg) scale(1.06); opacity: 0.88; }
+    100% { transform: rotate(360deg) scale(0.96); opacity: 0.6; }
+  }
+
+  @keyframes heroAuroraC {
+    0%, 100% { transform: translateY(0) scaleX(0.94); opacity: 0.4; }
+    50% { transform: translateY(-1.4rem) scaleX(1.08); opacity: 0.72; }
+  }
+
+  @keyframes heroSpin {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+  }
+
+  @keyframes heroSpinReverse {
+    from { transform: translateY(-50%) rotate(360deg); }
+    to { transform: translateY(-50%) rotate(0deg); }
+  }
+
+  @keyframes heroBeamA {
+    0% { transform: translate3d(-18rem, 0, 0) skewX(-16deg); opacity: 0; }
+    24% { opacity: 0.64; }
+    55% { opacity: 0.36; }
+    100% { transform: translate3d(30rem, 0, 0) skewX(-16deg); opacity: 0; }
+  }
+
+  @keyframes heroBeamB {
+    0%, 18% { transform: translate3d(-12rem, 0, 0) skewX(-16deg); opacity: 0; }
+    34% { opacity: 0.44; }
+    62% { opacity: 0.2; }
+    100% { transform: translate3d(24rem, 0, 0) skewX(-16deg); opacity: 0; }
+  }
+
+  @keyframes heroTitleIn {
+    from {
+      opacity: 0;
+      transform: translateY(2.2rem);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes heroContentIn {
+    from {
+      opacity: 0;
+      transform: translateY(1.6rem);
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__aurora,
+    .hero__ring,
+    .hero__beam,
+    .hero__network-layer,
+    .hero__title span,
+    .hero__subtitle,
+    .hero__cta,
+    .hero__backing {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
   }
 </style>

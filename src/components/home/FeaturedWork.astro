@@ -1,5 +1,7 @@
 ---
+import ProjectThumbnail from '../ui/ProjectThumbnail.astro';
 import { localizedHref, type Locale } from '../../config/site';
+import { featuredProjects } from '../../data/projects';
 
 interface Props {
   locale: Locale;
@@ -9,50 +11,7 @@ const { locale } = Astro.props;
 
 const label = locale === 'zh' ? '精选作品' : 'SELECTED WORK';
 const viewAll = locale === 'zh' ? '查看全部作品' : 'View all work';
-
-// Hardcoded featured projects for now (P0).
-// These will be replaced by content collection queries once projects/ is seeded.
-const featured = locale === 'zh'
-  ? [
-      {
-        tag: 'AI · RAG',
-        name: 'training-rag',
-        summary: '匠人学院的生产级 RAG 系统，LangChain + pgvector on AWS Lambda，服务全球华语学员。',
-        client: 'JR Academy',
-      },
-      {
-        tag: 'AI · SAAS',
-        name: 'SigmaQ',
-        summary: '多租户企业级测评 SaaS，4 档 Stripe 订阅、LMS 集成、Super Admin 后台。',
-        client: 'JR Academy',
-      },
-      {
-        tag: 'PROPERTY · WEB',
-        name: 'Forma Property',
-        summary: '悉尼房地产开发商集团主站，编辑级极简风，商业与住宅项目集合展示。',
-        client: 'Forma Group',
-      },
-    ]
-  : [
-      {
-        tag: 'AI · RAG',
-        name: 'training-rag',
-        summary: 'Production RAG for JR Academy learning platform. LangChain + pgvector on AWS Lambda, shipping personalised learning paths.',
-        client: 'JR Academy',
-      },
-      {
-        tag: 'AI · SAAS',
-        name: 'SigmaQ',
-        summary: 'Multi-tenant enterprise assessment SaaS. 4-tier Stripe billing, LMS integration, super admin console.',
-        client: 'JR Academy',
-      },
-      {
-        tag: 'PROPERTY · WEB',
-        name: 'Forma Property',
-        summary: 'Sydney property developer group main site. Editorial minimal design, commercial + residential project showcase.',
-        client: 'Forma Group',
-      },
-    ];
+const featured = featuredProjects;
 ---
 
 <section class="featured">
@@ -67,17 +26,14 @@ const featured = locale === 'zh'
     <div class="featured__grid">
       {
         featured.map((p) => (
-          <a href={localizedHref('/work/', locale)} class="featured__card">
+          <a href={localizedHref(`/work/${p.slug}/`, locale)} class="featured__card">
             <div class="featured__cover" aria-hidden="true">
-              <div class="featured__cover-inner">
-                <span class="featured__tag">{p.tag}</span>
-                <div class="featured__pattern"></div>
-              </div>
+              <ProjectThumbnail project={p} />
             </div>
 
             <div class="featured__body">
               <h3 class="featured__name">{p.name}</h3>
-              <p class="featured__summary">{p.summary}</p>
+              <p class="featured__summary">{p.summary[locale]}</p>
               <div class="featured__meta">
                 <span class="section-label">CLIENT · {p.client}</span>
                 <span class="featured__arrow">→</span>
@@ -152,46 +108,8 @@ const featured = locale === 'zh'
   .featured__cover {
     position: relative;
     aspect-ratio: 16 / 10;
-    background:
-      linear-gradient(135deg, rgba(0, 229, 160, 0.06), rgba(0, 180, 216, 0.06));
     border-bottom: 1px solid var(--border-hairline);
     overflow: hidden;
-  }
-
-  .featured__cover-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-end;
-    padding: var(--space-4);
-  }
-
-  .featured__pattern {
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        45deg,
-        transparent 0,
-        transparent 24px,
-        rgba(255, 255, 255, 0.02) 24px,
-        rgba(255, 255, 255, 0.02) 25px
-      );
-    pointer-events: none;
-  }
-
-  .featured__tag {
-    position: relative;
-    z-index: 2;
-    font-family: var(--font-mono);
-    font-size: var(--fs-label);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--brand-primary);
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid var(--brand-primary);
-    border-radius: var(--radius-sm);
-    background: rgba(0, 0, 0, 0.5);
   }
 
   .featured__body {

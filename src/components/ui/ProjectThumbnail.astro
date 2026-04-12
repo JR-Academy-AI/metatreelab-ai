@@ -1,0 +1,302 @@
+---
+import type { ProjectEntry } from '../../data/projects';
+
+interface Props {
+  project: ProjectEntry;
+  variant?: 'card' | 'detail';
+  className?: string;
+}
+
+const { project, variant = 'card', className = '' } = Astro.props;
+
+const categoryLabel = {
+  'ai-systems': 'AI Systems',
+  property: 'Property',
+  brand: 'Brand',
+}[project.category];
+
+const initials = project.name
+  .split(/[\s-]+/)
+  .filter(Boolean)
+  .map((part) => part[0]?.toUpperCase() ?? '')
+  .join('')
+  .slice(0, 3);
+
+const shellClass = ['project-thumb', `project-thumb--${variant}`, `project-thumb--${project.category}`, className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+{project.cover ? (
+<div class={shellClass} aria-hidden="true">
+  <img
+    src={project.cover}
+    alt={project.name}
+    class="project-thumb__image"
+    loading="lazy"
+    decoding="async"
+  />
+</div>
+) : (
+<div class={shellClass} aria-hidden="true">
+  <div class="project-thumb__grid"></div>
+  <div class="project-thumb__glow project-thumb__glow--a"></div>
+  <div class="project-thumb__glow project-thumb__glow--b"></div>
+  <div class="project-thumb__ring project-thumb__ring--outer"></div>
+  <div class="project-thumb__ring project-thumb__ring--inner"></div>
+
+  <div class="project-thumb__topline">
+    <span class="project-thumb__category">{categoryLabel}</span>
+    <span class="project-thumb__year">{project.year}</span>
+  </div>
+
+  <div class="project-thumb__frame">
+    <div class="project-thumb__frame-line"></div>
+    <div class="project-thumb__frame-line"></div>
+    <div class="project-thumb__frame-line"></div>
+    <div class="project-thumb__monogram">{initials}</div>
+  </div>
+
+  <div class="project-thumb__footer">
+    <span class="project-thumb__name">{project.name}</span>
+    <span class="project-thumb__client">{project.client}</span>
+  </div>
+</div>
+)}
+
+<style>
+  .project-thumb__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .project-thumb {
+    --thumb-accent: rgba(0, 229, 160, 0.9);
+    --thumb-accent-soft: rgba(0, 180, 216, 0.5);
+    --thumb-panel: rgba(255, 255, 255, 0.04);
+    --thumb-line: rgba(255, 255, 255, 0.1);
+    --thumb-glow-a: rgba(0, 229, 160, 0.18);
+    --thumb-glow-b: rgba(0, 180, 216, 0.12);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 36%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  }
+
+  .project-thumb--ai-systems {
+    --thumb-accent: rgba(0, 229, 160, 0.92);
+    --thumb-accent-soft: rgba(0, 180, 216, 0.52);
+    --thumb-glow-a: rgba(0, 229, 160, 0.22);
+    --thumb-glow-b: rgba(0, 180, 216, 0.14);
+  }
+
+  .project-thumb--property {
+    --thumb-accent: rgba(230, 215, 184, 0.92);
+    --thumb-accent-soft: rgba(125, 249, 197, 0.32);
+    --thumb-glow-a: rgba(230, 215, 184, 0.18);
+    --thumb-glow-b: rgba(125, 249, 197, 0.1);
+  }
+
+  .project-thumb--brand {
+    --thumb-accent: rgba(125, 249, 197, 0.92);
+    --thumb-accent-soft: rgba(255, 255, 255, 0.22);
+    --thumb-glow-a: rgba(125, 249, 197, 0.18);
+    --thumb-glow-b: rgba(255, 255, 255, 0.08);
+  }
+
+  .project-thumb--card {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .project-thumb--detail {
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-thumb__grid,
+  .project-thumb__glow,
+  .project-thumb__ring {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .project-thumb__grid {
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), transparent);
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), transparent);
+    opacity: 0.5;
+  }
+
+  .project-thumb__glow {
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.9;
+  }
+
+  .project-thumb__glow--a {
+    width: 42%;
+    aspect-ratio: 1;
+    top: -8%;
+    left: -4%;
+    background: var(--thumb-glow-a);
+  }
+
+  .project-thumb__glow--b {
+    width: 36%;
+    aspect-ratio: 1;
+    right: 6%;
+    bottom: 14%;
+    background: var(--thumb-glow-b);
+  }
+
+  .project-thumb__ring {
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transform: rotate(-18deg);
+  }
+
+  .project-thumb__ring--outer {
+    width: 58%;
+    height: 120%;
+    top: -12%;
+    right: -4%;
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .project-thumb__ring--inner {
+    width: 36%;
+    height: 76%;
+    right: 16%;
+    top: 10%;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .project-thumb__topline,
+  .project-thumb__footer {
+    position: absolute;
+    left: clamp(1.2rem, 2vw, 2.4rem);
+    right: clamp(1.2rem, 2vw, 2.4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 2;
+  }
+
+  .project-thumb__topline {
+    top: clamp(1.2rem, 2vw, 2rem);
+  }
+
+  .project-thumb__footer {
+    bottom: clamp(1.2rem, 2vw, 2rem);
+    align-items: flex-end;
+  }
+
+  .project-thumb__category,
+  .project-thumb__year,
+  .project-thumb__client {
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 1vw, 1.2rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .project-thumb__category {
+    color: var(--thumb-accent);
+  }
+
+  .project-thumb__year,
+  .project-thumb__client {
+    color: var(--text-tertiary);
+  }
+
+  .project-thumb__frame {
+    position: absolute;
+    inset: 20% 10% 20% 10%;
+    border-radius: clamp(1.6rem, 3vw, 2.8rem);
+    border: 1px solid var(--thumb-line);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+      var(--thumb-panel);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 18px 50px rgba(0, 0, 0, 0.28);
+    display: grid;
+    place-items: center;
+    z-index: 1;
+  }
+
+  .project-thumb__frame-line {
+    position: absolute;
+    height: 1px;
+    left: 8%;
+    right: 8%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  }
+
+  .project-thumb__frame-line:nth-child(1) {
+    top: 16%;
+  }
+
+  .project-thumb__frame-line:nth-child(2) {
+    top: 22%;
+    left: 14%;
+    right: 14%;
+  }
+
+  .project-thumb__frame-line:nth-child(3) {
+    bottom: 16%;
+  }
+
+  .project-thumb__monogram {
+    font-family: var(--font-mono);
+    font-size: clamp(2.8rem, 6vw, 7.2rem);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.18em;
+    text-indent: 0.18em;
+    color: rgba(255, 255, 255, 0.14);
+    text-transform: uppercase;
+    text-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .project-thumb__name {
+    font-size: clamp(1.4rem, 1.6vw, 2rem);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    max-width: 65%;
+    text-wrap: balance;
+  }
+
+  .project-thumb--detail .project-thumb__frame {
+    inset: 16% 10% 16% 10%;
+  }
+
+  .project-thumb--detail .project-thumb__monogram {
+    font-size: clamp(4.2rem, 9vw, 9.6rem);
+  }
+
+  .project-thumb--detail .project-thumb__name {
+    font-size: clamp(2rem, 2.2vw, 2.6rem);
+  }
+
+  @media (max-width: 767px) {
+    .project-thumb__frame {
+      inset: 22% 8% 22% 8%;
+    }
+
+    .project-thumb__name {
+      max-width: 72%;
+    }
+  }
+</style>

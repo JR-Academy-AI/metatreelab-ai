@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
+import ProjectThumbnail from '../ui/ProjectThumbnail.astro';
 import { localizedHref, type Locale } from '../../config/site';
 import { type ProjectEntry } from '../../data/projects';
 
@@ -56,10 +57,7 @@ const tags = project.tags;
 
       <!-- Cover area -->
       <div class="detail__cover">
-        <div class="detail__pattern"></div>
-        <div class="detail__cover-inner">
-          <span class="detail__cover-name">{project.name}</span>
-        </div>
+        <ProjectThumbnail project={project} variant="detail" />
       </div>
 
       <!-- Meta grid -->
@@ -187,43 +185,9 @@ const tags = project.tags;
   .detail__cover {
     position: relative;
     aspect-ratio: 16 / 9;
-    background: linear-gradient(
-      135deg,
-      rgba(0, 229, 160, 0.06),
-      rgba(0, 180, 216, 0.06)
-    );
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-lg);
     overflow: hidden;
-  }
-
-  .detail__pattern {
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        45deg,
-        transparent 0,
-        transparent 32px,
-        rgba(255, 255, 255, 0.015) 32px,
-        rgba(255, 255, 255, 0.015) 33px
-      );
-    pointer-events: none;
-  }
-
-  .detail__cover-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .detail__cover-name {
-    font-family: var(--font-mono);
-    font-size: var(--fs-h2);
-    color: var(--text-muted);
-    letter-spacing: 0.02em;
   }
 
   /* Meta grid */

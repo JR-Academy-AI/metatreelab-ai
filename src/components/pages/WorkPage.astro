@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../ui/PageHero.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
+import ProjectThumbnail from '../ui/ProjectThumbnail.astro';
 import { localizedHref, type Locale } from '../../config/site';
 import { projects, type ProjectEntry } from '../../data/projects';
 
@@ -78,12 +79,12 @@ const sorted = [...projects].sort((a, b) => a.order - b.order);
               data-category={p.category}
             >
               <div class="work-card__cover">
+                <ProjectThumbnail project={p} />
                 <span class="work-card__tags">
                   {p.tags.map((t) => (
                     <span class="work-card__tag">{t}</span>
                   ))}
                 </span>
-                <div class="work-card__pattern"></div>
               </div>
 
               <div class="work-card__body">
@@ -224,34 +225,14 @@ const sorted = [...projects].sort((a, b) => a.order - b.order);
   .work-card__cover {
     position: relative;
     aspect-ratio: 16 / 10;
-    background: linear-gradient(
-      135deg,
-      rgba(0, 229, 160, 0.04),
-      rgba(0, 180, 216, 0.04)
-    );
     border-bottom: 1px solid var(--border-hairline);
     overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-    padding: var(--space-3);
-  }
-
-  .work-card__pattern {
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        45deg,
-        transparent 0,
-        transparent 24px,
-        rgba(255, 255, 255, 0.015) 24px,
-        rgba(255, 255, 255, 0.015) 25px
-      );
-    pointer-events: none;
   }
 
   .work-card__tags {
-    position: relative;
+    position: absolute;
+    left: var(--space-3);
+    bottom: var(--space-3);
     z-index: 2;
     display: flex;
     gap: var(--space-1);
