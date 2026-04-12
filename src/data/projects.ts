@@ -184,6 +184,23 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'techscrum',
+    category: 'ai-systems',
+    tags: ['SaaS', 'Project Management', 'DevTool'],
+    year: 2024,
+    featured: false,
+    order: 99,
+    name: 'TechScrum',
+    client: 'TechScrum',
+    summary: {
+      en: 'Agile project management platform built for engineering teams. Scrum boards, sprint planning, backlog management, and team collaboration — designed to streamline software delivery workflows.',
+      zh: '面向工程团队的敏捷项目管理平台。Scrum 看板、Sprint 规划、Backlog 管理和团队协作 — 简化软件交付流程。',
+    },
+    stack: ['React', 'Node.js', 'SaaS'],
+    url: 'https://www.techscrumapp.com',
+  },
+
+  {
     slug: 'argus-systems',
     category: 'ai-systems',
     tags: ['AI', 'Infrastructure', 'Critical Systems'],
