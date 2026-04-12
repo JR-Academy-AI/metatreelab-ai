@@ -28,40 +28,46 @@ const shellClass = ['project-thumb', `project-thumb--${variant}`, `project-thumb
 ---
 
 {project.cover ? (
-<div class={shellClass} aria-hidden="true">
-  <img
-    src={project.cover}
-    alt={project.name}
-    class="project-thumb__image"
-    loading="lazy"
-    decoding="async"
-  />
-</div>
+  <div class={shellClass} aria-hidden="true">
+    <img
+      src={project.cover}
+      alt={project.name}
+      class="project-thumb__image"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
 ) : (
-<div class={shellClass} aria-hidden="true">
-  <div class="project-thumb__grid"></div>
-  <div class="project-thumb__glow project-thumb__glow--a"></div>
-  <div class="project-thumb__glow project-thumb__glow--b"></div>
-  <div class="project-thumb__ring project-thumb__ring--outer"></div>
-  <div class="project-thumb__ring project-thumb__ring--inner"></div>
+  <div class={shellClass} aria-hidden="true">
+    <div class="project-thumb__grid"></div>
+    <div class="project-thumb__glow project-thumb__glow--a"></div>
+    <div class="project-thumb__glow project-thumb__glow--b"></div>
+    <div class="project-thumb__ring project-thumb__ring--outer"></div>
+    <div class="project-thumb__ring project-thumb__ring--inner"></div>
 
-  <div class="project-thumb__topline">
-    <span class="project-thumb__category">{categoryLabel}</span>
-    <span class="project-thumb__year">{project.year}</span>
-  </div>
+    <div class="project-thumb__topline">
+      <span class="project-thumb__category">{categoryLabel}</span>
+      {variant === 'detail' && <span class="project-thumb__year">{project.year}</span>}
+    </div>
 
-  <div class="project-thumb__frame">
-    <div class="project-thumb__frame-line"></div>
-    <div class="project-thumb__frame-line"></div>
-    <div class="project-thumb__frame-line"></div>
-    <div class="project-thumb__monogram">{initials}</div>
-  </div>
+    <div class="project-thumb__frame">
+      {variant === 'detail' && (
+        <>
+          <div class="project-thumb__frame-line"></div>
+          <div class="project-thumb__frame-line"></div>
+          <div class="project-thumb__frame-line"></div>
+        </>
+      )}
+      <div class="project-thumb__monogram">{initials}</div>
+    </div>
 
-  <div class="project-thumb__footer">
-    <span class="project-thumb__name">{project.name}</span>
-    <span class="project-thumb__client">{project.client}</span>
+    {variant === 'detail' && (
+      <div class="project-thumb__footer">
+        <span class="project-thumb__name">{project.name}</span>
+        <span class="project-thumb__client">{project.client}</span>
+      </div>
+    )}
   </div>
-</div>
 )}
 
 <style>
@@ -85,6 +91,7 @@ const shellClass = ['project-thumb', `project-thumb--${variant}`, `project-thumb
     background:
       radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 36%),
       linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    height: 100%;
   }
 
   .project-thumb--ai-systems {

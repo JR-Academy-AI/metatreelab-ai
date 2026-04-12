@@ -22,25 +22,33 @@ const featured = featuredProjects;
         {viewAll} →
       </a>
     </div>
-<div class="featured__grid">
-  {
-    featured.map((p, idx) => (
-      <a 
-        href={localizedHref(`/work/${p.slug}/`, locale)} 
-        class={`featured__card card-shimmer delay-${(idx % 3) + 1}`}
-        data-reveal="3d"
-      >
-        <div class="featured__cover" aria-hidden="true">
-...
 
+    <div class="featured__grid">
+      {
+        featured.map((p, idx) => (
+          <a
+            href={localizedHref(`/work/${p.slug}/`, locale)}
+            class={`featured__card card-shimmer delay-${(idx % 3) + 1}`}
+            data-reveal="3d"
+          >
+            <div class="featured__cover">
               <ProjectThumbnail project={p} />
             </div>
 
             <div class="featured__body">
+              <div class="featured__tags">
+                {p.tags.map((t) => (
+                  <span class="featured__tag">{t}</span>
+                ))}
+              </div>
+
               <h3 class="featured__name">{p.name}</h3>
               <p class="featured__summary">{p.summary[locale]}</p>
+
               <div class="featured__meta">
-                <span class="section-label">CLIENT · {p.client}</span>
+                <span class="section-label">
+                  {p.client} · {p.year}
+                </span>
                 <span class="featured__arrow">→</span>
               </div>
             </div>
@@ -115,6 +123,30 @@ const featured = featuredProjects;
     aspect-ratio: 16 / 10;
     border-bottom: 1px solid var(--border-hairline);
     overflow: hidden;
+    background: var(--bg-elevated);
+  }
+
+  .featured__tags {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-2);
+  }
+
+  .featured__tag {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    padding: 1px 6px;
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .featured__card:hover .featured__tag {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
   }
 
   .featured__body {
@@ -144,12 +176,13 @@ const featured = featuredProjects;
     justify-content: space-between;
     align-items: center;
     padding-top: var(--space-3);
+    margin-top: var(--space-2);
     border-top: 1px solid var(--border-hairline);
   }
 
   .featured__arrow {
     color: var(--text-tertiary);
-    transition: transform var(--dur-normal) var(--ease-out);
+    transition: transform var(--dur-normal) var(--ease-out), color var(--dur-normal) var(--ease-out);
   }
 
   .featured__card:hover .featured__arrow {
