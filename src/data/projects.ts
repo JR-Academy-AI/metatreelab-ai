@@ -120,6 +120,55 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'dispatch-ai',
+    category: 'ai-systems',
+    tags: ['AI', 'SaaS'],
+    year: 2025,
+    featured: false,
+    order: 5,
+    name: 'Dispatch AI',
+    client: 'Metatree Lab',
+    summary: {
+      en: 'AI-powered dispatch and operations platform. Built to streamline workflows and automate task routing with intelligent agents.',
+      zh: 'AI 驱动的调度与运营平台。通过智能 Agent 自动化任务路由，优化工作流效率。',
+    },
+    stack: ['Next.js', 'AI Agent', 'LLM'],
+    url: 'https://getdispatch.ai',
+  },
+
+  {
+    slug: 'j3-club',
+    category: 'brand',
+    tags: ['E-commerce', 'Brand', 'Web'],
+    year: 2024,
+    featured: false,
+    order: 6,
+    name: 'J3 Club',
+    client: 'JR Exclusives',
+    cover: '/work/j3-club.png',
+    summary: {
+      en: 'Full e-commerce store for JR Academy\'s tech-lifestyle merchandise brand. Student discounts, secure checkout, and a curated collection of IT-inspired apparel and accessories.',
+      zh: '为 JR Academy 的科技生活方式周边品牌打造的完整电商平台。学生折扣、安全支付，精选 IT 风格服饰与配件。',
+    },
+    outcomes: {
+      en: [
+        'Full Shopify-powered e-commerce with custom theme',
+        'Student discount and promo code system',
+        'Merchandise collection: apparel, bags, accessories, homeware',
+        'Mobile-first responsive design',
+      ],
+      zh: [
+        '基于 Shopify 的完整电商 + 定制主题',
+        '学生折扣与优惠码系统',
+        '周边系列：服饰、包袋、配件、家居',
+        'Mobile-first 响应式设计',
+      ],
+    },
+    stack: ['Shopify', 'E-commerce', 'Custom Theme'],
+    url: 'https://j3.club',
+  },
+
+  {
     slug: 'forma-property',
     category: 'property',
     tags: ['Property', 'Web'],
