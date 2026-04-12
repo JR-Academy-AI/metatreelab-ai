@@ -158,6 +158,37 @@ export const projects: ProjectEntry[] = [
     stack: ['Chrome Extension', 'Claude API'],
   },
   {
+    slug: 'metatown',
+    category: 'ai-systems',
+    tags: ['AI', 'SaaS', 'Platform'],
+    year: 2025,
+    featured: true,
+    order: 2,
+    name: 'MetaTown',
+    client: 'JR Academy',
+    summary: {
+      en: 'Virtual office and campus platform that turns remote collaboration into an immersive shared world. Customisable avatars, real-time spatial movement, video meetings, whiteboard, SSO — supporting 100+ users simultaneously.',
+      zh: '虚拟办公与线上校园平台，把远程协作变成可沉浸的共享世界。自定义头像、实时空间移动、视频会议、白板、SSO — 支持 100+ 人同时在线。',
+    },
+    outcomes: {
+      en: [
+        'Spatial virtual world replacing grid-style video calls',
+        'Real-time avatar movement with proximity-based audio/video',
+        'Integrated video meetings, screen sharing, and whiteboard',
+        'SSO authentication and 100+ concurrent user support',
+      ],
+      zh: [
+        '空间虚拟世界，替代网格式视频通话',
+        '实时头像移动 + 基于距离的音视频',
+        '集成视频会议、屏幕共享、白板',
+        'SSO 认证，支持 100+ 人同时在线',
+      ],
+    },
+    stack: ['React', 'WebRTC', 'Canvas', 'WebSocket', 'SSO'],
+    url: 'https://metatown.ai',
+  },
+
+  {
     slug: 'jobpin-ai',
     category: 'ai-systems',
     tags: ['AI', 'SaaS', 'Agent'],
