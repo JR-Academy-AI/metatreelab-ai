@@ -7,20 +7,20 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const label = locale === 'zh' ? '我们的底气' : 'RECEIPTS';
+const label = locale === 'zh' ? '关键数据' : 'BY THE NUMBERS';
 
 const stats = locale === 'zh'
   ? [
-      { value: '5+', unit: '年', caption: '生产级 AI 运营' },
-      { value: '10+', unit: '', caption: '线上 AI 服务' },
-      { value: '3', unit: '款', caption: '真实用户的 AI 产品' },
-      { value: '2', unit: '', caption: '活跃业务线' },
+      { value: '10+', unit: '', caption: '已交付 AI 项目' },
+      { value: '50+', unit: '', caption: '服务过的企业客户' },
+      { value: '5+', unit: '年', caption: 'AI 生产系统运维经验' },
+      { value: '3', unit: '城', caption: '悉尼 · 墨尔本 · 阿德莱德' },
     ]
   : [
-      { value: '5+', unit: 'YRS', caption: 'Production AI in the wild' },
-      { value: '10+', unit: '', caption: 'Live AI services shipped' },
-      { value: '3', unit: '', caption: 'AI products with real users' },
-      { value: '2', unit: '', caption: 'Business lines running' },
+      { value: '10+', unit: '', caption: 'AI projects delivered' },
+      { value: '50+', unit: '', caption: 'Enterprise clients served' },
+      { value: '5+', unit: 'YRS', caption: 'Running AI in production' },
+      { value: '3', unit: '', caption: 'Offices across Australia' },
     ];
 ---
 

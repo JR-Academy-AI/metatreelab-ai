@@ -7,44 +7,45 @@
     "bookCall": "Book a call"
   },
   "hero": {
-    "sectionLabel": "/ 01 — METATREE LAB",
-    "title_line1": "We build systems",
-    "title_line2": "that ship.",
-    "subtitle": "A digital studio from JR Academy. AI for teams that build. Marketing for teams that sell property. Both shipped with the same engineering obsession.",
-    "cta_primary": "Book a call",
+    "sectionLabel": "/ 01 — AI CONSULTING",
+    "title_line1": "From strategy to",
+    "title_line2": "production AI.",
+    "subtitle": "We help companies adopt AI that actually works — from RAG pipelines and autonomous agents to Claude Code rollouts and OpenClaw automation. No slide decks, just systems that run.",
+    "cta_primary": "Get in touch",
     "cta_secondary": "See our work",
-    "backing": "Backed by JR Academy · 5+ yrs in production AI"
+    "backing": "AI Strategy · Agent Development · Claude Cowork · OpenClaw 🦞 · RAG Systems"
   },
   "split": {
     "sectionLabel": "/ 02 — WHAT DO YOU NEED?",
     "ai": {
-      "title": "AI Systems",
-      "subtitle": "Build AI. Or adopt AI into your team's flow.",
+      "title": "AI Consulting",
+      "subtitle": "Custom AI agents, RAG systems, or help your team adopt Claude and OpenClaw.",
       "bullets": [
-        "RAG & agent development",
-        "Claude Cowork rollout",
-        "OpenClaw implementation",
-        "AI platform engineering"
+        "AI strategy & proof-of-concept",
+        "RAG & knowledge system engineering",
+        "Autonomous agent development",
+        "Claude Code team rollout",
+        "OpenClaw 🦞 self-hosted automation"
       ],
-      "proof": "training-rag · SigmaQ · 3 Chrome AI extensions",
-      "cta": "Explore AI Systems"
+      "proof": "10+ production AI systems shipped",
+      "cta": "Explore AI services"
     },
     "property": {
       "title": "Property Marketing",
-      "subtitle": "Websites, landing pages, and brand for Australian property.",
+      "subtitle": "Websites, landing pages, and brand for Australian property developers.",
       "bullets": [
-        "Developer main site",
-        "Single-project landing page",
-        "Brand identity",
+        "Developer group websites",
+        "Single-project landing pages",
+        "Brand identity & collateral",
         "Google / Meta ad pages"
       ],
-      "proof": "Forma Property",
-      "cta": "Explore Property Marketing"
+      "proof": "Forma Property + more",
+      "cta": "Explore Property services"
     }
   },
   "footer": {
-    "builtBy": "Built by Metatree Lab",
-    "parent": "Powered by JR Academy",
+    "builtBy": "Metatree Lab",
+    "parent": "AI Consulting & Digital Studio",
     "rights": "All rights reserved"
   },
   "locale": {

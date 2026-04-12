@@ -138,7 +138,8 @@ export const projects: ProjectEntry[] = [
     featured: true,
     order: 2,
     name: 'MetaTown',
-    client: 'JR Academy',
+    client: 'Metatree Lab',
+    cover: '/work/metatown.png',
     summary: {
       en: 'Virtual office and campus platform that turns remote collaboration into an immersive shared world. Customisable avatars, real-time spatial movement, video meetings, whiteboard, SSO — supporting 100+ users simultaneously.',
       zh: '虚拟办公与线上校园平台，把远程协作变成可沉浸的共享世界。自定义头像、实时空间移动、视频会议、白板、SSO — 支持 100+ 人同时在线。',

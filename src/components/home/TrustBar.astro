@@ -7,16 +7,25 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const label = locale === 'zh' ? '母公司产品矩阵' : 'BUILT ALONGSIDE';
+const label = locale === 'zh' ? '我们的专长' : 'WHAT WE DO';
 
-const brands = [
-  { name: 'SigmaQ', note: 'Assessment SaaS' },
-  { name: '考证匠', note: 'IT Cert Tutor' },
-  { name: '求职匠', note: 'Job Hunter' },
-  { name: '牛小匠', note: 'Uni Tutor' },
-  { name: 'JR Academy', note: 'Parent Brand' },
-  { name: 'Forma Property', note: 'Property Client' },
-];
+const brands = locale === 'zh'
+  ? [
+      { name: 'AI 战略', note: 'Strategy & POC' },
+      { name: 'RAG 系统', note: 'Knowledge Retrieval' },
+      { name: 'AI Agent', note: 'Autonomous Agents' },
+      { name: 'Claude Cowork', note: 'Team Rollout' },
+      { name: 'OpenClaw 🦞', note: 'Self-hosted Automation' },
+      { name: '房产营销', note: 'Property Marketing' },
+    ]
+  : [
+      { name: 'AI Strategy', note: 'Assessment & POC' },
+      { name: 'RAG Systems', note: 'Knowledge Retrieval' },
+      { name: 'AI Agents', note: 'Autonomous Agents' },
+      { name: 'Claude Cowork', note: 'Team Rollout' },
+      { name: 'OpenClaw 🦞', note: 'Self-hosted Automation' },
+      { name: 'Property Marketing', note: 'Websites & Brand' },
+    ];
 ---
 
 <section class="trustbar">

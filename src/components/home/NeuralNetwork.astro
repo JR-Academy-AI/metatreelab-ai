@@ -1,411 +1,277 @@
 ---
 /**
- * NeuralNetwork — irregular tiered strand field.
- *
- * Goals:
- * - starts under the headline area
- * - tiers become denser toward the right
- * - tiers feel offset / organic instead of evenly gridded
- * - white fiber bundles dominate, with light signal pulses on some paths
+ * NeuralNetwork — Winding organic paths with high-density firing synapses.
+ * 
+ * Redesign goals:
+ * - Precise node placement on winding paths.
+ * - "Firing synapse" effect with quick bursts and slow decay.
+ * - Concentrated activity on the right side.
  */
 
-const VB_WIDTH = 1400;
-const VB_HEIGHT = 760;
+const VB_WIDTH = 1600;
+const VB_HEIGHT = 900;
 
-type Point = {
-  id: string;
-  x: number;
-  y: number;
-  size: number;
-  delay: number;
-};
-
-type Strand = {
-  id: string;
-  d: string;
-  width: number;
-  delay: number;
-};
-
-type TierContour = {
-  d: string;
-  delay: number;
-};
-
-const seeds: Point[] = [
-  { id: 's1', x: 360, y: 286, size: 3.2, delay: 0.1 },
-  { id: 's2', x: 402, y: 370, size: 4.2, delay: 0.4 },
-  { id: 's3', x: 434, y: 494, size: 3.8, delay: 0.7 },
-  { id: 's4', x: 456, y: 620, size: 3.4, delay: 1.0 },
-];
-
-const tier1: Point[] = [
-  { id: 't1-1', x: 560, y: 250, size: 2.8, delay: 0.2 },
-  { id: 't1-2', x: 586, y: 348, size: 3.1, delay: 0.5 },
-  { id: 't1-3', x: 616, y: 438, size: 2.7, delay: 0.8 },
-];
-
-const tier2: Point[] = [
-  { id: 't2-1', x: 720, y: 184, size: 2.8, delay: 0.2 },
-  { id: 't2-2', x: 742, y: 266, size: 3.4, delay: 0.5 },
-  { id: 't2-3', x: 780, y: 354, size: 3.0, delay: 0.8 },
-  { id: 't2-4', x: 804, y: 466, size: 3.2, delay: 1.1 },
-  { id: 't2-5', x: 782, y: 602, size: 3.0, delay: 1.4 },
-];
-
-const tier3: Point[] = [
-  { id: 't3-1', x: 914, y: 126, size: 2.9, delay: 0.3 },
-  { id: 't3-2', x: 950, y: 206, size: 3.5, delay: 0.6 },
-  { id: 't3-3', x: 986, y: 286, size: 2.9, delay: 0.9 },
-  { id: 't3-4', x: 1028, y: 378, size: 3.6, delay: 1.2 },
-  { id: 't3-5', x: 998, y: 492, size: 3.1, delay: 1.5 },
-  { id: 't3-6', x: 946, y: 596, size: 3.0, delay: 1.8 },
-  { id: 't3-7', x: 1026, y: 662, size: 2.7, delay: 2.1 },
-];
-
-const tier4: Point[] = [
-  { id: 't4-1', x: 1124, y: 96, size: 3.2, delay: 0.4 },
-  { id: 't4-2', x: 1188, y: 154, size: 2.7, delay: 0.7 },
-  { id: 't4-3', x: 1212, y: 236, size: 3.3, delay: 1.0 },
-  { id: 't4-4', x: 1164, y: 324, size: 2.8, delay: 1.3 },
-  { id: 't4-5', x: 1232, y: 402, size: 3.8, delay: 1.6 },
-  { id: 't4-6', x: 1186, y: 486, size: 3.0, delay: 1.9 },
-  { id: 't4-7', x: 1260, y: 560, size: 3.4, delay: 2.2 },
-  { id: 't4-8', x: 1208, y: 634, size: 2.9, delay: 2.5 },
-  { id: 't4-9', x: 1298, y: 700, size: 3.3, delay: 2.8 },
-];
-
-const tiers = [tier1, tier2, tier3, tier4];
-
-const curve = (from: Point, to: Point, a: number, b: number) => {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const c1x = from.x + dx * 0.26;
-  const c1y = from.y + dy * 0.08 + a;
-  const c2x = from.x + dx * 0.74;
-  const c2y = from.y + dy * 0.94 + b;
-  return `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`;
-};
-
-const addBundle = (
-  acc: Strand[],
-  from: Point,
-  to: Point,
-  bundleOffsets: number[],
-  baseDelay: number
-) => {
-  bundleOffsets.forEach((offset, idx) => {
-    acc.push({
-      id: `${from.id}-${to.id}-${idx}`,
-      d: curve(from, to, offset * 0.9, offset * -0.5),
-      width: idx === Math.floor(bundleOffsets.length / 2) ? 1.15 : 0.78,
-      delay: (baseDelay + idx * 0.08) % 5.8,
-    });
-  });
-};
-
-const strands: Strand[] = [];
-
-const seedTargets = [
-  [tier1[0], tier1[1]],
-  [tier1[0], tier1[1], tier1[2]],
-  [tier1[1], tier1[2]],
-  [tier1[2]],
-];
-
-seeds.forEach((seed, idx) => {
-  seedTargets[idx].forEach((target, targetIdx) => {
-    addBundle(strands, seed, target, [-18, -10, -4, 0, 6, 12], idx * 0.3 + targetIdx * 0.14);
-  });
-});
-
-const mapping = [
-  [
-    [0, 1],
-    [1, 2],
-    [2, 3],
-  ],
-  [
-    [0, 1, 2],
-    [1, 2, 3],
-    [2, 3, 4],
-    [3, 4, 5],
-    [4, 5, 6],
-  ],
-  [
-    [0, 1, 2],
-    [1, 2, 3],
-    [2, 3, 4],
-    [3, 4, 5],
-    [4, 5, 6],
-    [5, 6, 7],
-    [6, 7, 8],
-  ],
-];
-
-for (let tierIdx = 0; tierIdx < tiers.length - 1; tierIdx++) {
-  const fromTier = tiers[tierIdx];
-  const toTier = tiers[tierIdx + 1];
-  fromTier.forEach((from, fromIdx) => {
-    const targetIndexes = mapping[tierIdx][fromIdx];
-    targetIndexes.forEach((targetIdx, localIdx) => {
-      const to = toTier[targetIdx];
-      const laterBundle = tierIdx >= 1;
-      addBundle(
-        strands,
-        from,
-        to,
-        laterBundle ? [-16, -10, -4, 0, 5, 10, 16] : [-12, -6, 0, 6, 12],
-        tierIdx * 0.9 + fromIdx * 0.11 + localIdx * 0.15
-      );
-    });
-  });
+let seed = 666;
+function random() {
+  const x = Math.sin(seed++) * 10000;
+  return x - Math.floor(x);
 }
 
-const skipLinks: Array<[Point, Point, number]> = [
-  [tier1[0], tier3[1], 0.8],
-  [tier1[2], tier3[4], 1.3],
-  [tier2[1], tier4[2], 1.9],
-  [tier2[4], tier4[7], 2.2],
-  [tier3[2], tier4[4], 2.6],
-  [tier3[5], tier4[8], 3.0],
-];
+/**
+ * Enhanced winding path that also returns key coordinates for node placement
+ */
+function getWindingPathWithPoints(x1: number, y1: number, x2: number, y2: number, variance = 100) {
+  const midX = x1 + (x2 - x1) * 0.45;
+  const midY = y1 + (y2 - y1) * 0.5 + (random() - 0.5) * variance * 2.2;
+  
+  const cp1x = x1 + (midX - x1) * (0.3 + random() * 0.3);
+  const cp1y = y1 + (random() - 0.5) * variance;
+  const cp2x = midX - (midX - x1) * (0.3 + random() * 0.3);
+  const cp2y = midY + (random() - 0.5) * variance;
+  
+  const cp3x = midX + (x2 - midX) * (0.3 + random() * 0.3);
+  const cp3y = midY + (random() - 0.5) * variance;
+  const cp4x = x2 - (x2 - midX) * (0.3 + random() * 0.3);
+  const cp4y = y2 + (random() - 0.5) * variance;
+  
+  const d = `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${midX} ${midY} S ${cp4x} ${cp4y}, ${x2} ${y2}`;
+  
+  return { d, points: [{x: midX, y: midY}, {x: x2, y: y2}] };
+}
 
-skipLinks.forEach(([from, to, delay]) => {
-  addBundle(strands, from, to, [-10, -4, 0, 6, 12], delay);
-});
+const branches = [];
+const pulses = [];
+const backgroundFibers = [];
+const synapses = []; // The "popping" nodes
 
-const tierContours: TierContour[] = [
-  {
-    d: 'M 500 226 C 604 188, 694 194, 792 248 S 972 358, 1108 330',
-    delay: 0.2,
-  },
-  {
-    d: 'M 512 342 C 636 290, 772 300, 914 378 S 1122 508, 1284 470',
-    delay: 0.8,
-  },
-  {
-    d: 'M 528 480 C 676 432, 818 448, 980 544 S 1184 664, 1342 628',
-    delay: 1.4,
-  },
-];
+// 1. Generate Primary Trunks
+const trunkCount = 12;
+for (let i = 0; i < trunkCount; i++) {
+  const startX = -120;
+  const startY = 420 + (i - trunkCount / 2) * 22 + (random() - 0.5) * 40;
+  const endX = VB_WIDTH + 200;
+  const endY = random() * VB_HEIGHT;
+  
+  const { d, points } = getWindingPathWithPoints(startX, startY, endX, endY, 150);
+  branches.push({ d, width: 1.2, delay: i * 0.1 });
+  
+  // Add pulses
+  pulses.push({ d, delay: random() * 10, duration: 6 + random() * 6, width: 2 });
 
-const labels = [
-  { x: 648, y: 170, text: 'TIER / 02' },
-  { x: 922, y: 112, text: 'TIER / 03' },
-  { x: 1184, y: 78, text: 'TIER / 04' },
-];
+  // Add nodes at path keypoints (mostly on the right)
+  points.forEach(p => {
+    if (p.x > 500) {
+      synapses.push({ 
+        x: p.x, y: p.y, 
+        r: 1.5 + random() * 2, 
+        delay: random() * 5, 
+        dur: 3 + random() * 4,
+        type: 'burst'
+      });
+    }
+  });
 
-const allPoints = [...seeds, ...tier1, ...tier2, ...tier3, ...tier4];
+  // 2. Secondary Branching
+  for (let step = 1; step <= 6; step++) {
+      const prog = step / 6;
+      const prob = 0.2 + prog * 0.7;
+      
+      if (random() < prob) {
+          const bSX = startX + (endX - startX) * (prog * 0.8);
+          const bSY = startY + (endY - startY) * (prog * 0.8) + (random() - 0.5) * 60;
+          const bEX = bSX + 300 + random() * 600;
+          const bEY = bSY + (random() - 0.5) * 500;
+          
+          const { d: subD, points: subPoints } = getWindingPathWithPoints(bSX, bSY, bEX, bEY, 80);
+          branches.push({ d: subD, width: 0.7, delay: random() * 4 });
+          
+          if (random() > 0.4) {
+              pulses.push({ d: subD, delay: random() * 8, duration: 8 + random() * 5, width: 1.2 });
+          }
+
+          // Dense nodes on sub-branches
+          subPoints.forEach(p => {
+              if (p.x > 600) {
+                synapses.push({ 
+                  x: p.x, y: p.y, 
+                  r: 1 + random() * 1.5, 
+                  delay: random() * 8, 
+                  dur: 4 + random() * 5,
+                  type: random() > 0.5 ? 'burst' : 'twinkle'
+                });
+              }
+          });
+      }
+  }
+}
+
+// 3. Extra Right-side Clusters
+for (let j = 0; j < 30; j++) {
+    synapses.push({
+        x: 900 + random() * 600,
+        y: random() * VB_HEIGHT,
+        r: 0.8 + random() * 1.2,
+        delay: random() * 10,
+        dur: 5 + random() * 5,
+        type: 'twinkle'
+    });
+}
 ---
 
-<div class="nn" aria-hidden="true">
+<div class="neural-root" aria-hidden="true">
   <svg
     viewBox={`0 0 ${VB_WIDTH} ${VB_HEIGHT}`}
     xmlns="http://www.w3.org/2000/svg"
-    class="nn__svg"
+    preserveAspectRatio="xMidYMid slice"
+    class="neural-svg"
   >
     <defs>
-      <linearGradient id="nnFiber" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.14" />
-        <stop offset="52%" stop-color="#FFFFFF" stop-opacity="0.78" />
-        <stop offset="100%" stop-color="#D6FFF3" stop-opacity="0.14" />
+      <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="var(--brand-primary)" stop-opacity="0" />
+        <stop offset="45%" stop-color="var(--brand-primary)" stop-opacity="0.12" />
+        <stop offset="85%" stop-color="var(--brand-secondary)" stop-opacity="0.18" />
+        <stop offset="100%" stop-color="var(--brand-secondary)" stop-opacity="0" />
       </linearGradient>
 
-      <linearGradient id="nnSignal" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
-        <stop offset="30%" stop-color="#FFFFFF" stop-opacity="1" />
-        <stop offset="68%" stop-color="#9BFFE4" stop-opacity="0.94" />
-        <stop offset="100%" stop-color="#00E5A0" stop-opacity="0" />
-      </linearGradient>
-
-      <radialGradient id="nnNode" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" />
-        <stop offset="40%" stop-color="#C9FFF0" stop-opacity="0.98" />
-        <stop offset="100%" stop-color="#00E5A0" stop-opacity="0.2" />
+      <radialGradient id="synapseGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+        <stop offset="40%" stop-color="var(--brand-primary)" stop-opacity="0.4" />
+        <stop offset="100%" stop-color="var(--brand-primary)" stop-opacity="0" />
       </radialGradient>
 
-      <filter id="nnGlow" x="-140%" y="-140%" width="380%" height="380%">
-        <feGaussianBlur stdDeviation="4" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
+      <filter id="bloomEffect" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
       </filter>
     </defs>
 
-    <g class="nn__tiers">
-      {
-        tierContours.map((contour) => (
-          <path d={contour.d} class="nn__tier" style={`animation-delay:${contour.delay}s`} />
-        ))
-      }
+    <!-- Winding Branches -->
+    <g class="layer-branches">
+      {branches.map((b) => (
+        <path
+          d={b.d}
+          pathLength="100"
+          fill="none"
+          stroke="url(#pathGrad)"
+          stroke-width={b.width}
+          class="branch-draw"
+          style={`animation-delay: ${b.delay}s`}
+        />
+      ))}
     </g>
 
-    <g class="nn__fibers">
-      {
-        strands.map((strand) => (
-          <path d={strand.d} class="nn__fiber" stroke-width={strand.width} />
-        ))
-      }
+    <!-- Data Signals -->
+    <g class="layer-pulses" filter="url(#bloomEffect)">
+      {pulses.map((p) => (
+        <path
+          d={p.d}
+          pathLength="100"
+          fill="none"
+          stroke="var(--brand-primary)"
+          stroke-width={p.width}
+          stroke-linecap="round"
+          class="pulse-flow"
+          style={`animation-delay: ${p.delay}s; animation-duration: ${p.duration}s;`}
+        />
+      ))}
     </g>
 
-    <g class="nn__signals" filter="url(#nnGlow)">
-      {
-        strands
-          .filter((_, idx) => idx % 5 === 0)
-          .map((strand) => (
-            <path
-              d={strand.d}
-              class="nn__signal"
-              stroke-width={strand.width + 0.95}
-              style={`animation-delay:${strand.delay}s`}
-            />
-          ))
-      }
-    </g>
-
-    <g class="nn__nodes" filter="url(#nnGlow)">
-      {
-        allPoints.map((point) => (
-          <circle
-            cx={point.x}
-            cy={point.y}
-            r={point.size}
-            fill="url(#nnNode)"
-            class="nn__node"
-            style={`animation-delay:${point.delay}s`}
-          />
-        ))
-      }
-    </g>
-
-    <g class="nn__labels">
-      <text x="286" y="132" class="nn__label nn__label--main">NEURAL NETWORK</text>
-      {
-        labels.map((label) => (
-          <text x={label.x} y={label.y} class="nn__label nn__label--tier">{label.text}</text>
-        ))
-      }
+    <!-- Firing Synapses (Neurons) -->
+    <g class="layer-synapses" filter="url(#bloomEffect)">
+      {synapses.map((s) => (
+        <circle
+          cx={s.x}
+          cy={s.y}
+          r={s.r}
+          fill="url(#synapseGlow)"
+          class={s.type === 'burst' ? 'synapse-burst' : 'synapse-twinkle'}
+          style={`animation-delay: ${s.delay}s; animation-duration: ${s.dur}s;`}
+        />
+      ))}
     </g>
   </svg>
 </div>
 
 <style>
-  .nn {
+  .neural-root {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
+    will-change: transform;
+    transform: translateZ(0);
+    /* Focus density on right, protect text on left */
+    mask-image: linear-gradient(to right, transparent 0%, transparent 30%, black 60%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 30%, black 60%, black 90%, transparent 100%);
+    opacity: 0.85;
   }
 
-  .nn__svg {
+  .neural-svg {
     width: 100%;
     height: 100%;
-    display: block;
     overflow: visible;
   }
 
-  .nn__tier {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.1);
-    stroke-width: 0.95;
-    stroke-dasharray: 8 18;
-    animation: tierDrift 8s ease-in-out infinite;
+  .branch-draw {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: growPath 4s var(--ease-out) forwards;
   }
 
-  .nn__fiber,
-  .nn__signal {
-    fill: none;
-    stroke-linecap: round;
-  }
-
-  .nn__fiber {
-    stroke: url(#nnFiber);
-    opacity: 0.88;
-  }
-
-  .nn__signal {
-    stroke: url(#nnSignal);
-    stroke-dasharray: 1 220;
+  .pulse-flow {
     opacity: 0;
-    animation: signalRun 4.7s linear infinite;
+    stroke-dasharray: 5 95;
+    stroke-dashoffset: 100;
+    animation: signalFlow linear infinite;
   }
 
-  .nn__node {
-    opacity: 0.9;
-    animation: nodePulse 3.2s ease-in-out infinite;
+  /* Burst: High-frequency flicker / signal firing */
+  .synapse-burst {
+    opacity: 0;
+    transform-origin: center;
+    animation: flashEffect ease-in-out infinite;
   }
 
-  .nn__label {
-    font-family: var(--font-mono);
-    letter-spacing: 0.06em;
+  /* Twinkle: Soft background shimmer */
+  .synapse-twinkle {
+    opacity: 0;
+    transform-origin: center;
+    animation: shimmerEffect ease-in-out infinite;
   }
 
-  .nn__label--main {
-    fill: rgba(255, 255, 255, 0.78);
-    font-size: 14px;
+  @keyframes growPath {
+    to { stroke-dashoffset: 0; }
   }
 
-  .nn__label--tier {
-    fill: rgba(117, 240, 225, 0.52);
-    font-size: 11px;
+  @keyframes signalFlow {
+    0% { stroke-dashoffset: 100; opacity: 0; }
+    15% { opacity: 0.4; }
+    50% { stroke-dasharray: 15 85; opacity: 0.4; }
+    85% { opacity: 0; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
   }
 
-  @keyframes tierDrift {
-    0%, 100% {
-      opacity: 0.12;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      opacity: 0.28;
-      stroke-dashoffset: -20;
-    }
+  /* Neural firing: Multi-stage opacity flicker, very subtle scale */
+  @keyframes flashEffect {
+    0%, 100% { opacity: 0; transform: scale(0.9); }
+    10% { opacity: 1; transform: scale(1.05); } /* Main strike */
+    14% { opacity: 0.3; }
+    18% { opacity: 0.8; } /* Micro-rebound strike */
+    35% { opacity: 0; transform: scale(0.95); }
   }
 
-  @keyframes signalRun {
-    0% {
-      opacity: 0;
-      stroke-dasharray: 1 220;
-      stroke-dashoffset: 0;
-    }
-    12% {
-      opacity: 1;
-    }
-    54% {
-      opacity: 1;
-      stroke-dasharray: 42 220;
-    }
-    100% {
-      opacity: 0;
-      stroke-dasharray: 1 220;
-      stroke-dashoffset: -270;
-    }
-  }
-
-  @keyframes nodePulse {
-    0%, 100% {
-      opacity: 0.7;
-      transform: scale(0.92);
-      transform-origin: center;
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.16);
-    }
+  /* Subtle background twinkling */
+  @keyframes shimmerEffect {
+    0%, 100% { opacity: 0.05; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.05); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nn__tier,
-    .nn__signal,
-    .nn__node {
+    .branch-draw, .pulse-flow, .synapse-burst, .synapse-twinkle {
       animation: none;
+      opacity: 0.2;
     }
-
-    .nn__signal {
-      opacity: 0.26;
-      stroke-dasharray: none;
-    }
+    .branch-draw { stroke-dashoffset: 0; }
   }
 </style>

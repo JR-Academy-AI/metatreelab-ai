@@ -7,13 +7,13 @@ export const siteConfig = {
   name: 'Metatree Lab',
 
   tagline: {
-    en: 'We build systems that ship.',
-    zh: '我们做真正上线的系统。',
+    en: 'AI consulting that ships to production.',
+    zh: '落地型 AI 咨询。',
   },
 
   description: {
-    en: 'A digital studio from JR Academy. AI for teams that build. Marketing for Australian property developers. Shipped with the same engineering obsession.',
-    zh: '匠人学院旗下的 Digital Studio。给技术团队做 AI，给澳洲房产团队做营销 — 同一种工程师的偏执，两种不同的产出。',
+    en: 'AI consulting and digital studio. We help companies ship production AI — from RAG and autonomous agents to Claude Code rollouts and OpenClaw automation.',
+    zh: 'AI 咨询与 Digital Studio。帮企业落地生产级 AI — 从 RAG 和自主 Agent 到 Claude Code 团队落地和 OpenClaw 自动化。',
   },
 
   url: 'https://metatreelab.ai',
