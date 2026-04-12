@@ -429,6 +429,52 @@ export const services: ServiceEntry[] = [
     },
   },
 
+  // ========== AI TRAINING TRACK ==========
+  {
+    slug: 'enterprise-ai-training',
+    track: 'adopt',
+    flagship: false,
+    duration: '1-4w',
+    order: 15,
+    tags: ['training', 'enterprise', 'workshop'],
+    title: {
+      en: 'Enterprise AI Training',
+      zh: '企业 AI 培训',
+    },
+    subtitle: {
+      en: 'Upskill your entire team on AI — from executives to engineers.',
+      zh: '让你整个团队掌握 AI — 从管理层到工程师。',
+    },
+    summary: {
+      en: 'Customised AI training programs for enterprise teams. We cover AI fundamentals for executives, prompt engineering for product teams, agent development for engineers, and AI governance for compliance. Backed by curriculum that has trained thousands of professionals across Australia and APAC.',
+      zh: '为企业团队定制的 AI 培训项目。涵盖高管 AI 基础、产品团队 prompt 工程、工程师 agent 开发、合规团队 AI 治理。背后是已培训数千名澳洲和亚太专业人士的成熟课程体系。',
+    },
+    deliverables: {
+      en: [
+        'AI Fundamentals for Executives (half-day workshop)',
+        'Prompt Engineering for Product & Ops teams (1-2 day intensive)',
+        'AI Agent Development for Engineers (1-2 week bootcamp)',
+        'Claude Code & AI Tools team rollout training',
+        'AI Governance & Risk for compliance teams',
+        'Custom curriculum tailored to your industry and tech stack',
+        'Post-training assessment and certification',
+      ],
+      zh: [
+        '高管 AI 基础（半天 Workshop）',
+        '产品与运营团队 Prompt 工程（1-2 天集训）',
+        '工程师 AI Agent 开发（1-2 周 Bootcamp）',
+        'Claude Code & AI 工具团队落地培训',
+        '合规团队 AI 治理与风险',
+        '按你的行业和技术栈定制课程',
+        '培训后评估与认证',
+      ],
+    },
+    proof: {
+      en: 'Curriculum has trained 5000+ professionals across Australia and APAC. Delivered in partnership with JR Academy.',
+      zh: '课程已培训 5000+ 名澳洲和亚太专业人士。与匠人学院（JR Academy）联合交付。',
+    },
+  },
+
   // ========== PROPERTY MARKETING TRACK ==========
   {
     slug: 'developer-website',
