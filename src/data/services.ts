@@ -476,23 +476,24 @@ export const services: ServiceEntry[] = [
   },
 
   // ========== PROPERTY MARKETING TRACK ==========
+  // AI-powered: websites launched in days, pitch decks / posters / flyers generated fast
   {
     slug: 'developer-website',
     track: 'property',
     flagship: false,
-    duration: '4-8w',
+    duration: '1-2w',
     order: 20,
-    tags: ['website', 'developer', 'portfolio'],
+    tags: ['website', 'developer', 'ai-powered'],
     title: {
       en: 'Developer Website',
       zh: '开发商官网',
     },
     subtitle: {
-      en: 'Editorial, minimal, investor-grade — like Forma Property.',
-      zh: '编辑级、极简、投资级 — 像 Forma Property 那样。',
+      en: 'AI-assisted build — your website live in days, not months.',
+      zh: 'AI 辅助构建 — 几天上线，而不是几个月。',
     },
     summary: {
-      en: 'A full developer group website that positions your brand for high-net-worth buyers and institutional investors. Reference: Forma Property (metatreelab.ai built).',
+      en: 'A full developer group website launched fast with AI-assisted design and content generation. Investor-grade positioning, responsive, SEO-ready. What used to take 2 months now ships in 1-2 weeks.',
       zh: '一个完整的开发商集团主站，把你的品牌定位在高净值买家和机构投资人面前。参考案例：Forma Property（由 metatreelab.ai 出品）。',
     },
     deliverables: {
@@ -588,6 +589,49 @@ export const services: ServiceEntry[] = [
         '数字：网站素材、社交媒体模板',
         '品牌手册文档',
       ],
+    },
+  },
+
+  {
+    slug: 'ai-marketing-collateral',
+    track: 'property',
+    flagship: true,
+    duration: '1-3 days',
+    order: 22,
+    tags: ['ai-powered', 'pitch-deck', 'poster', 'flyer'],
+    title: {
+      en: 'AI-Powered Marketing Collateral',
+      zh: 'AI 快速营销物料',
+    },
+    subtitle: {
+      en: 'Pitch decks, posters, flyers, A4 brochures — generated in hours, not weeks.',
+      zh: 'Pitch Deck、海报、传单、A4 手册 — 数小时交付，而不是数周。',
+    },
+    summary: {
+      en: 'We use AI tools to generate high-quality marketing materials at speed traditional agencies cannot match. A pitch deck that used to take 2 weeks is ready in 1-3 days. Posters, flyers, A4 brochures, social assets — all brand-consistent, all fast.',
+      zh: '我们用 AI 工具生成高质量营销物料，速度是传统代理的数倍。以前 2 周才能做完的 Pitch Deck，1-3 天交付。海报、传单、A4 手册、社媒素材 — 全部品牌一致，全部快速。',
+    },
+    deliverables: {
+      en: [
+        'Pitch decks & investor presentations (1-3 days)',
+        'Marketing posters and display materials',
+        'A4 brochures and flyers',
+        'Social media content packs',
+        'Project signage and hoarding designs',
+        'All assets delivered brand-consistent and print-ready',
+      ],
+      zh: [
+        'Pitch Deck 与投资者演示（1-3 天）',
+        '营销海报与展示物料',
+        'A4 手册与传单',
+        '社媒内容素材包',
+        '项目标识与围挡设计',
+        '所有物料品牌一致、印刷就绪',
+      ],
+    },
+    proof: {
+      en: 'AI-assisted workflow: what used to take weeks is now delivered in days.',
+      zh: 'AI 辅助工作流：以前几周的活，现在几天搞定。',
     },
   },
 

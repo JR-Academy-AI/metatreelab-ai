@@ -1,6 +1,7 @@
 ---
 import { siteConfig, localizedHref, type Locale } from '../../config/site';
 import { useTranslations } from '../../i18n';
+import Logo from '../ui/Logo.astro';
 
 interface Props {
   locale: Locale;
@@ -25,37 +26,8 @@ const switchHref =
 
 <nav class="nav">
   <div class="nav__inner">
-    <a href={localizedHref('/', locale)} class="nav__logo" aria-label={siteConfig.name}>
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="navGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#00E5A0" />
-            <stop offset="100%" stop-color="#00B4D8" />
-          </linearGradient>
-        </defs>
-        <g stroke="url(#navGrad)" stroke-width="1.5" stroke-linecap="round" fill="none">
-          <path d="M16 24 L16 14" />
-          <path d="M16 18 L10 12" />
-          <path d="M16 18 L22 12" />
-          <path d="M10 12 L6 8" />
-          <path d="M22 12 L26 8" />
-        </g>
-        <g fill="url(#navGrad)">
-          <circle cx="16" cy="24" r="1.4" />
-          <circle cx="16" cy="18" r="1.4" />
-          <circle cx="10" cy="12" r="1.2" />
-          <circle cx="22" cy="12" r="1.2" />
-          <circle cx="6" cy="8" r="1" />
-          <circle cx="26" cy="8" r="1" />
-        </g>
-      </svg>
-      <span>Metatree</span>
+    <a href={localizedHref('/', locale)} class="nav__logo-link">
+      <Logo />
     </a>
 
     <div class="nav__links">
@@ -105,19 +77,13 @@ const switchHref =
     box-shadow: var(--shadow-card);
   }
 
-  .nav__logo {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-family: var(--font-mono);
-    font-size: var(--fs-body-sm);
-    font-weight: var(--fw-semibold);
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
+  .nav__logo-link {
+    text-decoration: none;
+    transition: transform var(--dur-normal) var(--ease-out);
   }
 
-  .nav__logo:hover {
-    color: var(--text-primary);
+  .nav__logo-link:hover {
+    transform: scale(1.02);
   }
 
   .nav__links {

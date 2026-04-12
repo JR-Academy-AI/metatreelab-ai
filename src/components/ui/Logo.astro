@@ -1,0 +1,127 @@
+---
+interface Props {
+  className?: string;
+  showText?: boolean;
+}
+
+const { className = '', showText = true } = Astro.props;
+---
+
+<div class={`logo-group ${className}`} aria-label="Metatree Lab">
+  <svg
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="logo-icon"
+  >
+    <defs>
+      <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#00E5A0" />
+        <stop offset="100%" stop-color="#00B4D8" />
+      </linearGradient>
+      
+      <filter id="logoGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+    </defs>
+
+    <!-- Neural Tree Structure -->
+    <g class="logo-structure" stroke="url(#logoGrad)" stroke-width="1.5" stroke-linecap="round">
+      <path d="M16 26V14" class="line-trunk" />
+      <path d="M16 18L10 12" class="line-branch" />
+      <path d="M16 18L22 12" class="line-branch" />
+      <path d="M10 12L6 8" class="line-leaf" />
+      <path d="M22 12L26 8" class="line-leaf" />
+      <path d="M16 14L16 8" class="line-leaf" />
+    </g>
+
+    <!-- Pulsing Synapses -->
+    <g fill="url(#logoGrad)" filter="url(#logoGlow)">
+      <circle cx="16" cy="26" r="1.5" class="dot-root" />
+      <circle cx="16" cy="18" r="1.2" class="dot-joint" />
+      <circle cx="10" cy="12" r="1.2" class="dot-joint" />
+      <circle cx="22" cy="12" r="1.2" class="dot-joint" />
+      <circle cx="6" cy="8" r="1" class="dot-terminal" />
+      <circle cx="26" cy="8" r="1" class="dot-terminal" />
+      <circle cx="16" cy="8" r="1" class="dot-terminal" />
+    </g>
+  </svg>
+
+  {showText && (
+    <div class="logo-text">
+      <span class="text-meta">Meta</span><span class="text-tree">tree</span>
+    </div>
+  )}
+</div>
+
+<style>
+  .logo-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .logo-icon {
+    flex-shrink: 0;
+    overflow: visible;
+  }
+
+  .logo-text {
+    font-size: 1.8rem;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: baseline;
+  }
+
+  .text-meta {
+    font-family: var(--font-sans);
+    font-weight: var(--fw-bold);
+  }
+
+  .text-tree {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-regular);
+    text-transform: uppercase;
+    font-size: 0.85em;
+    color: var(--brand-primary);
+    margin-left: 0.1em;
+  }
+
+  /* Animations */
+  .dot-terminal {
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  
+  .dot-terminal:nth-child(2) { animation-delay: 0.5s; }
+  .dot-terminal:nth-child(3) { animation-delay: 1s; }
+
+  .line-leaf {
+    stroke-dasharray: 10;
+    stroke-dashoffset: 10;
+    animation: logoDraw 2s var(--ease-out) forwards;
+  }
+
+  @keyframes logoPulse {
+    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  @keyframes logoDraw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .logo-group:hover .logo-icon {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+  }
+  
+  .logo-group:hover .text-tree {
+    color: var(--text-primary);
+  }
+</style>
