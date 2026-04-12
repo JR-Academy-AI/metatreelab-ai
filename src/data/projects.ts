@@ -184,6 +184,37 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'level3-ai',
+    category: 'ai-systems',
+    tags: ['AI', 'SaaS', 'Agent'],
+    year: 2025,
+    featured: false,
+    order: 5,
+    name: 'Level3 AI',
+    client: 'Level3 AI',
+    summary: {
+      en: 'Conversational AI agents for enterprise customer support and sales across APAC. 95+ languages, 16+ countries, multi-modal (chat, voice, images). Clients report 50-150% efficiency gains and 90-95% CSAT scores within 3 months.',
+      zh: '面向亚太企业客服与销售的对话式 AI Agent。支持 95+ 语言、覆盖 16+ 国家、多模态（聊天、语音、图片）。客户 3 个月内效率提升 50-150%，CSAT 达 90-95%。',
+    },
+    outcomes: {
+      en: [
+        '95+ languages across 16+ APAC countries',
+        '50-150% agent efficiency improvement',
+        '80-95% ticket resolution rate',
+        '90-95% CSAT within 3 months or money-back',
+      ],
+      zh: [
+        '95+ 语言覆盖 16+ 亚太国家',
+        'Agent 效率提升 50-150%',
+        '工单解决率 80-95%',
+        '3 个月内 CSAT 达 90-95%，否则退款',
+      ],
+    },
+    stack: ['AI Agent', 'NLP', 'Multi-modal', 'Enterprise'],
+    url: 'https://www.level3.ai',
+  },
+
+  {
     slug: 'dispatch-ai',
     category: 'ai-systems',
     tags: ['AI', 'SaaS'],
