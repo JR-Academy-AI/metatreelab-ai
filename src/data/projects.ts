@@ -184,6 +184,37 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'gotocourt',
+    category: 'ai-systems',
+    tags: ['AI', 'LegalTech', 'Platform'],
+    year: 2025,
+    featured: false,
+    order: 8,
+    name: 'Go To Court',
+    client: 'Go To Court Lawyers',
+    summary: {
+      en: "Australia's largest legal service platform. 800+ lawyers, 24/7 AI-powered legal hotline, rapid matching with local specialists. Helped 750,000+ Australians access legal support since 2010.",
+      zh: '澳大利亚最大的法律服务平台。800+ 律师、24/7 AI 法律热线、快速匹配本地专家。自 2010 年起已帮助 75 万+ 澳洲人获得法律支持。',
+    },
+    outcomes: {
+      en: [
+        '800+ lawyers across all Australian states',
+        '24/7 AI-powered free legal hotline',
+        '750,000+ Australians helped since 2010',
+        '#1 ranked legal service on Product Review (780+ reviews)',
+      ],
+      zh: [
+        '800+ 律师覆盖澳洲所有州',
+        '24/7 AI 免费法律热线',
+        '自 2010 年帮助 75 万+ 澳洲人',
+        'Product Review 法律服务排名第一（780+ 评价）',
+      ],
+    },
+    stack: ['AI', 'Legal Tech', 'Platform'],
+    url: 'https://www.gotocourt.com.au',
+  },
+
+  {
     slug: 'level3-ai',
     category: 'ai-systems',
     tags: ['AI', 'SaaS', 'Agent'],
