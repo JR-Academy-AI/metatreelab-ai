@@ -71,21 +71,6 @@ export const projects: ProjectEntry[] = [
     stack: ['AWS Lambda', 'DynamoDB', 'React'],
   },
   {
-    slug: 'mcp-servers',
-    category: 'ai-systems',
-    tags: ['AI', 'Infra'],
-    year: 2025,
-    featured: false,
-    order: 4,
-    name: 'MCP Servers',
-    client: 'JR Academy',
-    summary: {
-      en: 'Custom MCP (Model Context Protocol) servers exposing JR Academy course, video, teacher and roadmap data as tools callable by any MCP-compatible client.',
-      zh: '自研 MCP（Model Context Protocol）服务器，把匠人学院的课程、视频、老师、roadmap 数据暴露为任何 MCP 客户端可调用的工具。',
-    },
-    stack: ['TypeScript', 'MCP SDK', 'Node.js'],
-  },
-  {
     slug: 'kzj-ai-tutor',
     category: 'ai-systems',
     tags: ['AI', 'Agent', 'Chrome Ext'],

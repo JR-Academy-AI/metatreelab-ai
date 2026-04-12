@@ -15,11 +15,11 @@ const propertyHref = localizedHref('/services/property/', locale);
 
 <section class="split">
   <div class="split__inner container-x">
-    <span class="section-label">{t.split.sectionLabel}</span>
+    <span class="section-label" data-reveal>{t.split.sectionLabel}</span>
 
     <div class="split__grid">
       <!-- AI Systems card -->
-      <a href={aiHref} class="split__card split__card--ai">
+      <a href={aiHref} class="split__card split__card--ai card-shimmer" data-reveal>
         <div class="split__head">
           <span class="split__tag">[ A ]</span>
           <h3 class="split__title">{t.split.ai.title}</h3>
@@ -43,7 +43,7 @@ const propertyHref = localizedHref('/services/property/', locale);
       </a>
 
       <!-- Property Marketing card -->
-      <a href={propertyHref} class="split__card split__card--property">
+      <a href={propertyHref} class="split__card split__card--property card-shimmer" data-reveal style="transition-delay: 0.2s">
         <div class="split__head">
           <span class="split__tag">[ B ]</span>
           <h3 class="split__title">{t.split.property.title}</h3>

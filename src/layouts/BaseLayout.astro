@@ -80,5 +80,32 @@ const zhUrl = new URL(zhPath, siteConfig.url).toString();
       <slot />
     </main>
     <Footer locale={locale} />
+
+    <script>
+      function initReveal() {
+        const revealItems = document.querySelectorAll('[data-reveal]');
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              // Optionally unobserve after revealing
+              // observer.unobserve(entry.target);
+            }
+          });
+        }, { 
+          threshold: 0.15,
+          rootMargin: '0px 0px -50px 0px' 
+        });
+
+        revealItems.forEach(item => observer.observe(item));
+      }
+
+      // Initial run
+      initReveal();
+      
+      // Handle Astro View Transitions swaps if added later
+      document.addEventListener('astro:after-swap', initReveal);
+    </script>
   </body>
 </html>
