@@ -27,13 +27,21 @@ export const siteConfig = {
   },
 
   contact: {
-    email: 'hello@metatreelab.ai',
+    email: 'hello@jiangren.com.au',
+    phone: '+61 421 672 555',
     bookingUrl: 'https://cal.com/metatreelab/intro',
   },
 
+  offices: [
+    { city: 'Brisbane', address: 'Level 10b, 144 Edward Street, Brisbane QLD 4000' },
+    { city: 'Melbourne', address: 'Level 2, 171 La Trobe St, Melbourne VIC 3000' },
+    { city: 'Adelaide', address: 'Business Hub, 155 Waymouth St, Adelaide SA 5000' },
+  ],
+
   social: {
     github: 'https://github.com/JR-Academy-AI',
-    linkedin: 'https://linkedin.com/company/metatree-lab',
+    linkedin: 'https://linkedin.com/school/jr-academy',
+    instagram: 'https://www.instagram.com/jracademyau/',
   },
 
   locales: ['en', 'zh'] as const,

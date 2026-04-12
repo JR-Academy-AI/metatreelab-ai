@@ -1,0 +1,346 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+import { type ProjectEntry } from '../../data/projects';
+
+interface Props {
+  locale: Locale;
+  project: ProjectEntry;
+}
+
+const { locale, project } = Astro.props;
+
+const copy = locale === 'zh'
+  ? {
+      back: '← 返回作品列表',
+      client: '客户',
+      year: '年份',
+      stack: '技术栈',
+      outcomes: '成果',
+      visit: '访问项目 ↗',
+    }
+  : {
+      back: '← Back to work',
+      client: 'Client',
+      year: 'Year',
+      stack: 'Stack',
+      outcomes: 'Outcomes',
+      visit: 'Visit project ↗',
+    };
+
+const tags = project.tags;
+---
+
+<BaseLayout
+  title={`${project.name} — Work`}
+  description={project.summary[locale]}
+  locale={locale}
+  path={Astro.url.pathname}
+>
+  <section class="detail">
+    <div class="detail__inner container-x">
+      <!-- Back link -->
+      <a href={localizedHref('/work/', locale)} class="detail__back section-label">
+        {copy.back}
+      </a>
+
+      <!-- Header -->
+      <div class="detail__header">
+        <div class="detail__tags">
+          {tags.map((t) => <span class="detail__tag">{t}</span>)}
+        </div>
+        <h1 class="detail__title">{project.name}</h1>
+        <p class="detail__summary">{project.summary[locale]}</p>
+      </div>
+
+      <!-- Cover area -->
+      <div class="detail__cover">
+        <div class="detail__pattern"></div>
+        <div class="detail__cover-inner">
+          <span class="detail__cover-name">{project.name}</span>
+        </div>
+      </div>
+
+      <!-- Meta grid -->
+      <div class="detail__meta-grid">
+        <div class="detail__meta-block">
+          <span class="section-label">{copy.client}</span>
+          <p class="detail__meta-value">{project.client}</p>
+        </div>
+        <div class="detail__meta-block">
+          <span class="section-label">{copy.year}</span>
+          <p class="detail__meta-value">{project.year}</p>
+        </div>
+        <div class="detail__meta-block">
+          <span class="section-label">Category</span>
+          <p class="detail__meta-value">{project.category}</p>
+        </div>
+        {
+          project.url && (
+            <div class="detail__meta-block">
+              <span class="section-label">Link</span>
+              <a href={project.url} target="_blank" rel="noreferrer" class="detail__ext-link">
+                {copy.visit}
+              </a>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Stack -->
+      {
+        project.stack && project.stack.length > 0 && (
+          <div class="detail__section">
+            <span class="section-label">/ {copy.stack.toUpperCase()}</span>
+            <div class="detail__stack-list">
+              {project.stack.map((s) => (
+                <span class="detail__stack-tag">{s}</span>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Outcomes -->
+      {
+        project.outcomes && project.outcomes[locale] && (
+          <div class="detail__section">
+            <span class="section-label">/ {copy.outcomes.toUpperCase()}</span>
+            <ul class="detail__outcomes">
+              {project.outcomes[locale].map((o) => (
+                <li>{o}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} />
+</BaseLayout>
+
+<style>
+  .detail {
+    position: relative;
+    padding-block: var(--space-8);
+    z-index: 2;
+  }
+
+  .detail__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: 96rem;
+  }
+
+  .detail__back {
+    color: var(--text-tertiary);
+    transition: color var(--dur-normal) var(--ease-out);
+    align-self: flex-start;
+  }
+
+  .detail__back:hover {
+    color: var(--brand-primary);
+  }
+
+  .detail__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .detail__tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .detail__tag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    padding: var(--space-1) var(--space-2);
+    background: rgba(0, 229, 160, 0.08);
+    color: var(--brand-primary);
+    border: 1px solid var(--brand-primary);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .detail__title {
+    font-size: var(--fs-display);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.03em;
+    line-height: var(--lh-tight);
+  }
+
+  .detail__summary {
+    font-size: var(--fs-body-lg);
+    color: var(--text-secondary);
+    max-width: 72rem;
+    line-height: var(--lh-normal);
+  }
+
+  /* Cover placeholder */
+  .detail__cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 229, 160, 0.06),
+      rgba(0, 180, 216, 0.06)
+    );
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .detail__pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 32px,
+        rgba(255, 255, 255, 0.015) 32px,
+        rgba(255, 255, 255, 0.015) 33px
+      );
+    pointer-events: none;
+  }
+
+  .detail__cover-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .detail__cover-name {
+    font-family: var(--font-mono);
+    font-size: var(--fs-h2);
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* Meta grid */
+  .detail__meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border-hairline);
+    border-bottom: 1px solid var(--border-hairline);
+  }
+
+  .detail__meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-right: 1px solid var(--border-hairline);
+  }
+
+  .detail__meta-block:last-child {
+    border-right: none;
+  }
+
+  .detail__meta-value {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+  }
+
+  .detail__ext-link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--brand-primary);
+  }
+
+  .detail__ext-link:hover {
+    color: var(--brand-accent);
+  }
+
+  /* Stack tags */
+  .detail__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .detail__stack-list {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .detail__stack-tag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-pill);
+    color: var(--text-secondary);
+  }
+
+  /* Outcomes */
+  .detail__outcomes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .detail__outcomes li {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+    padding-left: var(--space-4);
+    position: relative;
+  }
+
+  .detail__outcomes li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--brand-primary);
+    font-weight: var(--fw-bold);
+  }
+
+  @media (max-width: 991px) {
+    .detail__title {
+      font-size: var(--fs-h1);
+    }
+    .detail__meta-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .detail__meta-block:nth-child(2) {
+      border-right: none;
+    }
+    .detail__meta-block:nth-child(n + 3) {
+      border-top: 1px solid var(--border-hairline);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .detail__title {
+      font-size: var(--fs-h2);
+    }
+    .detail__meta-grid {
+      grid-template-columns: 1fr;
+    }
+    .detail__meta-block {
+      border-right: none;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .detail__meta-block:last-child {
+      border-bottom: none;
+    }
+  }
+</style>

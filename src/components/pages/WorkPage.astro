@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../ui/PageHero.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
-import { type Locale } from '../../config/site';
+import { localizedHref, type Locale } from '../../config/site';
 import { projects, type ProjectEntry } from '../../data/projects';
 
 interface Props {
@@ -72,7 +72,8 @@ const sorted = [...projects].sort((a, b) => a.order - b.order);
       <div class="work__grid" id="work-grid">
         {
           sorted.map((p: ProjectEntry) => (
-            <article
+            <a
+              href={localizedHref(`/work/${p.slug}/`, locale)}
               class="work-card"
               data-category={p.category}
             >
@@ -100,7 +101,7 @@ const sorted = [...projects].sort((a, b) => a.order - b.order);
                   )}
                 </div>
               </div>
-            </article>
+            </a>
           ))
         }
       </div>

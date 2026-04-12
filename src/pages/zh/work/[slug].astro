@@ -1,0 +1,15 @@
+---
+import WorkDetailPage from '../../../components/pages/WorkDetailPage.astro';
+import { projects } from '../../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({
+    params: { slug: p.slug },
+    props: { project: p },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<WorkDetailPage locale="zh" project={project} />

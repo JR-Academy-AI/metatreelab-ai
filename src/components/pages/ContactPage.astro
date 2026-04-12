@@ -187,6 +187,27 @@ const thanksUrl = locale === 'zh' ? '/zh/thanks/' : '/thanks/';
             </a>
           </div>
 
+          <div class="contact__block">
+            <span class="section-label">/ {locale === 'zh' ? '电话' : 'PHONE'}</span>
+            <a href={`tel:${siteConfig.contact.phone}`} class="contact__email">
+              {siteConfig.contact.phone}
+            </a>
+          </div>
+
+          <div class="contact__block">
+            <span class="section-label">/ {locale === 'zh' ? '办公室' : 'OFFICES'}</span>
+            <div class="contact__offices">
+              {
+                siteConfig.offices.map((o) => (
+                  <div class="contact__office">
+                    <strong>{o.city}</strong>
+                    <span>{o.address}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
           <div class="contact__block contact__block--quiet">
             <span class="section-label">/ PARENT</span>
             <a
@@ -326,6 +347,31 @@ const thanksUrl = locale === 'zh' ? '/zh/thanks/' : '/thanks/';
 
   .contact__email:hover {
     color: var(--brand-primary);
+  }
+
+  .contact__offices {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .contact__office {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: var(--fs-body-sm);
+  }
+
+  .contact__office strong {
+    color: var(--text-primary);
+    font-weight: var(--fw-semibold);
+  }
+
+  .contact__office span {
+    color: var(--text-secondary);
+    font-size: var(--fs-label);
+    font-family: var(--font-mono);
   }
 
   @media (max-width: 991px) {
