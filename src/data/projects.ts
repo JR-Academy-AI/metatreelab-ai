@@ -343,6 +343,37 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'orens-capital',
+    category: 'property',
+    tags: ['Property', 'Investment', 'Web'],
+    year: 2025,
+    featured: false,
+    order: 11,
+    name: 'Orens Capital',
+    client: 'Orens Capital',
+    summary: {
+      en: 'Investment fund website for a greenfield land subdivision and development firm. 2,000+ hectares delivered across Australian residential growth corridors. Institutional-grade investor portal with fund offerings and transparency updates.',
+      zh: '澳洲绿地土地分割与开发投资基金网站。已成功交付 2000+ 公顷项目，覆盖住宅增长走廊。机构级投资者门户，含基金产品与透明度更新。',
+    },
+    outcomes: {
+      en: [
+        '2,000+ hectares of delivered projects',
+        'Institutional-grade investor portal',
+        'Multiple fund offerings (equity + debt)',
+        'Stakeholder transparency and reporting',
+      ],
+      zh: [
+        '2000+ 公顷已交付项目',
+        '机构级投资者门户',
+        '多基金产品（股权 + 债权）',
+        '利益相关方透明度与报告',
+      ],
+    },
+    stack: ['Web', 'CMS', 'Investment Portal'],
+    url: 'https://orenscapital.com.au',
+  },
+
+  {
     slug: 'forma-property',
     category: 'property',
     tags: ['Property', 'Web'],
