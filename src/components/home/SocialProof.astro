@@ -1,0 +1,176 @@
+---
+import type { Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const label = locale === 'zh' ? '客户怎么说' : 'WHAT CLIENTS SAY';
+
+const testimonials = locale === 'zh'
+  ? [
+      {
+        quote: '以前找代理做个官网要三个月，报价两万多。Metatree 一周搞定，效果比之前的还好，花了不到五分之一。',
+        author: 'Forma Group',
+        role: '房地产开发商 · 悉尼',
+        result: '省 80%+ 费用，上线快 10 倍',
+      },
+      {
+        quote: '我们内部有大量重复性数据处理工作，之前靠 3 个人轮班做。Metatree 帮我们搭了一套自动化系统，现在机器 24 小时跑，人力释放出来做更重要的事。',
+        author: '运营总监',
+        role: '教育集团 · 墨尔本',
+        result: '3 人工作量 → 全自动',
+      },
+      {
+        quote: '之前不懂 AI 能做什么，觉得跟我们没关系。Metatree 用两天时间帮我们团队做了一次培训，现在每个人都在用 AI 工具处理日常工作，效率直接翻倍。',
+        author: '公司创始人',
+        role: '金融科技 · 悉尼',
+        result: '全员 AI 化，效率翻倍',
+      },
+    ]
+  : [
+      {
+        quote: "Our previous agency quoted $22k and 3 months for a website. Metatree delivered in a week — and it looks better. We spent less than a fifth of the original quote.",
+        author: 'Forma Group',
+        role: 'Property Developer · Sydney',
+        result: '80%+ cost saved, 10x faster',
+      },
+      {
+        quote: "We had 3 people doing repetitive data processing around the clock. Metatree built an automation system that runs 24/7 — those people now focus on work that actually grows the business.",
+        author: 'Head of Operations',
+        role: 'Education Group · Melbourne',
+        result: '3 headcount → fully automated',
+      },
+      {
+        quote: "We didn't think AI was relevant to us. Metatree ran a 2-day training and now every team member uses AI tools daily. Productivity doubled almost overnight.",
+        author: 'Company Founder',
+        role: 'Fintech · Sydney',
+        result: 'Whole team AI-enabled, 2x output',
+      },
+    ];
+---
+
+<section class="sp">
+  <div class="sp__inner container-x">
+    <span class="section-label" data-reveal>/ 04 — {label}</span>
+
+    <div class="sp__grid">
+      {testimonials.map((t, idx) => (
+        <div
+          class={`sp__card delay-${idx + 1}`}
+          data-reveal="3d"
+        >
+          <div class="sp__quote-mark" aria-hidden="true">"</div>
+          <blockquote class="sp__quote">{t.quote}</blockquote>
+          <div class="sp__result">{t.result}</div>
+          <div class="sp__author">
+            <span class="sp__name">{t.author}</span>
+            <span class="sp__role">{t.role}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .sp {
+    position: relative;
+    padding-block: var(--space-9);
+    z-index: 2;
+  }
+
+  .sp__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .sp__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .sp__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color var(--dur-normal) var(--ease-out),
+      transform var(--dur-normal) var(--ease-out);
+  }
+
+  .sp__card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+  }
+
+  .sp__quote-mark {
+    font-family: var(--font-sans);
+    font-size: 6.4rem;
+    line-height: 0.6;
+    color: var(--brand-primary);
+    opacity: 0.3;
+    user-select: none;
+  }
+
+  .sp__quote {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+    margin: 0;
+    flex: 1;
+  }
+
+  .sp__result {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    color: var(--brand-primary);
+    background: rgba(0, 229, 160, 0.08);
+    border: 1px solid rgba(0, 229, 160, 0.15);
+    border-radius: var(--radius-pill);
+    padding: 0.3rem 1rem;
+    width: fit-content;
+    letter-spacing: 0.02em;
+  }
+
+  .sp__author {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .sp__name {
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+  }
+
+  .sp__role {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 991px) {
+    .sp__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

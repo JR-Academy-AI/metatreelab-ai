@@ -1,0 +1,432 @@
+---
+import type { Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const label = locale === 'zh' ? '帮你省多少？' : 'HOW MUCH DO YOU SAVE?';
+const title = locale === 'zh'
+  ? ['同样的品质，', '十分之一的价格和时间。']
+  : ['Same quality.', 'A fraction of the cost and time.'];
+const subtitle = locale === 'zh'
+  ? 'AI 不是未来——你的竞争对手今天就在用。以下是我们帮客户节省的真实数据：'
+  : "AI isn't the future — your competitors are using it today. Here's what our clients actually save:";
+
+const items = locale === 'zh'
+  ? [
+      {
+        category: '公司网站',
+        oldPrice: '$15,000 – 25,000',
+        oldTime: '2-3 个月',
+        newPrice: '$2,000 起',
+        newTime: '3-7 天',
+        saving: '省 85%+',
+        icon: '🌐',
+      },
+      {
+        category: 'Pitch Deck / 投资人演示',
+        oldPrice: '$3,000 – 5,000',
+        oldTime: '2-3 周',
+        newPrice: '$500 起',
+        newTime: '1-3 天',
+        saving: '省 80%+',
+        icon: '📊',
+      },
+      {
+        category: 'AI 客服助手',
+        oldPrice: '雇人: $80k+/年',
+        oldTime: '招聘 1-3 个月',
+        newPrice: '$5,000 起',
+        newTime: '1-2 周上线',
+        saving: '省 90%+',
+        icon: '💬',
+      },
+      {
+        category: '重复性工作自动化',
+        oldPrice: '人工: 40 小时/周',
+        oldTime: '持续消耗人力',
+        newPrice: '自动运行',
+        newTime: '1-3 周搭建',
+        saving: '省 20+ 小时/周',
+        icon: '⚡',
+      },
+      {
+        category: 'Web3 / 区块链官网',
+        oldPrice: '$25,000 – 35,000',
+        oldTime: '2-3 个月',
+        newPrice: '$4,000 起',
+        newTime: '1-2 周',
+        saving: '省 85%+',
+        icon: '🔗',
+      },
+      {
+        category: '团队 AI 培训',
+        oldPrice: '外部顾问: $50k+',
+        oldTime: '几个月见效',
+        newPrice: '$3,000 起',
+        newTime: '3-5 天上手',
+        saving: '省 90%+',
+        icon: '🎓',
+      },
+    ]
+  : [
+      {
+        category: 'Company Website',
+        oldPrice: '$15,000 – 25,000',
+        oldTime: '2-3 months',
+        newPrice: 'From $2,000',
+        newTime: '3-7 days',
+        saving: 'Save 85%+',
+        icon: '🌐',
+      },
+      {
+        category: 'Pitch Deck / Presentation',
+        oldPrice: '$3,000 – 5,000',
+        oldTime: '2-3 weeks',
+        newPrice: 'From $500',
+        newTime: '1-3 days',
+        saving: 'Save 80%+',
+        icon: '📊',
+      },
+      {
+        category: 'AI Customer Assistant',
+        oldPrice: 'Staff hire: $80k+/yr',
+        oldTime: '1-3 months to hire',
+        newPrice: 'From $5,000',
+        newTime: '1-2 weeks live',
+        saving: 'Save 90%+',
+        icon: '💬',
+      },
+      {
+        category: 'Repetitive Task Automation',
+        oldPrice: 'Manual: 40 hrs/week',
+        oldTime: 'Ongoing headcount cost',
+        newPrice: 'Runs automatically',
+        newTime: '1-3 weeks to build',
+        saving: 'Save 20+ hrs/week',
+        icon: '⚡',
+      },
+      {
+        category: 'Web3 / Blockchain Website',
+        oldPrice: '$25,000 – 35,000',
+        oldTime: '2-3 months',
+        newPrice: 'From $4,000',
+        newTime: '1-2 weeks',
+        saving: 'Save 85%+',
+        icon: '🔗',
+      },
+      {
+        category: 'Team AI Training',
+        oldPrice: 'External consultants: $50k+',
+        oldTime: 'Months to see results',
+        newPrice: 'From $3,000',
+        newTime: '3-5 days hands-on',
+        saving: 'Save 90%+',
+        icon: '🎓',
+      },
+    ];
+
+const oldLabel = locale === 'zh' ? '传统方式' : 'Traditional';
+const newLabel = locale === 'zh' ? '和我们合作' : 'With us';
+
+const bottomTitle = locale === 'zh'
+  ? '不只是省钱——我们帮你赚更多'
+  : "It's not just about saving — we help you earn more";
+
+const bottomPoints = locale === 'zh'
+  ? [
+      { icon: '🕐', text: '你的团队从重复劳动中解放，专注高价值工作' },
+      { icon: '📈', text: 'AI 客服 7×24 接客，再也不丢线索' },
+      { icon: '🚀', text: '比竞争对手更快推向市场，抢占先机' },
+      { icon: '🤝', text: '我们长期陪跑，不是做完就走——你的业务增长就是我们的 KPI' },
+    ]
+  : [
+      { icon: '🕐', text: 'Free your team from repetitive work — focus on what matters' },
+      { icon: '📈', text: 'AI handles enquiries 24/7 — never miss a lead again' },
+      { icon: '🚀', text: 'Go to market faster than your competitors' },
+      { icon: '🤝', text: "We're in it for the long run — your growth is our KPI" },
+    ];
+---
+
+<section class="pc">
+  <div class="pc__inner container-x">
+    <span class="section-label" data-reveal>/ 03 — {label}</span>
+
+    <div class="pc__header" data-reveal>
+      <h2 class="pc__title">
+        <span>{title[0]}</span>
+        <span>{title[1]}</span>
+      </h2>
+      <p class="pc__subtitle">{subtitle}</p>
+    </div>
+
+    <div class="pc__grid">
+      {items.map((item, idx) => (
+        <div
+          class={`pc__card delay-${(idx % 3) + 1}`}
+          data-reveal="3d"
+        >
+          <div class="pc__card-header">
+            <span class="pc__icon">{item.icon}</span>
+            <span class="pc__category">{item.category}</span>
+            <span class="pc__saving">{item.saving}</span>
+          </div>
+
+          <div class="pc__comparison">
+            <div class="pc__old">
+              <span class="pc__col-label">{oldLabel}</span>
+              <span class="pc__old-price">{item.oldPrice}</span>
+              <span class="pc__old-time">{item.oldTime}</span>
+            </div>
+            <div class="pc__arrow" aria-hidden="true">→</div>
+            <div class="pc__new">
+              <span class="pc__col-label">{newLabel}</span>
+              <span class="pc__new-price">{item.newPrice}</span>
+              <span class="pc__new-time">{item.newTime}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Bottom value props -->
+    <div class="pc__bottom" data-reveal>
+      <h3 class="pc__bottom-title">{bottomTitle}</h3>
+      <div class="pc__bottom-grid">
+        {bottomPoints.map((point) => (
+          <div class="pc__point">
+            <span class="pc__point-icon">{point.icon}</span>
+            <span class="pc__point-text">{point.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pc {
+    position: relative;
+    padding-block: var(--space-9);
+    z-index: 2;
+  }
+
+  .pc__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .pc__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .pc__title {
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.03em;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pc__subtitle {
+    font-size: var(--fs-body-lg);
+    color: var(--text-secondary);
+    max-width: 60rem;
+    line-height: var(--lh-normal);
+  }
+
+  /* ---- Card grid ---- */
+  .pc__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .pc__card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    transition:
+      border-color var(--dur-normal) var(--ease-out),
+      transform var(--dur-normal) var(--ease-out);
+  }
+
+  .pc__card:hover {
+    transform: translateY(-4px);
+    border-color: var(--brand-primary);
+  }
+
+  .pc__card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .pc__icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .pc__category {
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  .pc__saving {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    color: var(--brand-primary);
+    background: rgba(0, 229, 160, 0.1);
+    border: 1px solid rgba(0, 229, 160, 0.2);
+    border-radius: var(--radius-pill);
+    padding: 0.2rem 0.8rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  /* ---- Comparison layout ---- */
+  .pc__comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .pc__col-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .pc__old {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pc__old-price {
+    font-size: var(--fs-body-sm);
+    color: var(--text-tertiary);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 100, 100, 0.5);
+  }
+
+  .pc__old-time {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  .pc__arrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-lg);
+    color: var(--brand-primary);
+    text-align: center;
+  }
+
+  .pc__new {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pc__new-price {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: var(--brand-primary);
+  }
+
+  .pc__new-time {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+  }
+
+  /* ---- Bottom value section ---- */
+  .pc__bottom {
+    margin-top: var(--space-5);
+    padding: var(--space-6);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .pc__bottom-title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-5);
+  }
+
+  .pc__bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .pc__point {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .pc__point-icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+
+  .pc__point-text {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 991px) {
+    .pc__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .pc__title {
+      font-size: var(--fs-h2);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .pc__grid {
+      grid-template-columns: 1fr;
+    }
+    .pc__bottom-grid {
+      grid-template-columns: 1fr;
+    }
+    .pc__title {
+      font-size: var(--fs-h3);
+    }
+  }
+</style>
