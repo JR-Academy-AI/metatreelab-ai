@@ -185,6 +185,54 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'airbotix',
+    category: 'ai-systems',
+    tags: ['AI', 'Robotics', 'EdTech'],
+    year: 2025,
+    featured: false,
+    order: 11,
+    name: 'Airbotix',
+    client: 'Airbotix',
+    summary: {
+      en: 'AI and robotics education platform. Combining artificial intelligence with robotics training to build the next generation of tech talent.',
+      zh: 'AI 与机器人教育平台。将人工智能与机器人培训结合，培养下一代科技人才。',
+    },
+    stack: ['AI', 'Robotics', 'Education'],
+    url: 'https://airbotix.ai',
+  },
+
+  {
+    slug: 'lingoai',
+    category: 'ai-systems',
+    tags: ['AI', 'Web3', 'DePIN'],
+    year: 2025,
+    featured: false,
+    order: 10,
+    name: 'LingoAI',
+    client: 'LingoAI',
+    summary: {
+      en: 'Decentralised AI language platform bridging human-machine symbiosis. Multilingual data mining across 5,000+ languages, real-time voice translation in 100+ languages, DePIN architecture, and a Web3 translation marketplace with "Speak to Earn" tokenomics.',
+      zh: '去中心化 AI 语言平台，连接人机共生。覆盖 5000+ 语言的多语种数据挖掘、100+ 语言实时语音翻译、DePIN 架构，以及带 "Speak to Earn" 代币经济的 Web3 翻译市场。',
+    },
+    outcomes: {
+      en: [
+        '5,000+ languages supported via distributed mining',
+        'Real-time voice translation in 100+ languages',
+        'DePIN edge computing architecture',
+        'Web3 translation marketplace (454 languages)',
+      ],
+      zh: [
+        '5000+ 语言分布式挖掘',
+        '100+ 语言实时语音翻译',
+        'DePIN 边缘计算架构',
+        'Web3 翻译市场（454 种语言）',
+      ],
+    },
+    stack: ['AI', 'Web3', 'DePIN', 'NLP', 'Blockchain'],
+    url: 'https://lingoai.io',
+  },
+
+  {
     slug: 'techscrum',
     category: 'ai-systems',
     tags: ['SaaS', 'Project Management', 'DevTool'],
