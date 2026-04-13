@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../ui/PageHero.astro';
 import { localizedHref, type Locale } from '../../config/site';
 import { useTranslations } from '../../i18n';
-import { allCategories } from '../../data/pricing';
+import { allCategories, RECURRING_IDS } from '../../data/pricing';
 
 interface Props {
   locale: Locale;
@@ -14,20 +14,7 @@ const t = useTranslations(locale);
 const q = t.quote;
 const contactHref = localizedHref('/contact/', locale);
 
-const categoriesJson = JSON.stringify(
-  allCategories.map((cat) => ({
-    id: cat.id,
-    title: cat.title[locale],
-    subtitle: cat.subtitle?.[locale],
-    selectionMode: cat.selectionMode,
-    items: cat.items.map((item) => ({
-      id: item.id,
-      price: item.price,
-      label: item.label[locale],
-      description: item.description?.[locale],
-    })),
-  }))
-);
+const recurringIdsJson = JSON.stringify([...RECURRING_IDS]);
 ---
 
 <BaseLayout title={q.title} locale={locale} path={Astro.url.pathname}>
@@ -50,9 +37,7 @@ const categoriesJson = JSON.stringify(
                 </span>
                 <div class="quote__cat-title-wrap">
                   <h2 class="quote__cat-title">{cat.title[locale]}</h2>
-                  {cat.subtitle && (
-                    <p class="quote__cat-subtitle">{cat.subtitle[locale]}</p>
-                  )}
+                  <p class="quote__cat-subtitle">{cat.subtitle[locale]}</p>
                 </div>
                 {cat.selectionMode === 'single' && (
                   <span class="quote__cat-badge quote__cat-badge--single">
@@ -79,12 +64,12 @@ const categoriesJson = JSON.stringify(
                     <span class="quote__item-check" aria-hidden="true"></span>
                     <span class="quote__item-body">
                       <span class="quote__item-label">{item.label[locale]}</span>
-                      {item.description && (
-                        <span class="quote__item-desc">{item.description[locale]}</span>
-                      )}
+                      <span class="quote__item-benefit">{item.benefit[locale]}</span>
                     </span>
                     <span class="quote__item-price">
-                      ${item.price.toLocaleString()}
+                      {item.price === 0
+                        ? (locale === 'zh' ? '已含' : 'Included')
+                        : `$${item.price.toLocaleString()}`}
                     </span>
                   </label>
                 ))}
@@ -138,9 +123,8 @@ const categoriesJson = JSON.stringify(
   </section>
 </BaseLayout>
 
-<script is:inline define:vars={{ categoriesJson, contactHref, perMonthLabel: q.perMonth }}>
-  const RECURRING_IDS = new Set(['maintenance-monthly', 'priority-support']);
-  const categories = JSON.parse(categoriesJson);
+<script is:inline define:vars={{ recurringIdsJson, contactHref, perMonthLabel: q.perMonth }}>
+  const RECURRING_IDS = new Set(JSON.parse(recurringIdsJson));
 
   function initQuoteCalculator() {
     const builder = document.getElementById('quote-builder');
@@ -156,17 +140,17 @@ const categoriesJson = JSON.stringify(
     if (!builder || !summaryList) return;
 
     function getSelectedItems() {
-      const selected = [];
-      const inputs = builder.querySelectorAll('.quote__input:checked');
-      inputs.forEach((input) => {
-        const label = input.closest('.quote__item');
+      var selected = [];
+      var inputs = builder.querySelectorAll('.quote__input:checked');
+      inputs.forEach(function (input) {
+        var label = input.closest('.quote__item');
         if (!label) return;
-        const id = label.dataset.itemId;
-        const price = Number(label.dataset.price);
-        const nameEl = label.querySelector('.quote__item-label');
+        var id = label.dataset.itemId;
+        var price = Number(label.dataset.price);
+        var nameEl = label.querySelector('.quote__item-label');
         selected.push({
-          id,
-          price,
+          id: id,
+          price: price,
           label: nameEl ? nameEl.textContent : id,
           recurring: RECURRING_IDS.has(id),
         });
@@ -175,7 +159,7 @@ const categoriesJson = JSON.stringify(
     }
 
     function updateSummary() {
-      const items = getSelectedItems();
+      var items = getSelectedItems();
 
       // Clear summary list
       while (summaryList.firstChild) {
@@ -191,16 +175,29 @@ const categoriesJson = JSON.stringify(
         return;
       }
 
-      let oneoff = 0;
-      let recurring = 0;
+      var oneoff = 0;
+      var recurring = 0;
 
-      items.forEach((item) => {
-        const row = document.createElement('div');
+      items.forEach(function (item) {
+        var row = document.createElement('div');
         row.className = 'quote__summary-item';
-        row.innerHTML = `
-          <span class="quote__summary-item-name">${item.label}${item.recurring ? ' <span class="quote__recurring-tag">' + perMonthLabel + '</span>' : ''}</span>
-          <span class="quote__summary-item-price">$${item.price.toLocaleString()}${item.recurring ? perMonthLabel : ''}</span>
-        `;
+
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'quote__summary-item-name';
+        nameSpan.textContent = item.label;
+        if (item.recurring) {
+          var tag = document.createElement('span');
+          tag.className = 'quote__recurring-tag';
+          tag.textContent = perMonthLabel;
+          nameSpan.appendChild(tag);
+        }
+
+        var priceSpan = document.createElement('span');
+        priceSpan.className = 'quote__summary-item-price';
+        priceSpan.textContent = '$' + item.price.toLocaleString() + (item.recurring ? perMonthLabel : '');
+
+        row.appendChild(nameSpan);
+        row.appendChild(priceSpan);
         summaryList.appendChild(row);
 
         if (item.recurring) {
@@ -214,22 +211,18 @@ const categoriesJson = JSON.stringify(
       totalRecurring.textContent = '$' + recurring.toLocaleString() + perMonthLabel;
       totalGrand.textContent = '$' + oneoff.toLocaleString();
 
-      if (recurring > 0) {
-        recurringRow.style.display = 'flex';
-      } else {
-        recurringRow.style.display = 'none';
-      }
+      recurringRow.style.display = recurring > 0 ? 'flex' : 'none';
 
       // Update CTA link with query params
-      const params = new URLSearchParams();
-      params.set('items', items.map((i) => i.id).join(','));
+      var params = new URLSearchParams();
+      params.set('items', items.map(function (i) { return i.id; }).join(','));
       params.set('total', String(oneoff));
       if (recurring > 0) params.set('recurring', String(recurring));
       ctaBtn.href = contactHref + '?' + params.toString();
 
       // Update visual states
-      builder.querySelectorAll('.quote__item').forEach((item) => {
-        const input = item.querySelector('.quote__input');
+      builder.querySelectorAll('.quote__item').forEach(function (item) {
+        var input = item.querySelector('.quote__input');
         item.classList.toggle('is-selected', input && input.checked);
       });
     }
@@ -239,11 +232,11 @@ const categoriesJson = JSON.stringify(
 
     // Reset
     if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        builder.querySelectorAll('.quote__input').forEach((input) => {
+      resetBtn.addEventListener('click', function () {
+        builder.querySelectorAll('.quote__input').forEach(function (input) {
           input.checked = false;
         });
-        builder.querySelectorAll('.quote__item').forEach((item) => {
+        builder.querySelectorAll('.quote__item').forEach(function (item) {
           item.classList.remove('is-selected');
         });
         updateSummary();
@@ -337,10 +330,10 @@ const categoriesJson = JSON.stringify(
     border: 1px solid rgba(0, 180, 216, 0.2);
   }
 
-  /* ===== Items grid ===== */
+  /* ===== Items ===== */
   .quote__items {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-2);
   }
 
@@ -348,14 +341,13 @@ const categoriesJson = JSON.stringify(
     display: flex;
     align-items: flex-start;
     gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4);
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition:
       border-color var(--dur-normal) var(--ease-out),
-      background var(--dur-normal) var(--ease-out),
-      transform var(--dur-fast) var(--ease-out);
+      background var(--dur-normal) var(--ease-out);
   }
 
   .quote__item:hover {
@@ -376,20 +368,20 @@ const categoriesJson = JSON.stringify(
     pointer-events: none;
   }
 
+  /* Custom checkbox / radio */
   .quote__item-check {
     position: relative;
     flex-shrink: 0;
-    width: 2rem;
-    height: 2rem;
+    width: 2.2rem;
+    height: 2.2rem;
     border: 2px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    margin-top: 0.2rem;
+    border-radius: 0.4rem;
+    margin-top: 0.1rem;
     transition:
       border-color var(--dur-fast) var(--ease-out),
       background var(--dur-fast) var(--ease-out);
   }
 
-  /* Radio → circle */
   [data-mode="single"] .quote__item-check {
     border-radius: 50%;
   }
@@ -404,33 +396,33 @@ const categoriesJson = JSON.stringify(
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     width: 1rem;
-    height: 0.7rem;
+    height: 0.6rem;
     border-left: 2px solid #000;
     border-bottom: 2px solid #000;
-    transform: translate(-50%, -60%) rotate(-45deg);
+    transform: translate(-50%, -65%) rotate(-45deg);
   }
 
+  /* Item content */
   .quote__item-body {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.4rem;
     flex: 1;
     min-width: 0;
   }
 
   .quote__item-label {
     font-size: var(--fs-body);
-    font-weight: var(--fw-semibold);
+    font-weight: var(--fw-bold);
     color: var(--text-primary);
-    line-height: var(--lh-normal);
+    line-height: var(--lh-tight);
   }
 
-  .quote__item-desc {
+  .quote__item-benefit {
     font-size: var(--fs-body-sm);
-    color: var(--text-tertiary);
-    line-height: var(--lh-normal);
+    color: var(--text-secondary);
+    line-height: var(--lh-relaxed);
   }
 
   .quote__item-price {
@@ -440,7 +432,7 @@ const categoriesJson = JSON.stringify(
     color: var(--brand-primary);
     white-space: nowrap;
     flex-shrink: 0;
-    margin-top: 0.2rem;
+    margin-top: 0.1rem;
   }
 
   /* ===== Sticky summary ===== */
@@ -467,6 +459,8 @@ const categoriesJson = JSON.stringify(
     flex-direction: column;
     gap: var(--space-2);
     min-height: 4rem;
+    max-height: 40rem;
+    overflow-y: auto;
   }
 
   .quote__summary-empty {
@@ -482,7 +476,7 @@ const categoriesJson = JSON.stringify(
     background: var(--border-hairline);
   }
 
-  /* ===== Summary items (JS-injected) ===== */
+  /* Summary items (JS-injected) */
   :global(.quote__summary-item) {
     display: flex;
     justify-content: space-between;
@@ -519,7 +513,7 @@ const categoriesJson = JSON.stringify(
     white-space: nowrap;
   }
 
-  /* ===== Totals ===== */
+  /* Totals */
   .quote__summary-totals {
     display: flex;
     flex-direction: column;
@@ -566,7 +560,7 @@ const categoriesJson = JSON.stringify(
     background-clip: text;
   }
 
-  /* ===== CTA ===== */
+  /* CTA & Reset */
   .quote__cta {
     text-align: center;
     width: 100%;
@@ -579,7 +573,7 @@ const categoriesJson = JSON.stringify(
     padding: var(--space-2) var(--space-4);
   }
 
-  /* ===== Disclaimer ===== */
+  /* Disclaimer */
   .quote__disclaimer {
     padding: var(--space-4);
     background: rgba(255, 255, 255, 0.02);
@@ -632,13 +626,16 @@ const categoriesJson = JSON.stringify(
 
     .quote__item {
       padding: var(--space-3);
-      flex-wrap: wrap;
     }
 
     .quote__item-price {
-      width: 100%;
-      padding-left: 3.2rem;
-      margin-top: 0.4rem;
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+    }
+
+    .quote__item-body {
+      padding-right: 7rem;
     }
   }
 </style>
