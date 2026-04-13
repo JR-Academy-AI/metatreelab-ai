@@ -53,5 +53,28 @@
   },
   "locale": {
     "switchTo": "EN"
+  },
+  "deck": {
+    "pageTitle": "公司介绍",
+    "fullscreen": "全屏",
+    "exitFullscreen": "退出全屏",
+    "backToSite": "返回官网",
+    "bookCall": "预约沟通",
+    "sendEmail": "发送邮件",
+    "or": "或",
+    "parentBacking": "匠人学院旗下 — 5 年以上教育科技经验，为 1000+ 企业提供 AI 培训。",
+    "trackBuild": "AI Build",
+    "trackBuildDesc": "定制 AI 工程。Agent、RAG、LLM 应用 — 为生产环境构建，不是做 Demo。",
+    "trackAdopt": "AI Adopt",
+    "trackAdoptDesc": "让团队 AI 化。Claude Code 落地、OpenClaw 自动化、工作流升级。",
+    "trackProperty": "Property Marketing",
+    "trackPropertyDesc": "开发商官网、Pitch Deck、品牌视觉 — 工程化驱动，快速交付。",
+    "buildServices": "AI Agent 开发 · RAG 知识系统 · 定制 LLM 应用 · AI 平台工程",
+    "adoptServices": "Claude Cowork 落地 · OpenClaw 部署 · 工作流自动化 · AI 工具集成",
+    "propertyServices": "开发商官网 · Pitch Deck · 营销物料 · 品牌视觉",
+    "founderTitle": "Lightman Wang",
+    "founderRole": "创始人 & AI 战略负责人",
+    "founderBio": "全栈产品负责人，5 年以上 AI 教育与 SaaS 平台经验。主导战略咨询、Agent 架构设计和平台工程。",
+    "teamCapabilities": "AI 战略 · Agent 架构 · RAG 工程 · Claude Code · MCP · OpenClaw · 平台工程 · 产品设计"
   }
 }

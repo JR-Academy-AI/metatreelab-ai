@@ -20,7 +20,9 @@ const {
   path = Astro.url.pathname,
 } = Astro.props;
 
-const fullTitle = title === siteConfig.name ? title : `${title} — ${siteConfig.name}`;
+const fullTitle = title === siteConfig.name
+  ? `${siteConfig.name} — ${siteConfig.tagline[locale]}`
+  : `${title} — ${siteConfig.name}`;
 const canonical = new URL(path, siteConfig.url).toString();
 
 // Build hreflang alternates
