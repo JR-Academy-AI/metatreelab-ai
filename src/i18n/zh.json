@@ -7,43 +7,43 @@
     "bookCall": "预约沟通"
   },
   "hero": {
-    "sectionLabel": "/ 01 — AI CONSULTING",
-    "title_line1": "从战略到上线",
-    "title_line2": "落地型 AI 咨询。",
-    "subtitle": "帮企业落地真正能跑的 AI — RAG 知识系统、自主 Agent、Claude Code 团队落地、OpenClaw 自动化。不做 PPT，只交付生产系统。",
+    "sectionLabel": "/ 01 — 你的 AI 合作伙伴",
+    "title_line1": "降本增效，",
+    "title_line2": "AI 真正落地。",
+    "subtitle": "你的竞争对手已经在用 AI 把过去几个月的工作缩短到几天。我们帮你赶上——甚至超越。不讲术语，不做没完没了的规划，只交付真正省时省钱的系统。",
     "cta_primary": "联系我们",
     "cta_secondary": "查看作品",
-    "backing": "AI 战略 · Compound Engineering · Harness Engineering · Agent 搭建 · RAG 系统"
+    "backing": "战略咨询 · 流程自动化 · 团队培训 · AI 智能助手 · 房产营销"
   },
   "split": {
-    "sectionLabel": "/ 02 — WHAT DO YOU NEED?",
+    "sectionLabel": "/ 02 — 我们能帮你什么？",
     "ai": {
-      "title": "AI Consulting",
-      "subtitle": "Compound AI 系统、Harness Engineering，或帮你团队用 Claude 和 OpenClaw 实现 AI 化。",
+      "title": "AI 赋能你的业务",
+      "subtitle": "别再花大价钱雇人做 AI 能搞定的事。我们搭建定制 AI 系统，帮你自动化运营、秒回客户、处理文档——全天候运行，成本只是传统方案的零头。",
       "bullets": [
-        "AI 战略评估与 POC",
-        "RAG 与知识系统工程",
-        "自主 Agent 搭建",
-        "Claude Code 团队落地",
-        "OpenClaw 🦞 自托管自动化",
-        "企业 AI 培训与 Workshop",
-        "Web3 / Blockchain 应用"
+        "自动化重复性工作 — 每周省 20+ 小时",
+        "AI 客服助手，即时回答客户问题",
+        "智能文档处理 — 合同、发票、报告",
+        "内部知识搜索，一键查遍所有文件",
+        "全员 AI 工具培训",
+        "为你的业务流程定制 AI 软件",
+        "Web3 / 区块链应用"
       ],
-      "proof": "10+ 生产级 AI 系统交付",
+      "proof": "10+ 套 AI 系统已上线运行",
       "cta": "了解 AI 服务"
     },
     "property": {
-      "title": "Property Marketing",
-      "subtitle": "AI 加持的澳洲房产营销 — 网站几天上线、PPT、海报、传单快速高质量交付。",
+      "title": "房产营销",
+      "subtitle": "传统代理公司收 $15-30k，要 2-3 个月。我们几天就交付同样品质——AI 驱动的设计和内容生产，成本只是他们的零头。",
       "bullets": [
-        "开发商官网与楼盘着陆页",
-        "AI 快速生成 Pitch Deck 与演示",
-        "营销海报、传单、A4 物料",
+        "开发商官网 — 几天上线，不是几个月",
+        "Pitch Deck 与投资人演示 — 1-3 天交付",
+        "营销海报、传单、手册 — 当周完成",
         "品牌视觉系统",
         "Google / Meta / 微信广告投放"
       ],
       "proof": "Forma Property · Orens Capital 等",
-      "cta": "了解 Property 服务"
+      "cta": "了解房产服务"
     }
   },
   "footer": {
@@ -62,33 +62,33 @@
     "bookCall": "预约沟通",
     "sendEmail": "发送邮件",
     "or": "或",
-    "parentBacking": "匠人学院旗下 — 5 年以上教育科技经验，为 1000+ 企业提供 AI 培训。",
-    "trackBuild": "AI Build",
-    "trackBuildDesc": "Compound AI 工程。Agent、RAG、LLM 应用 — 为生产环境构建，不是做 Demo。",
-    "trackAdopt": "AI Adopt",
-    "trackAdoptDesc": "Harness Engineering 让团队 AI 化。Claude Code 落地、OpenClaw 自动化、工作流升级。",
-    "trackProperty": "Property Marketing",
-    "trackPropertyDesc": "开发商官网、Pitch Deck、品牌视觉 — 工程化驱动，快速交付。",
-    "buildServices": "AI Agent 开发 · RAG 知识系统 · 定制 LLM 应用 · AI 平台工程",
-    "adoptServices": "Claude Cowork 落地 · OpenClaw 部署 · 工作流自动化 · AI 工具集成",
+    "parentBacking": "匠人学院旗下 — 5 年以上科技经验，为澳洲和亚太 1000+ 企业提供 AI 培训。",
+    "trackBuild": "AI 定制开发",
+    "trackBuildDesc": "定制 AI 系统，自动化你的运营流程、降低成本。我们搭建、部署、移交。",
+    "trackAdopt": "AI 团队落地",
+    "trackAdoptDesc": "几天内让你的团队学会用 AI。培训、工具配置、流程升级。",
+    "trackProperty": "房产营销",
+    "trackPropertyDesc": "官网、Pitch Deck、品牌视觉 — 几天交付，价格只是传统代理的零头。",
+    "buildServices": "流程自动化 · 智能文档处理 · AI 客服助手 · 定制 AI 软件",
+    "adoptServices": "AI 工具配置 · 团队培训 · 工作流自动化 · 流程优化",
     "propertyServices": "开发商官网 · Pitch Deck · 营销物料 · 品牌视觉",
     "founderTitle": "Lightman Wang",
     "founderRole": "创始人 & AI 战略负责人",
-    "founderBio": "全栈产品负责人，5 年以上 AI 教育与 SaaS 平台经验。主导战略咨询、Agent 架构设计和平台工程。",
-    "teamCapabilities": "AI 战略 · Agent 架构 · RAG 工程 · Claude Code · MCP · OpenClaw · 平台工程 · 产品设计"
+    "founderBio": "5 年以上 AI 平台搭建经验，已帮助 50+ 企业落地 AI——从战略到可运行的系统。",
+    "teamCapabilities": "AI 战略 · 流程自动化 · 团队培训 · 定制软件 · AI 智能助手 · 数据系统 · 产品设计 · 平台工程"
   },
   "engagement": {
-    "sectionLabel": "/ HOW WE WORK",
+    "sectionLabel": "/ 合作方式",
     "title": "两种合作模式",
     "project": {
-      "tag": "项目制",
-      "title": "端到端交付",
-      "description": "我们全权负责项目，从需求梳理到生产上线。交付完整的 Compound AI 系统、Agent 平台或全栈应用 — 固定范围、固定时间线。"
+      "tag": "固定报价",
+      "title": "我们帮你做",
+      "description": "告诉我们问题。我们评估、开发、交付一套可运行的系统——固定价格、固定周期。没有意外加价，没有范围蔓延。所有交付物归你所有。"
     },
     "consultant": {
-      "tag": "顾问制",
-      "title": "帮你组建 AI 团队",
-      "description": "我们嵌入你的团队，帮助搭建 AI 工程能力 — 招聘指导、工具链搭建、工作流设计、手把手培训，直到你的团队能独立交付。"
+      "tag": "持续服务",
+      "title": "我们帮你的团队升级",
+      "description": "我们和你的团队并肩工作，配置 AI 工具、重新设计工作流、培训你的员工——直到他们能独立运作。相当于你的 AI 部门，但没有固定人力开销。"
     }
   }
 }

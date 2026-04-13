@@ -24,9 +24,10 @@ export interface ProjectEntry {
   outcomes?: { en: string[]; zh: string[] };
   stack?: string[];
   url?: string;
+  visible?: boolean;
 }
 
-export const projects: ProjectEntry[] = [
+const allProjects: ProjectEntry[] = [
   {
     slug: 'sigmaq',
     category: 'ai-systems',
@@ -462,6 +463,7 @@ export const projects: ProjectEntry[] = [
     tags: ['Property', 'Investment', 'Web'],
     year: 2025,
     featured: false,
+    visible: false,
     order: 11,
     name: 'Orens Capital',
     client: 'Orens Capital',
@@ -516,6 +518,8 @@ export const projects: ProjectEntry[] = [
     url: 'https://www.formaproperty.com.au',
   },
 ];
+
+export const projects = allProjects.filter((p) => p.visible !== false);
 
 export const featuredProjects = projects.filter((p) => p.featured);
 

@@ -7,13 +7,13 @@ export const siteConfig = {
   name: 'Metatree Lab',
 
   tagline: {
-    en: 'AI consulting that ships to production.',
-    zh: '落地型 AI 咨询。',
+    en: 'Cut costs. Ship faster. AI that works.',
+    zh: '降本增效，AI 真正落地。',
   },
 
   description: {
-    en: 'AI consulting and digital studio. We help companies ship production AI — from RAG and autonomous agents to Claude Code rollouts and OpenClaw automation.',
-    zh: 'AI 咨询与 Digital Studio。帮企业落地生产级 AI — 从 RAG 和自主 Agent 到 Claude Code 团队落地和 OpenClaw 自动化。',
+    en: 'We help businesses automate operations, train teams on AI, and build custom AI systems — saving time and money. Plus fast, affordable property marketing powered by AI.',
+    zh: '帮企业自动化运营、培训团队使用 AI、搭建定制 AI 系统——省时省钱。同时提供 AI 驱动的快速高性价比房产营销。',
   },
 
   url: 'https://metatreelab.ai',

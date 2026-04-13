@@ -8,15 +8,15 @@ interface Props {
 
 const { locale, sectionNumber = '08' } = Astro.props;
 
-const label = locale === 'zh' ? '联系我们' : 'GET IN TOUCH';
+const label = locale === 'zh' ? '下一步' : 'NEXT STEP';
 
 const headline = locale === 'zh'
-  ? ['我们一起做', '真正上线的东西。']
-  : ["Let's build something", 'that ships.'];
+  ? ['聊 30 分钟，', '看看能帮你省多少。']
+  : ['30-minute call.', 'See how much you can save.'];
 
 const subtitle = locale === 'zh'
-  ? '不卖 PPT，不讲故事。聊完就开工。'
-  : 'No slide decks. No storytelling. We scope, we ship, we operate.';
+  ? '免费评估你的业务场景。没有销售套路，只有具体方案和报价。'
+  : 'Free assessment of your business. No sales pitch — just a concrete plan and a quote.';
 
 const ctaPrimary = locale === 'zh' ? '预约沟通' : 'Book a call';
 const ctaSecondary = locale === 'zh' ? '发邮件' : 'Send an email';

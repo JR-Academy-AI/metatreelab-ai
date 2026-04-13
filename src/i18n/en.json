@@ -7,38 +7,38 @@
     "bookCall": "Book a call"
   },
   "hero": {
-    "sectionLabel": "/ 01 — AI CONSULTING",
-    "title_line1": "From strategy to",
-    "title_line2": "production AI.",
-    "subtitle": "We help companies adopt AI that actually works — from RAG pipelines and autonomous agents to Claude Code rollouts and OpenClaw automation. No slide decks, just systems that run.",
+    "sectionLabel": "/ 01 — YOUR AI PARTNER",
+    "title_line1": "Cut costs. Ship faster.",
+    "title_line2": "AI that works.",
+    "subtitle": "Your competitors are already using AI to do in days what used to take months. We help you catch up — and pull ahead. No jargon, no endless planning. Just working systems that save you time and money.",
     "cta_primary": "Get in touch",
     "cta_secondary": "See our work",
-    "backing": "AI Strategy · Compound Engineering · Harness Engineering · Agent Development · RAG Systems"
+    "backing": "Strategy · Automation · Team Training · AI Agents · Property Marketing"
   },
   "split": {
-    "sectionLabel": "/ 02 — WHAT DO YOU NEED?",
+    "sectionLabel": "/ 02 — HOW CAN WE HELP?",
     "ai": {
-      "title": "AI Consulting",
-      "subtitle": "Compound AI systems, harness engineering, or help your team go AI-native with Claude and OpenClaw.",
+      "title": "AI for Your Business",
+      "subtitle": "Stop paying people to do work that AI can handle. We build custom AI systems that automate your operations, answer your customers, and process your documents — 24/7, at a fraction of the cost.",
       "bullets": [
-        "AI strategy & proof-of-concept",
-        "RAG & knowledge system engineering",
-        "Autonomous agent development",
-        "Claude Code team rollout",
-        "OpenClaw 🦞 self-hosted automation",
-        "Enterprise AI training & workshops",
-        "Web3 / Blockchain applications"
+        "Automate repetitive tasks — save 20+ hours/week",
+        "AI assistants that answer customer questions instantly",
+        "Smart document processing — contracts, invoices, reports",
+        "Internal knowledge search across all your files",
+        "AI tools training for your whole team",
+        "Custom AI software tailored to your workflow",
+        "Web3 & blockchain applications"
       ],
-      "proof": "10+ production AI systems shipped",
+      "proof": "10+ AI systems running in production",
       "cta": "Explore AI services"
     },
     "property": {
       "title": "Property Marketing",
-      "subtitle": "AI-powered marketing for Australian property — websites launched in days, pitch decks, posters, and flyers delivered fast.",
+      "subtitle": "Traditional agencies charge $15-30k and take 2-3 months. We deliver the same quality in days — AI-powered design and content production at a fraction of the cost.",
       "bullets": [
-        "Developer group websites & landing pages",
-        "AI-generated pitch decks & presentations",
-        "Marketing posters, flyers & A4 collateral",
+        "Developer websites — live in days, not months",
+        "Pitch decks & investor presentations — 1-3 days",
+        "Marketing posters, flyers & brochures — same week",
         "Brand identity & visual system",
         "Google / Meta / WeChat ad campaigns"
       ],
@@ -62,33 +62,33 @@
     "bookCall": "Book a Call",
     "sendEmail": "Send an Email",
     "or": "or",
-    "parentBacking": "Backed by JR Academy — 5+ years in ed-tech, powering AI education for 1000+ enterprises.",
+    "parentBacking": "Backed by JR Academy — 5+ years in tech, powering AI education for 1000+ enterprises across Australia and APAC.",
     "trackBuild": "AI Build",
-    "trackBuildDesc": "Compound AI engineering. Agents, RAG, LLM apps — built for production, not demos.",
+    "trackBuildDesc": "Custom AI systems that automate your operations and cut costs. We build it, deploy it, hand it over.",
     "trackAdopt": "AI Adopt",
-    "trackAdoptDesc": "Harness engineering for your team. Claude Code rollouts, OpenClaw automation, workflow upgrades.",
+    "trackAdoptDesc": "Get your team using AI effectively in days. Training, tools setup, and workflow upgrades.",
     "trackProperty": "Property Marketing",
-    "trackPropertyDesc": "Developer sites, pitch decks, brand identity — engineered fast, pixel-perfect.",
-    "buildServices": "AI Agent Development · RAG & Knowledge Systems · Custom LLM Apps · AI Platform Engineering",
-    "adoptServices": "Claude Cowork Setup · OpenClaw Implementation · Workflow Automation · AI Tools Rollout",
+    "trackPropertyDesc": "Websites, pitch decks, brand identity — delivered in days at a fraction of agency prices.",
+    "buildServices": "AI Automation · Smart Document Processing · Customer AI Assistants · Custom AI Software",
+    "adoptServices": "AI Tools Setup · Team Training · Workflow Automation · Process Optimisation",
     "propertyServices": "Developer Sites · Pitch Decks · Marketing Collateral · Brand Identity",
     "founderTitle": "Lightman Wang",
     "founderRole": "Founder & AI Strategy Lead",
-    "founderBio": "Full-stack product leader, 5+ years building AI-powered education and SaaS platforms. Leads strategy, agent architecture, and platform engineering.",
-    "teamCapabilities": "AI Strategy · Agent Architecture · RAG Engineering · Claude Code · MCP · OpenClaw · Platform Engineering · Product Design"
+    "founderBio": "5+ years building AI-powered platforms. Has helped 50+ businesses adopt AI — from strategy to working systems.",
+    "teamCapabilities": "AI Strategy · Automation · Team Training · Custom Software · AI Agents · Data Systems · Product Design · Platform Engineering"
   },
   "engagement": {
     "sectionLabel": "/ HOW WE WORK",
-    "title": "Two ways to engage",
+    "title": "Two ways to work with us",
     "project": {
-      "tag": "Project-based",
-      "title": "End-to-end delivery",
-      "description": "We own the project from scoping to production. You get a working system — compound AI pipelines, agent platforms, or full-stack applications — delivered on a fixed scope and timeline."
+      "tag": "Fixed price",
+      "title": "We build it for you",
+      "description": "Tell us the problem. We scope it, build it, and hand you a working system — on a fixed price and timeline. No surprises, no scope creep. You own everything we deliver."
     },
     "consultant": {
-      "tag": "Consultant",
-      "title": "Build your AI team",
-      "description": "We embed with your team to set up AI engineering capabilities — hiring guidance, toolchain setup, workflow design, and hands-on training until your team ships independently."
+      "tag": "Ongoing support",
+      "title": "We level up your team",
+      "description": "We work alongside your team to set up AI tools, redesign workflows, and train your people — until they can run it all independently. Think of us as your AI department, without the overhead."
     }
   }
 }

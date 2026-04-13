@@ -7,24 +7,24 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const label = locale === 'zh' ? '我们的专长' : 'WHAT WE DO';
+const label = locale === 'zh' ? '我们能帮你做什么' : 'WHAT WE DO';
 
 const brands = locale === 'zh'
   ? [
-      { name: 'AI 战略', note: 'Strategy & POC' },
-      { name: 'RAG 系统', note: 'Knowledge Retrieval' },
-      { name: 'AI Agent', note: 'Autonomous Agents' },
-      { name: 'Claude Cowork', note: 'Team Rollout' },
-      { name: 'OpenClaw 🦞', note: 'Self-hosted Automation' },
-      { name: '房产营销', note: 'Property Marketing' },
+      { name: '流程自动化', note: '省人力 · 省时间' },
+      { name: 'AI 客服助手', note: '7×24 即时响应' },
+      { name: '智能文档处理', note: '合同 · 发票 · 报告' },
+      { name: '团队 AI 培训', note: '全员上手' },
+      { name: '定制 AI 软件', note: '按你的业务定制' },
+      { name: '房产营销', note: '快速 · 高性价比' },
     ]
   : [
-      { name: 'AI Strategy', note: 'Assessment & POC' },
-      { name: 'RAG Systems', note: 'Knowledge Retrieval' },
-      { name: 'AI Agents', note: 'Autonomous Agents' },
-      { name: 'Claude Cowork', note: 'Team Rollout' },
-      { name: 'OpenClaw 🦞', note: 'Self-hosted Automation' },
-      { name: 'Property Marketing', note: 'Websites & Brand' },
+      { name: 'Workflow Automation', note: 'Save time & headcount' },
+      { name: 'AI Assistants', note: '24/7 instant responses' },
+      { name: 'Document Processing', note: 'Contracts · invoices · reports' },
+      { name: 'Team AI Training', note: 'Get everyone onboard' },
+      { name: 'Custom AI Software', note: 'Built for your workflow' },
+      { name: 'Property Marketing', note: 'Fast · cost-effective' },
     ];
 ---
 
