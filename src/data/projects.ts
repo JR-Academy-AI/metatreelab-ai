@@ -185,6 +185,37 @@ export const projects: ProjectEntry[] = [
   },
 
   {
+    slug: 'qldarch',
+    category: 'brand',
+    tags: ['Web', 'Archive', 'Research'],
+    year: 2014,
+    featured: false,
+    order: 98,
+    name: 'QLD Architecture Archive',
+    client: 'University of Queensland',
+    summary: {
+      en: 'Digital Archive of Queensland Architecture — a research database preserving the region\'s design history from 1945 onwards. Browse architects, buildings, firms, and articles with timeline, map, and word cloud tools.',
+      zh: '昆士兰建筑数字档案馆 — 保存该地区 1945 年以来设计历史的研究数据库。通过时间线、地图和词云工具浏览建筑师、建筑、事务所与文章。',
+    },
+    outcomes: {
+      en: [
+        'Thousands of audiovisual and textual records',
+        'Research tools: timeline, map, word cloud',
+        'Originally part of the Hot Modernism research project',
+        'Ongoing development since 2014',
+      ],
+      zh: [
+        '数千条音视频与文本记录',
+        '研究工具：时间线、地图、词云',
+        '起源于 Hot Modernism 研究项目',
+        '2014 年至今持续开发',
+      ],
+    },
+    stack: ['Web', 'Database', 'Research Platform'],
+    url: 'https://qldarch.net',
+  },
+
+  {
     slug: 'airbotix',
     category: 'ai-systems',
     tags: ['AI', 'Robotics', 'EdTech'],
