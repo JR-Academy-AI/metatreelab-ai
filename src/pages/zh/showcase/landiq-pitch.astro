@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const pitchUrl = 'https://australiaitgroup.github.io/landiq/pitch';
+---
+
+<BaseLayout
+  title="LandIQ AI Pitch Deck — 房产营销展示"
+  description="LandIQ 的 AI 生成 Pitch Deck，展示 Metatree Lab 为房产客户交付的营销物料能力。"
+  locale="zh"
+  path="/zh/showcase/landiq-pitch/"
+>
+  <section class="showcase">
+    <div class="showcase__header container-x">
+      <div class="showcase__meta">
+        <span class="section-label">/ SHOWCASE — AI 生成 PITCH DECK</span>
+        <h1 class="showcase__title">LandIQ — AI 房产开发平台</h1>
+        <p class="showcase__subtitle">
+          这份 Pitch Deck 使用我们的 AI 营销物料服务制作。高质量演示，几天交付。
+        </p>
+      </div>
+      <div class="showcase__actions">
+        <a href={pitchUrl} target="_blank" rel="noreferrer" class="btn-primary">
+          全屏打开 ↗
+        </a>
+        <a href="/zh/services/property/" class="btn-ghost">
+          ← 返回 Property 服务
+        </a>
+      </div>
+    </div>
+
+    <div class="showcase__embed">
+      <iframe
+        src={pitchUrl}
+        title="LandIQ Pitch Deck"
+        class="showcase__iframe"
+        allow="fullscreen"
+        loading="lazy"
+      ></iframe>
+      <button class="showcase__fullscreen-btn" id="fullscreen-btn" aria-label="全屏切换">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="showcase__cta container-x">
+      <div class="showcase__cta-card">
+        <h2 class="showcase__cta-title">想要一份这样的 Pitch Deck？</h2>
+        <p class="showcase__cta-desc">
+          我们的 AI 营销物料服务可在 1-3 天内交付 Pitch Deck、海报、传单和 A4 手册。
+        </p>
+        <a href="/zh/contact/" class="btn-primary">
+          ↓ 联系我们
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('fullscreen-btn');
+  const embed = document.querySelector('.showcase__embed') as HTMLElement | null;
+
+  if (btn && embed) {
+    btn.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        embed.requestFullscreen();
+      }
+    });
+  }
+</script>
+
+<style>
+  .showcase {
+    position: relative;
+    z-index: 2;
+    padding-bottom: var(--space-9);
+  }
+
+  .showcase__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-5);
+    padding-block: var(--space-8) var(--space-5);
+    flex-wrap: wrap;
+  }
+
+  .showcase__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 72rem;
+  }
+
+  .showcase__title {
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+  }
+
+  .showcase__subtitle {
+    font-size: var(--fs-body-lg);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  .showcase__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .showcase__embed {
+    position: relative;
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-elevated);
+  }
+
+  .showcase__iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .showcase__fullscreen-btn {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    padding: var(--space-2);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--dur-normal) var(--ease-out);
+    z-index: 10;
+  }
+
+  .showcase__fullscreen-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+  }
+
+  .showcase__embed:fullscreen {
+    border-radius: 0;
+    border: none;
+  }
+
+  .showcase__cta {
+    margin-top: var(--space-7);
+  }
+
+  .showcase__cta-card {
+    padding: var(--space-6);
+    background: linear-gradient(135deg, rgba(0, 229, 160, 0.04), rgba(0, 180, 216, 0.04));
+    border: 1px solid rgba(0, 229, 160, 0.2);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 64rem;
+  }
+
+  .showcase__cta-title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+  }
+
+  .showcase__cta-desc {
+    font-size: var(--fs-body-lg);
+    color: var(--text-secondary);
+  }
+
+  .showcase__cta .btn-primary {
+    align-self: flex-start;
+    margin-top: var(--space-2);
+  }
+
+  @media (max-width: 767px) {
+    .showcase__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .showcase__title {
+      font-size: var(--fs-h3);
+    }
+    .showcase__embed {
+      border-radius: 0;
+      margin-inline: calc(-1 * var(--space-3));
+      width: calc(100% + var(--space-3) * 2);
+      max-width: none;
+    }
+  }
+</style>

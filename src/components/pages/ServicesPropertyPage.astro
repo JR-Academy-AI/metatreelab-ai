@@ -21,6 +21,10 @@ const copy = locale === 'zh'
       caseName: 'Forma Property',
       caseDesc: '悉尼一家房地产开发商集团的主站。编辑级极简风，商业 + 住宅项目集合展示，面向投资人和高净值买家的品牌定位。',
       caseView: '查看案例 →',
+      pitchHeading: '/ AI 生成 PITCH DECK',
+      pitchName: 'LandIQ Pitch Deck',
+      pitchDesc: '一份 18 页的 AI 房产开发平台投资者 Pitch Deck — 使用我们的 AI 营销物料服务设计和交付。点击查看完整交互式演示。',
+      pitchCta: '查看 Pitch Deck →',
       industryHeading: '/ WHY METATREE — 我们懂澳洲房产',
       industryItems: [
         { label: '销售节奏', text: '熟悉 off-the-plan / display suite / settlement 的全流程时间线' },
@@ -39,6 +43,10 @@ const copy = locale === 'zh'
       caseName: 'Forma Property',
       caseDesc: 'Sydney-based property developer group main site. Editorial minimal aesthetic, commercial + residential portfolio, investor-grade positioning for high-net-worth buyers.',
       caseView: 'View case →',
+      pitchHeading: '/ AI-GENERATED PITCH DECK',
+      pitchName: 'LandIQ Pitch Deck',
+      pitchDesc: 'An 18-slide investor pitch deck for an AI property development platform — designed and delivered using our AI-powered collateral service. Click to view the full interactive presentation.',
+      pitchCta: 'View pitch deck →',
       industryHeading: '/ WHY METATREE — We know Australian property',
       industryItems: [
         { label: 'Sales rhythm', text: 'We know the full off-the-plan / display suite / settlement timeline inside out.' },
@@ -108,6 +116,28 @@ const propertyServices = servicesByTrack.property;
             class="btn-ghost"
           >
             {copy.caseView}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI PITCH DECK SHOWCASE -->
+  <section class="p-case">
+    <div class="p-case__inner container-x">
+      <span class="section-label">{copy.pitchHeading}</span>
+
+      <div class="p-case__card">
+        <div class="p-case__pattern"></div>
+        <div class="p-case__body">
+          <div class="p-case__tag section-label">AI · PITCH DECK · 2025</div>
+          <h3 class="p-case__name">{copy.pitchName}</h3>
+          <p class="p-case__desc">{copy.pitchDesc}</p>
+          <a
+            href={locale === 'zh' ? '/zh/showcase/landiq-pitch/' : '/showcase/landiq-pitch/'}
+            class="btn-primary"
+          >
+            {copy.pitchCta}
           </a>
         </div>
       </div>

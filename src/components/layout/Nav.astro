@@ -36,6 +36,12 @@ const switchHref =
     </div>
 
     <div class="nav__right">
+      <a href={localizedHref('/deck/', locale)} class="nav__deck" aria-label="Pitch Deck" title="Pitch Deck">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8" /><path d="M12 17v4" />
+        </svg>
+      </a>
       <a href={switchHref} class="nav__locale" aria-label="Switch language">
         {t.locale.switchTo}
       </a>
@@ -61,6 +67,7 @@ const switchHref =
   <div class="nav__drawer" id="nav-drawer" aria-hidden="true">
     <div class="nav__drawer-inner">
       {links.map((link) => <a href={link.href} class="nav__drawer-link">{link.label}</a>)}
+      <a href={localizedHref('/deck/', locale)} class="nav__drawer-link">Pitch Deck</a>
       <div class="nav__drawer-divider"></div>
       <a href={switchHref} class="nav__drawer-link nav__drawer-link--muted">
         {t.locale.switchTo === '中' ? 'Switch to 中文' : 'Switch to English'}
@@ -159,6 +166,20 @@ const switchHref =
     display: flex;
     align-items: center;
     gap: var(--space-3);
+  }
+
+  .nav__deck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: color var(--dur-normal) var(--ease-out);
+  }
+
+  .nav__deck:hover {
+    color: var(--brand-primary);
   }
 
   .nav__locale {
