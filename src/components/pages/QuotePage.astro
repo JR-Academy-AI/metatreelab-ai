@@ -1,0 +1,641 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import { localizedHref, type Locale } from '../../config/site';
+import { useTranslations } from '../../i18n';
+import { allCategories, RECURRING_IDS } from '../../data/pricing';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const q = t.quote;
+const contactHref = localizedHref('/contact/', locale);
+
+const recurringIdsJson = JSON.stringify([...RECURRING_IDS]);
+---
+
+<BaseLayout title={q.title} locale={locale} path={Astro.url.pathname}>
+  <PageHero
+    sectionLabel={q.sectionLabel}
+    title={q.title}
+    subtitle={q.subtitle}
+  />
+
+  <section class="quote">
+    <div class="quote__inner container-x">
+      <div class="quote__grid">
+        <!-- LEFT: Category selector cards -->
+        <div class="quote__builder" id="quote-builder">
+          {allCategories.map((cat, idx) => (
+            <div class="quote__category" data-category={cat.id} data-reveal>
+              <div class="quote__cat-header">
+                <span class="quote__cat-step">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                <div class="quote__cat-title-wrap">
+                  <h2 class="quote__cat-title">{cat.title[locale]}</h2>
+                  <p class="quote__cat-subtitle">{cat.subtitle[locale]}</p>
+                </div>
+                {cat.selectionMode === 'single' && (
+                  <span class="quote__cat-badge quote__cat-badge--single">
+                    {locale === 'zh' ? '单选' : 'Pick one'}
+                  </span>
+                )}
+              </div>
+
+              <div class="quote__items">
+                {cat.items.map((item) => (
+                  <label
+                    class="quote__item"
+                    data-item-id={item.id}
+                    data-price={item.price}
+                    data-category-id={cat.id}
+                    data-mode={cat.selectionMode}
+                  >
+                    <input
+                      type={cat.selectionMode === 'single' ? 'radio' : 'checkbox'}
+                      name={cat.selectionMode === 'single' ? `cat-${cat.id}` : `item-${item.id}`}
+                      value={item.id}
+                      class="quote__input"
+                    />
+                    <span class="quote__item-check" aria-hidden="true"></span>
+                    <span class="quote__item-body">
+                      <span class="quote__item-label">{item.label[locale]}</span>
+                      <span class="quote__item-benefit">{item.benefit[locale]}</span>
+                    </span>
+                    <span class="quote__item-price">
+                      {item.price === 0
+                        ? (locale === 'zh' ? '已含' : 'Included')
+                        : `$${item.price.toLocaleString()}`}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- RIGHT: Sticky summary -->
+        <aside class="quote__summary" id="quote-summary">
+          <div class="quote__summary-inner">
+            <span class="section-label">/ {q.summary.toUpperCase()}</span>
+
+            <div class="quote__summary-list" id="summary-list">
+              <p class="quote__summary-empty" id="summary-empty">{q.noItems}</p>
+            </div>
+
+            <div class="quote__summary-divider"></div>
+
+            <div class="quote__summary-totals">
+              <div class="quote__total-row">
+                <span class="quote__total-label">{q.oneOff}</span>
+                <span class="quote__total-value" id="total-oneoff">$0</span>
+              </div>
+              <div class="quote__total-row quote__total-row--recurring" id="recurring-row" style="display:none;">
+                <span class="quote__total-label">{q.recurring}</span>
+                <span class="quote__total-value" id="total-recurring">$0{q.perMonth}</span>
+              </div>
+              <div class="quote__total-row quote__total-row--grand">
+                <span class="quote__total-label">{q.total}</span>
+                <span class="quote__total-value quote__total-grand" id="total-grand">$0</span>
+              </div>
+            </div>
+
+            <a href={contactHref} class="btn-primary quote__cta" id="quote-cta">
+              ↓ {q.ctaButton}
+            </a>
+
+            <button class="btn-ghost quote__reset" id="quote-reset" type="button">
+              {q.resetButton}
+            </button>
+
+            <div class="quote__disclaimer">
+              <strong>{q.disclaimerTitle}</strong>
+              <p>{q.disclaimer}</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ recurringIdsJson, contactHref, perMonthLabel: q.perMonth }}>
+  const RECURRING_IDS = new Set(JSON.parse(recurringIdsJson));
+
+  function initQuoteCalculator() {
+    const builder = document.getElementById('quote-builder');
+    const summaryList = document.getElementById('summary-list');
+    const summaryEmpty = document.getElementById('summary-empty');
+    const totalOneoff = document.getElementById('total-oneoff');
+    const totalRecurring = document.getElementById('total-recurring');
+    const recurringRow = document.getElementById('recurring-row');
+    const totalGrand = document.getElementById('total-grand');
+    const resetBtn = document.getElementById('quote-reset');
+    const ctaBtn = document.getElementById('quote-cta');
+
+    if (!builder || !summaryList) return;
+
+    function getSelectedItems() {
+      var selected = [];
+      var inputs = builder.querySelectorAll('.quote__input:checked');
+      inputs.forEach(function (input) {
+        var label = input.closest('.quote__item');
+        if (!label) return;
+        var id = label.dataset.itemId;
+        var price = Number(label.dataset.price);
+        var nameEl = label.querySelector('.quote__item-label');
+        selected.push({
+          id: id,
+          price: price,
+          label: nameEl ? nameEl.textContent : id,
+          recurring: RECURRING_IDS.has(id),
+        });
+      });
+      return selected;
+    }
+
+    function updateSummary() {
+      var items = getSelectedItems();
+
+      // Clear summary list
+      while (summaryList.firstChild) {
+        summaryList.removeChild(summaryList.firstChild);
+      }
+
+      if (items.length === 0) {
+        summaryList.appendChild(summaryEmpty);
+        totalOneoff.textContent = '$0';
+        totalRecurring.textContent = '$0' + perMonthLabel;
+        totalGrand.textContent = '$0';
+        recurringRow.style.display = 'none';
+        return;
+      }
+
+      var oneoff = 0;
+      var recurring = 0;
+
+      items.forEach(function (item) {
+        var row = document.createElement('div');
+        row.className = 'quote__summary-item';
+
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'quote__summary-item-name';
+        nameSpan.textContent = item.label;
+        if (item.recurring) {
+          var tag = document.createElement('span');
+          tag.className = 'quote__recurring-tag';
+          tag.textContent = perMonthLabel;
+          nameSpan.appendChild(tag);
+        }
+
+        var priceSpan = document.createElement('span');
+        priceSpan.className = 'quote__summary-item-price';
+        priceSpan.textContent = '$' + item.price.toLocaleString() + (item.recurring ? perMonthLabel : '');
+
+        row.appendChild(nameSpan);
+        row.appendChild(priceSpan);
+        summaryList.appendChild(row);
+
+        if (item.recurring) {
+          recurring += item.price;
+        } else {
+          oneoff += item.price;
+        }
+      });
+
+      totalOneoff.textContent = '$' + oneoff.toLocaleString();
+      totalRecurring.textContent = '$' + recurring.toLocaleString() + perMonthLabel;
+      totalGrand.textContent = '$' + oneoff.toLocaleString();
+
+      recurringRow.style.display = recurring > 0 ? 'flex' : 'none';
+
+      // Update CTA link with query params
+      var params = new URLSearchParams();
+      params.set('items', items.map(function (i) { return i.id; }).join(','));
+      params.set('total', String(oneoff));
+      if (recurring > 0) params.set('recurring', String(recurring));
+      ctaBtn.href = contactHref + '?' + params.toString();
+
+      // Update visual states
+      builder.querySelectorAll('.quote__item').forEach(function (item) {
+        var input = item.querySelector('.quote__input');
+        item.classList.toggle('is-selected', input && input.checked);
+      });
+    }
+
+    // Listen for changes on all inputs
+    builder.addEventListener('change', updateSummary);
+
+    // Reset
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        builder.querySelectorAll('.quote__input').forEach(function (input) {
+          input.checked = false;
+        });
+        builder.querySelectorAll('.quote__item').forEach(function (item) {
+          item.classList.remove('is-selected');
+        });
+        updateSummary();
+      });
+    }
+  }
+
+  initQuoteCalculator();
+  document.addEventListener('astro:after-swap', initQuoteCalculator);
+</script>
+
+<style>
+  /* ===== Layout ===== */
+  .quote {
+    position: relative;
+    padding-block: var(--space-6) var(--space-10);
+    z-index: 2;
+  }
+
+  .quote__grid {
+    display: grid;
+    grid-template-columns: 1fr 38rem;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  /* ===== Category blocks ===== */
+  .quote__category {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-5);
+  }
+
+  .quote__cat-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .quote__cat-step {
+    font-family: var(--font-mono);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+    color: var(--brand-primary);
+    opacity: 0.3;
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 4rem;
+  }
+
+  .quote__cat-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+  }
+
+  .quote__cat-title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+  }
+
+  .quote__cat-subtitle {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  .quote__cat-badge {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+  }
+
+  .quote__cat-badge--single {
+    color: var(--brand-secondary);
+    background: rgba(0, 180, 216, 0.1);
+    border: 1px solid rgba(0, 180, 216, 0.2);
+  }
+
+  /* ===== Items ===== */
+  .quote__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .quote__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition:
+      border-color var(--dur-normal) var(--ease-out),
+      background var(--dur-normal) var(--ease-out);
+  }
+
+  .quote__item:hover {
+    border-color: var(--border-strong);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .quote__item.is-selected {
+    border-color: var(--brand-primary);
+    background: rgba(0, 229, 160, 0.05);
+  }
+
+  .quote__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* Custom checkbox / radio */
+  .quote__item-check {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 2px solid var(--border-strong);
+    border-radius: 0.4rem;
+    margin-top: 0.1rem;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+
+  [data-mode="single"] .quote__item-check {
+    border-radius: 50%;
+  }
+
+  .quote__item.is-selected .quote__item-check {
+    border-color: var(--brand-primary);
+    background: var(--brand-primary);
+  }
+
+  .quote__item.is-selected .quote__item-check::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 0.6rem;
+    border-left: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: translate(-50%, -65%) rotate(-45deg);
+  }
+
+  /* Item content */
+  .quote__item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .quote__item-label {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
+    line-height: var(--lh-tight);
+  }
+
+  .quote__item-benefit {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-relaxed);
+  }
+
+  .quote__item-price {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: var(--brand-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* ===== Sticky summary ===== */
+  .quote__summary {
+    position: sticky;
+    top: 10rem;
+  }
+
+  .quote__summary-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .quote__summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 4rem;
+    max-height: 40rem;
+    overflow-y: auto;
+  }
+
+  .quote__summary-empty {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-4) 0;
+  }
+
+  .quote__summary-divider {
+    height: 1px;
+    background: var(--border-hairline);
+  }
+
+  /* Summary items (JS-injected) */
+  :global(.quote__summary-item) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  :global(.quote__summary-item-name) {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.quote__recurring-tag) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--brand-secondary);
+    background: rgba(0, 180, 216, 0.1);
+    border: 1px solid rgba(0, 180, 216, 0.2);
+    border-radius: var(--radius-pill);
+    padding: 0.1rem 0.5rem;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
+  :global(.quote__summary-item-price) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  /* Totals */
+  .quote__summary-totals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .quote__total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .quote__total-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+  }
+
+  .quote__total-value {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+  }
+
+  .quote__total-row--recurring .quote__total-value {
+    color: var(--brand-secondary);
+  }
+
+  .quote__total-row--grand {
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-hairline);
+    margin-top: var(--space-1);
+  }
+
+  .quote__total-grand {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* CTA & Reset */
+  .quote__cta {
+    text-align: center;
+    width: 100%;
+    display: block;
+  }
+
+  .quote__reset {
+    align-self: center;
+    font-size: var(--fs-label);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  /* Disclaimer */
+  .quote__disclaimer {
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+  }
+
+  .quote__disclaimer strong {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .quote__disclaimer p {
+    font-size: var(--fs-body-sm);
+    color: var(--text-muted);
+    line-height: var(--lh-relaxed);
+  }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 991px) {
+    .quote__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quote__summary {
+      position: relative;
+      top: 0;
+      order: -1;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .quote__category {
+      padding: var(--space-4);
+    }
+
+    .quote__cat-step {
+      font-size: var(--fs-h3);
+      min-width: 3rem;
+    }
+
+    .quote__cat-title {
+      font-size: var(--fs-h4);
+    }
+
+    .quote__item {
+      padding: var(--space-3);
+    }
+
+    .quote__item-price {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+    }
+
+    .quote__item-body {
+      padding-right: 7rem;
+    }
+  }
+</style>
