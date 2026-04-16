@@ -534,23 +534,38 @@ function formatRates(rates: ConsultantRate[]): string {
       activeChip = null;
     }
 
+    // Only attach hover handlers on devices that can actually hover (desktop
+    // with a mouse). Touch devices simulate mouseenter/mouseleave in ways
+    // that would cause the popover to flicker right after a tap.
+    const canHover = window.matchMedia('(hover: hover)').matches;
+
     chips.forEach((chip) => {
-      chip.addEventListener('mouseenter', () => show(chip));
-      chip.addEventListener('mouseleave', (e) => {
-        // Don't hide if moving onto the popover itself
-        const related = e.relatedTarget as Node | null;
-        if (related && popover.contains(related)) return;
+      if (canHover) {
+        chip.addEventListener('mouseenter', () => show(chip));
+        chip.addEventListener('mouseleave', (e) => {
+          const related = e.relatedTarget as Node | null;
+          if (related && popover.contains(related)) return;
+          hide();
+        });
+      }
+
+      chip.addEventListener('focus', () => show(chip));
+      chip.addEventListener('blur', (e) => {
+        // If focus moves to another chip, let its focus handler take over —
+        // avoids a hide/show flicker between sibling chips.
+        const related = e.relatedTarget as Element | null;
+        if (related && related.classList.contains('capability-chip')) return;
         hide();
       });
-      chip.addEventListener('focus', () => show(chip));
-      chip.addEventListener('blur', hide);
+
       chip.addEventListener('click', (e) => {
+        // Click always shows. Dismissal happens via outside-click, Escape,
+        // blur, scroll, or tapping another chip (which replaces content).
+        // Previously this was a toggle, but focus fires before click on
+        // touch + keyboard, making the popover hide immediately after
+        // the focus handler showed it.
         e.preventDefault();
-        if (activeChip === chip) {
-          hide();
-        } else {
-          show(chip);
-        }
+        show(chip);
       });
     });
 
