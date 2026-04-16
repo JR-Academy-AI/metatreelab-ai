@@ -1,0 +1,56 @@
+姓名,所在城市,收费方式（AUD）比较希望自己的课时费金额，可以写每小时希望的费用的区间,毕业院校-最高学位-专业方向,请上传自己的照片,进行自我介绍（例如用对客户的自我介绍）
+,,,,,
+Chris,Melbourne,200-250,浙江大学 电子信息工程 本科,New%20form/IMG_5760.jpeg,拥有超过 10 年产品研发经验。曾创立 SaaS 平台并完成从产品验证到商业化的全流程，后在字节跳动电商任前端开发，负责抖店商家与平台侧核心成长体系。自 2019 年起深耕 Web3 与金融科技交叉领域，主导多个区块链支付与资产代币化项目
+Elliott Jing,Adelaide,30-50,Adelaide Uni - Computer Science,New%20form/bd904cba-8132-45a6-a710-731263928137.png,"GIS based in Adelaide - 
+Full stack developer
+AWS/TS/JS/Python/Golang
+AWS Certified Solutions Architect – Professional"
+Alex Liu,"Melbourne, VIC",35-45,Monash University Master of AI ,New%20form/IMG_6057.jpeg,我是 Alex，目前定居在墨尔本。我毕业于 Monash University，Master of AI and Bachelor of CS。现任职于 Jobpin AI 担任全栈工程师。我深耕于 React、Node.js 及 AWS 云端架构，并长期利用 OpenClaw、Claude Code 等 AI 工具实现高效开发。我擅长将复杂的 AI 技术转化为很多行业都会需要的的实用工具——无论是自动化处理繁琐文档、优化业务流程，还是定制化开发办公小工具，我都能用最通俗易懂的方式，确保 AI 技术能真正落地并解决业务场景中的实际痛点。
+Miro,Sydney,35-45,Western Sydney University- Master -ICT cybersecurity ,New%20form/IMG_4723.jpeg,"ICT – Cybersecurity 研究生毕业于西悉尼大学，目前在澳洲本地公司担任 Cyber Operations Analyst。业余时间会不定期参与一些技术项目，接触过 DevOps 和网站开发，也一直在学习新的知识，希望不断提升自己解决问题的能力。
+
+平时可以协助处理一些常见技术问题，例如网站更新维护、账号问题、系统故障排查等，也可以帮忙优化一些工作流程，提高效率。同时也能从基础角度提供一些安全方面的建议。
+
+性格耐心，沟通细致，希望能为客户提供实际有帮助的支持。"
+Andrew,Melbourne ,40-50,"Swinburne 
+Bachelor 
+Computer Science ",New%20form/b430f2e4e4cb228380a082b60e93ef86.jpeg,"Hi, My name is Andrew, I'm based here in Melbourne. I am a IT professional with a background as a DevOps Engineer, specializing in transforming technical complexity into business efficiency. My core strength lies in combining developer expertise using Python and C# to build custom automation and software solutions with advanced infrastructure management through Azure, AWS, and Terraform. This means I don't just solve surface-level IT issues; I architect systems that are secure, cost-effective, and fully automated. Whether it’s containerizing applications with Docker to ensure consistency across the team's computers or using Infrastructure as Code to prevent system downtime, my focus is always on high-level reliability. I excel at bridging the gap between complex code and everyday business needs, ensuring that technology remains a seamless asset rather than a technical burden for your operations."
+Devin,墨尔本,45,Monash-master-devps，it support,,有 itsupport，devops 经验，动手能力强 一手的 openclaw 和 Hermes agent 安装经验
+Eric Ye,Brisbane,40,Master of IT - UNSW,New%20form/%E4%B8%AA%E4%BA%BA%E7%85%A7%E7%89%87.jpg,"我在布里斯班，背景是软件工程师。擅长的技术栈是React, Next.js, TypeScript, Node.js, .Net 和AWS S3, EC2, Lambda。我擅长做web application 前后端并且部署上线。"
+Dexter,Melbounre,58,Bachelor of computer science honours ,New%20form/IMG_2268.png,"你好！我是一名驻墨尔本的IT技术支持专家，拥有3至5年的从业经验。我主要服务于非IT背景的行业客户，包括房地产、律所、医疗等领域，擅长将复杂的技术问题转化为简单易懂的解决方案。
+我的技术专长包括：Windows/macOS系统维护、网络故障排查、硬件维修与配置，以及办公软件的部署与支持。我持有 Microsoft 365、Google Workspace 及 CompTIA A+ 认证，能够帮助客户高效管理云端协作工具、邮件系统及设备安全。
+我注重沟通与响应速度，致力于为客户提供稳定可靠的IT支持，让您的业务运营无后顾之忧。"
+Fengyan Shi,Melbourne,35-60,Monash University - PhD - Chemical Engineer,New%20form/%E7%9F%B3%E5%A5%89%E8%89%B3%E8%AF%81%E4%BB%B6%E7%85%A7.jpg,"Hi, I'm Fengyan, based in Melbourne with a strong background in Windows system configuration and troubleshooting. Over the past few months, I've been deeply working with OpenClaw — building a local deployment from scratch using Docker and WSL2, integrating browser automation via CDP, connecting WeChat and Feishu channels, and designing a multi-agent architecture. I've also automated content publishing workflows for XiaoHongshu. My hands-on experience troubleshooting real-world Windows permission, networking, and container issues gives me a practical perspective that I'm eager to share with others navigating the same challenges."
+Kevin,Canberra,80-120 depending on workload for preparing,"University of Canberra 
+Software and Networking engineer",,"IT professional focusing on cyber security. I have background in software and network engineering, giving me strong technical foundation. I also worked as a business analyst, helping translate business needs into practical solutions. I like combining security with real business requirements to build effective and secure systems.
+
+Microsoft SC-200
+Google Cyber Security Professional Certificate"
+Shawn,"Melbourne, Australia",50,RMIT University - Master of Information Technology,New%20form/Image_2026-04-14_212818_686.jpg,"I'm Shawn — a Cloud/DevOps Engineer based in Melbourne, currently working at an AWS Premier Partner. I have 3+ years of hands-on experience in cloud infrastructure, automation, and CI/CD pipelines, primarily on AWS.
+Day-to-day I work with Cfn, Terraform, AWS CDK, GitHub Actions, Python (boto3), and Bash to build and maintain cloud-native solutions across large-scale environments. I hold three AWS Associate certifications (Solutions Architect, Developer, SysOps) and an Azure Fundamentals cert.
+I'm particularly interested in infrastructure automation, cost optimisation, and building reliable, maintainable systems. Always happy to connect with others working in the cloud and DevOps space."
+Paco,Adelaide,30-40,阿德莱大学-本科-计算机科学-人工智能,New%20form/1711080217969.jpeg,"I am a full-stack developer based in Adelaide, Australia, currently working at an AI-focused company. I have hands-on experience delivering end-to-end solutions and building systems for real business use.
+
+My expertise covers both frontend and backend development, including React, Next.js, Node.js, and NestJS, as well as cloud deployment and system integration. I am familiar with the full process of turning an idea into a working product, from design and development to deployment and ongoing improvement.
+
+In my current work, I focus on building practical systems that help businesses automate processes, improve customer communication, and increase operational efficiency. This includes AI-powered solutions, workflow automation, customer-facing platforms, and integrations with existing business systems.
+
+My strength is combining full-stack development, system design, and problem-solving to deliver complete, production-ready solutions. I am particularly interested in helping businesses build practical digital tools that are scalable, reliable, and easy to use."
+Jojo,Perth,85,Master of IT,New%20form/IMG_6886.jpeg,"I am an AI Consultant with a background in business analysis, data analysis, and digital systems, specialising in helping non-technical industries improve efficiency and customer experience through practical AI solutions.
+
+I have experience working in the healthcare retail (pharmacy) sector at Chemist Warehouse, where I developed strong insights into customer behaviour, service workflows, and operational challenges.
+
+Core Skills:
+	•	Data Analysis: SQL, Tableau, Excel
+	•	Business Analysis: Requirements gathering, process mapping, stakeholder communication
+	•	Digital Systems: WordPress, basic HTML/CSS/JavaScript
+	•	AI Applications: workflow automation, AI-assisted customer service, data insights
+
+What I Help With:
+	•	Automating repetitive tasks and improving workflows
+	•	Enhancing customer experience through smarter systems
+	•	Turning business needs into practical, implementable solutions
+
+I focus on delivering simple, effective solutions that create real business value without requiring deep technical knowledge from clients."
+Rick,Sydney,55,sistc master of it SDE,New%20form/%E5%9B%BE%E7%89%87_20260416200135_26_74.jpg,"目前担任 JobPin AI 的 Founding AI Engineer，同时也是 Omega AI 的 Senior AI Engineer，主要负责将前沿 AI 技术落地为企业可实际使用的系统。
+技术方面，我擅长大语言模型（LLM）、Web 系统开发，以及云端部署（AWS），可以提供从方案设计到落地实施的完整支持。
+我也非常注重与非技术客户的沟通，会把复杂技术转化为简单、可执行的方案，帮助业务真正产生价值。"

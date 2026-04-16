@@ -1,0 +1,315 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { type Locale } from '../../config/site';
+import { consultants, type ConsultantEntry, type ConsultantRate } from '../../data/consultants';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const copy = locale === 'zh'
+  ? {
+      sectionLabel: '/ CONSULTANTS',
+      title: '顾问团队。',
+      subtitle: '澳洲各地 16 位资深工程师与顾问，随时可派出项目——覆盖 AI 工程、云与 DevOps、网络安全、房产营销与非技术行业的 IT 支持。',
+      eyebrow: 'AUSTRALIA-WIDE / 按需组队、按项目计费',
+      railItems: [
+        '价格仅供参考，实际按项目与工期议定',
+        '可按小时或按天交付，远程为主、墨尔本/悉尼可现场',
+        '所有顾问签署 NDA，代码与数据归客户所有',
+      ],
+      cityLabel: '城市',
+      rateFrom: '起',
+      hourUnit: '小时',
+      dayUnit: '天',
+      avatarAlt: (name: string) => `${name} 头像`,
+    }
+  : {
+      sectionLabel: '/ CONSULTANTS',
+      title: 'Senior engineers, ready to deploy.',
+      subtitle: '16 senior engineers and consultants across Australia — available per project. AI engineering, cloud & DevOps, cybersecurity, property marketing, and IT support for non-tech industries.',
+      eyebrow: 'AUSTRALIA-WIDE / Teams assembled per engagement',
+      railItems: [
+        'Rates are indicative — final pricing scoped per engagement',
+        'Hourly or day rate, remote-first with on-site in MEL/SYD',
+        'All consultants sign NDAs; code and data stay with the client',
+      ],
+      cityLabel: 'City',
+      rateFrom: 'From',
+      hourUnit: 'hr',
+      dayUnit: 'day',
+      avatarAlt: (name: string) => `${name} avatar`,
+    };
+
+const sorted = [...consultants].sort((a, b) => a.order - b.order);
+
+const cityCounts = new Set(sorted.map((c) => c.city.en));
+const metaItems = [
+  `${sorted.length} ${locale === 'zh' ? '位顾问' : 'consultants'}`,
+  `${cityCounts.size} ${locale === 'zh' ? '座澳洲城市' : 'AU cities'}`,
+  locale === 'zh' ? 'AI · Cloud · Security · Property' : 'AI · Cloud · Security · Property',
+];
+
+function formatRates(rates: ConsultantRate[]): string {
+  return rates
+    .map((r) => {
+      const unit = r.unit === 'hour' ? copy.hourUnit : copy.dayUnit;
+      const value = r.value.toLocaleString('en-AU');
+      return `AUD ${value}+/${unit}`;
+    })
+    .join(' · ');
+}
+---
+
+<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+  <PageHero
+    sectionLabel={copy.sectionLabel}
+    title={copy.title}
+    subtitle={copy.subtitle}
+    variant="editorial"
+    eyebrow={copy.eyebrow}
+    metaItems={metaItems}
+    railItems={copy.railItems}
+  />
+
+  <section class="consultants">
+    <div class="consultants__inner container-x">
+      <div class="consultants__grid">
+        {
+          sorted.map((c: ConsultantEntry, idx) => (
+            <article class={`consultant-card delay-${(idx % 3) + 1}`} data-reveal="3d">
+              <div class="consultant-card__avatar">
+                <img src={c.avatar} alt={copy.avatarAlt(c.name)} loading="lazy" width="180" height="180" />
+              </div>
+
+              <div class="consultant-card__body">
+                <header class="consultant-card__head">
+                  <h3 class="consultant-card__name">{c.name}</h3>
+                  <span class="section-label consultant-card__city">{c.city[locale]}</span>
+                </header>
+
+                <div class="consultant-card__tags">
+                  {c.tags.slice(0, 3).map((t) => (
+                    <span class="consultant-card__tag">{t}</span>
+                  ))}
+                </div>
+
+                <p class="consultant-card__profile">{c.profile[locale]}</p>
+
+                {c.highlights[locale].length > 0 && (
+                  <ul class="consultant-card__highlights">
+                    {c.highlights[locale].map((h) => (
+                      <li>{h}</li>
+                    ))}
+                  </ul>
+                )}
+
+                <div class="consultant-card__meta">
+                  <span class="consultant-card__rate">
+                    <span class="consultant-card__rate-label">{copy.rateFrom}</span>
+                    <span class="consultant-card__rate-value">{formatRates(c.rates)}</span>
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} />
+</BaseLayout>
+
+<style>
+  .consultants {
+    position: relative;
+    padding-block: var(--space-8);
+    z-index: 2;
+  }
+
+  .consultants__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .consultants__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+  }
+
+  .consultant-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition:
+      border-color var(--dur-normal) var(--ease-out),
+      transform var(--dur-normal) var(--ease-out),
+      box-shadow var(--dur-normal) var(--ease-out);
+  }
+
+  .consultant-card:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 0 40px rgba(0, 229, 160, 0.1);
+  }
+
+  .consultant-card__avatar {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-bottom: 1px solid var(--border-hairline);
+    overflow: hidden;
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .consultant-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .consultant-card__body {
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+
+  .consultant-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .consultant-card__name {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .consultant-card__city {
+    color: var(--text-tertiary);
+    white-space: nowrap;
+  }
+
+  .consultant-card__tags {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .consultant-card__tag {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    padding: 1px 6px;
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: border-color var(--dur-normal) var(--ease-out), color var(--dur-normal) var(--ease-out);
+  }
+
+  .consultant-card:hover .consultant-card__tag {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+  }
+
+  .consultant-card__profile {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  .consultant-card__highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+  }
+
+  .consultant-card__highlights li {
+    position: relative;
+    padding-left: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-normal);
+    color: var(--text-secondary);
+  }
+
+  .consultant-card__highlights li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--brand-primary);
+    font-family: var(--font-mono);
+  }
+
+  .consultant-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .consultant-card__rate {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+  }
+
+  .consultant-card__rate-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: var(--fs-micro);
+    letter-spacing: 0.08em;
+  }
+
+  .consultant-card__rate-value {
+    color: var(--brand-primary);
+    font-weight: var(--fw-medium);
+  }
+
+  @media (max-width: 1199px) {
+    .consultants__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 991px) {
+    .consultants__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .consultants__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
