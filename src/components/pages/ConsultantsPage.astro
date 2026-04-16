@@ -51,49 +51,324 @@ const copy = locale === 'zh'
       avatarAlt: (name: string) => `${name} avatar`,
     };
 
-const capabilityGroups = [
+type CapabilityItem = {
+  label: string;
+  explain: { en: string; zh: string };
+};
+
+const capabilityGroups: Array<{
+  label: { en: string; zh: string };
+  items: CapabilityItem[];
+}> = [
   {
     label: { en: 'AI & Automation', zh: 'AI 与自动化' },
     items: [
-      'LLM', 'RAG', 'Agent systems', 'OpenClaw', 'Hermes Agent',
-      'Claude Code', 'CDP automation', 'AI workflows',
-      'Office automation',
+      {
+        label: 'LLM',
+        explain: {
+          en: 'The AI behind ChatGPT and Claude — reads, writes, summarises, and reasons at near-human level. The core engine of modern AI.',
+          zh: 'ChatGPT 和 Claude 背后的 AI——阅读、写作、总结、推理接近人类水平。现代 AI 的核心引擎。',
+        },
+      },
+      {
+        label: 'RAG',
+        explain: {
+          en: "Turn your company's documents into an AI that answers staff and customer questions instantly — like ChatGPT, but trained on your own business.",
+          zh: '把公司文档变成一个能随时回答员工和客户问题的 AI——相当于用你自己的业务数据训练一个 ChatGPT。',
+        },
+      },
+      {
+        label: 'Agent systems',
+        explain: {
+          en: 'AI that works like an employee — plans, uses tools, completes multi-step tasks on its own. The evolution beyond chatbots.',
+          zh: '像员工一样工作的 AI——自己规划、使用工具、完成多步骤任务。聊天机器人的下一代形态。',
+        },
+      },
+      {
+        label: 'OpenClaw',
+        explain: {
+          en: 'Cutting-edge framework for building custom AI assistants — creates an AI that understands your specific business rules and workflows.',
+          zh: '前沿的 AI 助手搭建框架——打造懂你业务规则和工作流的专属 AI。',
+        },
+      },
+      {
+        label: 'Hermes Agent',
+        explain: {
+          en: 'Enterprise-grade platform that reliably runs AI agents in production — keeps your AI workers monitored, controlled, and always-on.',
+          zh: '企业级 AI Agent 运行平台——让 AI 员工稳定跑在生产环境，全天候可监控、可控、不掉线。',
+        },
+      },
+      {
+        label: 'Claude Code',
+        explain: {
+          en: "Anthropic's top-of-the-line coding AI. Our team uses it daily — it's why we ship software 3–5× faster than traditional dev shops.",
+          zh: 'Anthropic 出品、最顶尖的编程 AI。我们团队每天都在用——这就是我们能比传统开发团队快 3–5 倍的原因。',
+        },
+      },
+      {
+        label: 'CDP automation',
+        explain: {
+          en: 'Programmatically control real browsers — we can build bots that log in, fill forms, scrape data, or test websites 24/7.',
+          zh: '用代码直接控制真实浏览器——我们可以让机器人 24 小时登录、填表、抓数据、测网站。',
+        },
+      },
+      {
+        label: 'AI workflows',
+        explain: {
+          en: 'Chain AI steps into full business processes — e.g. read email → extract order → update CRM → send reply. Hours of work, done in seconds.',
+          zh: '把多个 AI 步骤串成完整业务流程——例如"收邮件 → 提取订单 → 更新 CRM → 自动回复"。原本几小时的活，秒级完成。',
+        },
+      },
+      {
+        label: 'Office automation',
+        explain: {
+          en: 'AI takes over the mind-numbing office work — drafting documents, sorting emails, generating reports, updating spreadsheets. Free your team for real work.',
+          zh: 'AI 接管重复办公工作——起草文档、分类邮件、生成报表、更新表格。让团队做真正有价值的事。',
+        },
+      },
     ],
   },
   {
     label: { en: 'Languages & Frameworks', zh: '语言与框架' },
     items: [
-      'React', 'Next.js', 'TypeScript', 'JavaScript',
-      'Node.js', 'NestJS', '.NET',
-      'Python', 'Golang', 'C#',
+      {
+        label: 'React',
+        explain: {
+          en: "The world's #1 frontend framework — built and open-sourced by Meta. Powers Facebook, Instagram, Airbnb, Netflix, and millions more.",
+          zh: '全球第一的前端框架——Meta（Facebook）开源。Facebook、Instagram、Airbnb、Netflix 千万级网站都在用。',
+        },
+      },
+      {
+        label: 'Next.js',
+        explain: {
+          en: 'The production-grade React framework used by OpenAI, TikTok, Notion, and GitHub Copilot. Fast, SEO-friendly, built to handle huge traffic.',
+          zh: 'OpenAI、TikTok、Notion、GitHub Copilot 都在用的生产级 React 框架。快、SEO 友好，天生能扛大流量。',
+        },
+      },
+      {
+        label: 'TypeScript',
+        explain: {
+          en: 'Built by Microsoft. The industry standard for writing reliable web code — catches bugs before they reach production.',
+          zh: '微软出品，业界标准。让 Web 代码在上线前就能发现大部分 bug，企业级项目的必选。',
+        },
+      },
+      {
+        label: 'JavaScript',
+        explain: {
+          en: 'The language that runs in every web browser on the planet. If it moves on the web, JavaScript is behind it.',
+          zh: '全球每个浏览器都在跑的语言。网页上所有"动"的东西背后都是 JavaScript。',
+        },
+      },
+      {
+        label: 'Node.js',
+        explain: {
+          en: 'Runs JavaScript on servers — the backbone of backend APIs at Netflix, PayPal, LinkedIn, and Uber.',
+          zh: '在服务器上跑 JavaScript——Netflix、PayPal、LinkedIn、Uber 的后端核心。',
+        },
+      },
+      {
+        label: 'NestJS',
+        explain: {
+          en: 'The go-to framework when your backend needs to scale with your business. Structured, enterprise-ready, built to last.',
+          zh: '后端需要跟业务一起长大时的首选框架。结构清晰、企业级、能撑长远。',
+        },
+      },
+      {
+        label: '.NET',
+        explain: {
+          en: "Microsoft's enterprise-grade backend platform. Powers most banks, insurance companies, and government systems worldwide.",
+          zh: '微软的企业级后端平台。全球大多数银行、保险、政府系统都在用。',
+        },
+      },
+      {
+        label: 'Python',
+        explain: {
+          en: 'The de-facto language of AI and data science — what OpenAI, Google, and every AI lab builds in. Also the fastest way to automate anything.',
+          zh: 'AI 和数据科学的事实标准语言——OpenAI、Google、所有 AI 实验室都在用。也是自动化任何事情最快的选择。',
+        },
+      },
+      {
+        label: 'Golang',
+        explain: {
+          en: "Google's ultra-fast, efficient language. The backbone of modern cloud — Docker, Kubernetes, and most cloud-native infrastructure run on Go.",
+          zh: 'Google 出品，极快、极省资源。现代云的骨干——Docker、Kubernetes 和大部分云原生基础设施都用它。',
+        },
+      },
+      {
+        label: 'C#',
+        explain: {
+          en: "Microsoft's flagship language. Powers Windows apps, enterprise backends, and Unity — the engine behind 70% of all mobile games.",
+          zh: '微软旗舰语言。Windows 应用、企业后端、Unity 游戏引擎（全球 70% 手游的引擎）都在用。',
+        },
+      },
     ],
   },
   {
     label: { en: 'Cloud & DevOps', zh: '云与 DevOps' },
     items: [
-      'AWS', 'Azure',
-      'Terraform', 'AWS CDK', 'CloudFormation',
-      'GitHub Actions', 'Docker', 'WSL2', 'boto3',
+      {
+        label: 'AWS',
+        explain: {
+          en: "Amazon Web Services — the world's #1 cloud platform. Netflix, Airbnb, NASA, and 70%+ of Fortune 500 companies run on it.",
+          zh: '亚马逊云——全球第一的云平台。Netflix、Airbnb、NASA，以及 70%+ 的世界 500 强都跑在上面。',
+        },
+      },
+      {
+        label: 'Azure',
+        explain: {
+          en: "Microsoft's cloud — the go-to choice for enterprises running Windows, Office 365, and Microsoft infrastructure.",
+          zh: '微软云——用 Windows、Office 365、微软生态的企业的首选云平台。',
+        },
+      },
+      {
+        label: 'Terraform',
+        explain: {
+          en: 'Define your entire cloud setup as code — reproducible, versioned, auditable. The industry standard for modern cloud operations.',
+          zh: '把整套云环境当代码写——可复现、可版本化、可审计。现代云运维的业界标准。',
+        },
+      },
+      {
+        label: 'AWS CDK',
+        explain: {
+          en: "AWS's modern infrastructure tool — define your entire cloud architecture in TypeScript or Python. Faster, safer, more maintainable than old-school templates.",
+          zh: 'AWS 的现代基础设施工具——用 TypeScript 或 Python 写云架构。比老式模板更快、更安全、更可维护。',
+        },
+      },
+      {
+        label: 'CloudFormation',
+        explain: {
+          en: "AWS's original infrastructure-as-code tool. The bedrock of modern AWS deployments — reliable, repeatable, battle-tested.",
+          zh: 'AWS 最早的基础设施即代码工具。现代 AWS 部署的基石——稳定、可复现、久经考验。',
+        },
+      },
+      {
+        label: 'GitHub Actions',
+        explain: {
+          en: 'Automates testing, building, and deployment every time code is pushed. Every serious modern dev team relies on this kind of tooling.',
+          zh: '每次代码 push 自动跑测试、构建、部署。所有正规现代开发团队都要靠这类工具。',
+        },
+      },
+      {
+        label: 'Docker',
+        explain: {
+          en: 'The industry-standard way to package apps. Runs identically on any machine — your laptop, servers, or the cloud. Used by virtually every tech company.',
+          zh: '应用打包的业界标准。在任何机器上——你的电脑、服务器、云端——跑起来一模一样。几乎每家科技公司都在用。',
+        },
+      },
+      {
+        label: 'WSL2',
+        explain: {
+          en: "Microsoft's official way to run full Linux inside Windows — the standard setup for modern Windows-based development teams.",
+          zh: '微软官方方案，在 Windows 里直接跑完整的 Linux——现代 Windows 开发团队的标准配置。',
+        },
+      },
+      {
+        label: 'boto3',
+        explain: {
+          en: "AWS's official Python toolkit — automate literally any cloud task with a few lines of code. The fastest way to build custom AWS automation.",
+          zh: 'AWS 官方 Python 工具包——几行代码就能自动化任何云上操作。快速搭建定制 AWS 自动化的首选。',
+        },
+      },
     ],
   },
   {
     label: { en: 'Vendor-Backed Credentials', zh: '厂商权威认证' },
     items: [
-      'AWS SA – Professional · top-tier architecture',
-      '3× AWS Associate · SA · Dev · SysOps',
-      'Microsoft SC-200 · Security Operations Analyst',
-      'Google Cybersecurity Professional',
-      'Azure Fundamentals · Microsoft cloud baseline',
-      'CompTIA A+ · IT support foundations',
+      {
+        label: 'AWS SA – Professional · top-tier architecture',
+        explain: {
+          en: "AWS's highest-level architecture certification. Pass rate under 30%. Proves the holder can design cloud systems at enterprise scale.",
+          zh: 'AWS 最高级架构认证，通过率不到 30%。证明持有者能设计企业级规模的云系统。',
+        },
+      },
+      {
+        label: '3× AWS Associate · SA · Dev · SysOps',
+        explain: {
+          en: 'One person holding all three core AWS certs — Architect (design), Developer (build), Operator (run). Full-spectrum AWS mastery, not a specialist silo.',
+          zh: '一个人同时持有 AWS 三张核心认证：架构（设计）、开发（构建）、运维（运行）。端到端 AWS 能力，不是单点专家。',
+        },
+      },
+      {
+        label: 'Microsoft SC-200 · Security Operations Analyst',
+        explain: {
+          en: 'Microsoft-certified security operations expert — detects, investigates, and stops cyber threats before they impact the business.',
+          zh: '微软认证的安全运营专家——在网络威胁影响业务前，识别、调查、阻断。',
+        },
+      },
+      {
+        label: 'Google Cybersecurity Professional',
+        explain: {
+          en: "Google's professional-grade security credential. Covers threat detection, incident response, and enterprise risk — the complete defensive toolkit.",
+          zh: 'Google 颁发的专业级安全认证。覆盖威胁检测、事件响应、企业风险——完整的防御工具箱。',
+        },
+      },
+      {
+        label: 'Azure Fundamentals · Microsoft cloud baseline',
+        explain: {
+          en: 'Microsoft-verified Azure cloud credential. Ensures smooth integration with Windows, Office 365, and enterprise Microsoft environments.',
+          zh: '微软官方认证的 Azure 云证书。确保与 Windows、Office 365、企业微软环境无缝集成。',
+        },
+      },
+      {
+        label: 'CompTIA A+ · IT support foundations',
+        explain: {
+          en: 'The global industry-standard IT support certification. Held by serious IT technicians at Fortune 500 support desks worldwide.',
+          zh: '全球 IT 支持行业的标准认证。世界 500 强企业 IT 支持岗的专业技师基本都持有。',
+        },
+      },
     ],
   },
   {
     label: { en: 'Data & Analytics', zh: '数据与分析' },
-    items: ['BA / Requirements', 'SQL', 'Tableau'],
+    items: [
+      {
+        label: 'BA / Requirements',
+        explain: {
+          en: 'The skill that saves projects — translating fuzzy business needs into crystal-clear specs before a single line of code is written.',
+          zh: '能救项目的关键能力——在写一行代码之前，把模糊的业务需求翻译成清晰可执行的规格。',
+        },
+      },
+      {
+        label: 'SQL',
+        explain: {
+          en: "The universal language of databases. Every data role speaks it — if it's data, it flows through SQL.",
+          zh: '数据库世界的通用语。所有数据岗位都要会——一切数据最终都要走 SQL。',
+        },
+      },
+      {
+        label: 'Tableau',
+        explain: {
+          en: 'The world-leading BI tool — turns raw numbers into interactive dashboards executives actually look at. Acquired by Salesforce for $15.7 billion.',
+          zh: '全球领先的商业智能工具——把原始数据变成高管真正会看的交互式 dashboard。Salesforce 以 157 亿美元收购。',
+        },
+      },
+    ],
   },
   {
     label: { en: 'CMS & Workspace', zh: 'CMS 与办公平台' },
-    items: ['WordPress', 'Microsoft 365', 'Google Workspace'],
+    items: [
+      {
+        label: 'WordPress',
+        explain: {
+          en: 'Powers 40%+ of every website on the planet. The Wall Street Journal, TechCrunch, and Microsoft News all run on WordPress.',
+          zh: '全球 40%+ 的网站都在用。华尔街日报、TechCrunch、微软新闻都跑在 WordPress 上。',
+        },
+      },
+      {
+        label: 'Microsoft 365',
+        explain: {
+          en: "The world's corporate backbone — Outlook, Word, Teams, SharePoint, OneDrive. Over 1 million businesses run on it daily.",
+          zh: '全球企业的办公基础设施——Outlook、Word、Teams、SharePoint、OneDrive。100 万+ 企业每天都在用。',
+        },
+      },
+      {
+        label: 'Google Workspace',
+        explain: {
+          en: "Google's cloud-native business suite — Gmail, Docs, Drive, Meet. Over 3 billion users worldwide. The standard for modern remote-first teams.",
+          zh: 'Google 云原生商业套件——Gmail、Docs、Drive、Meet。全球 30 亿+ 用户。现代远程团队的标准工具。',
+        },
+      },
+    ],
   },
 ];
 
@@ -143,7 +418,14 @@ function formatRates(rates: ConsultantRate[]): string {
               <span class="capability-group__label">{g.label[locale]}</span>
               <div class="capability-group__chips">
                 {g.items.map((item) => (
-                  <span class="capability-chip">{item}</span>
+                  <button
+                    type="button"
+                    class="capability-chip"
+                    data-explain={item.explain[locale]}
+                    aria-describedby="capability-popover"
+                  >
+                    {item.label}
+                  </button>
                 ))}
               </div>
             </div>
@@ -151,6 +433,13 @@ function formatRates(rates: ConsultantRate[]): string {
         }
       </div>
     </div>
+
+    <div
+      id="capability-popover"
+      class="capability-popover"
+      role="tooltip"
+      aria-hidden="true"
+    ></div>
   </section>
 
   <section class="consultants">
@@ -201,6 +490,87 @@ function formatRates(rates: ConsultantRate[]): string {
 
   <CtaFooter locale={locale} />
 </BaseLayout>
+
+<script>
+  // Capability chip popover — explains each tech/cert chip on hover, focus, or tap.
+  function initCapabilityPopover() {
+    const popover = document.getElementById('capability-popover');
+    if (!popover) return;
+
+    const chips = document.querySelectorAll<HTMLButtonElement>('.capability-chip');
+    let activeChip: HTMLButtonElement | null = null;
+
+    function show(chip: HTMLButtonElement) {
+      if (!popover) return;
+      const text = chip.dataset.explain ?? '';
+      if (!text) return;
+
+      popover.textContent = text;
+      popover.classList.add('is-visible');
+      popover.setAttribute('aria-hidden', 'false');
+      activeChip = chip;
+
+      // Position centered below the chip, flipped above if it would overflow.
+      const chipRect = chip.getBoundingClientRect();
+      const popRect = popover.getBoundingClientRect();
+      const margin = 12;
+
+      let left = chipRect.left + chipRect.width / 2 - popRect.width / 2;
+      left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+
+      let top = chipRect.bottom + 8;
+      if (top + popRect.height > window.innerHeight - margin) {
+        top = chipRect.top - popRect.height - 8;
+      }
+
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+    }
+
+    function hide() {
+      if (!popover) return;
+      popover.classList.remove('is-visible');
+      popover.setAttribute('aria-hidden', 'true');
+      activeChip = null;
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener('mouseenter', () => show(chip));
+      chip.addEventListener('mouseleave', (e) => {
+        // Don't hide if moving onto the popover itself
+        const related = e.relatedTarget as Node | null;
+        if (related && popover.contains(related)) return;
+        hide();
+      });
+      chip.addEventListener('focus', () => show(chip));
+      chip.addEventListener('blur', hide);
+      chip.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (activeChip === chip) {
+          hide();
+        } else {
+          show(chip);
+        }
+      });
+    });
+
+    // Dismiss on outside click or Escape
+    document.addEventListener('click', (e) => {
+      const target = e.target as Element | null;
+      if (!target) return;
+      if (target.closest('.capability-chip') || target.closest('.capability-popover')) return;
+      hide();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hide();
+    });
+    window.addEventListener('scroll', hide, { passive: true });
+    window.addEventListener('resize', hide, { passive: true });
+  }
+
+  initCapabilityPopover();
+  document.addEventListener('astro:after-swap', initCapabilityPopover);
+</script>
 
 <style>
   .capabilities {
@@ -274,15 +644,48 @@ function formatRates(rates: ConsultantRate[]): string {
     font-size: var(--fs-label);
     padding: 0.4rem 1rem;
     color: var(--text-secondary);
+    background: transparent;
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-pill);
     letter-spacing: 0.02em;
+    cursor: help;
     transition: border-color var(--dur-normal) var(--ease-out), color var(--dur-normal) var(--ease-out);
   }
 
-  .capability-chip:hover {
+  .capability-chip:hover,
+  .capability-chip:focus-visible {
     border-color: var(--brand-primary);
     color: var(--brand-primary);
+    outline: none;
+  }
+
+  .capability-popover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    max-width: min(34rem, calc(100vw - 3rem));
+    padding: var(--space-3) var(--space-4);
+    background: rgba(12, 16, 20, 0.96);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--brand-primary);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 229, 160, 0.08);
+    color: var(--text-primary);
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-normal);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      visibility var(--dur-fast) var(--ease-out);
+  }
+
+  .capability-popover.is-visible {
+    opacity: 1;
+    visibility: visible;
   }
 
   @media (max-width: 767px) {
