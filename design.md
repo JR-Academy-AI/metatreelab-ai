@@ -458,12 +458,17 @@ Delivered    Clients     LLM Agents
 
 ```
 Home
-├── Services      (AI Strategy / LLM Apps / AI Agents / Data Infra)
-├── Work          (案例列表 + 详情页)
+├── Services      (AI / Property — 两条业务线分两页)
+├── Work          (案例列表 + 详情页 + 筛选网格)
+├── Consultants   (顾问团队 · 能力矩阵 + 16 位顾问卡片)
+├── Quote         (Instant quote / 在线估价)
 ├── About         (团队、方法论、技术栈)
-├── Insights      (博客/技术文章，可选)
-└── Contact       (Book a call 表单)
+├── Contact       (Book a call 表单)
+└── Insights      (博客/技术文章，可选 · 尚未启用)
 ```
+
+Nav 顺序：`Services · Work · Consultants · Quote · About · Contact`。
+EN 默认无前缀；ZH 加 `/zh/` 前缀（详见 §8）。
 
 ### 7.2 首页区块顺序
 
@@ -815,6 +820,189 @@ Work 页要同时展示 AI 和 Property 两类项目，同时保持"一个 studi
 
 **Work 页策略**：前期（没真实甲方 AI 案例时）主力展示母公司自有产品作为 reference case + 至少 1-2 个 property 客户案例（Forma Property 必须在）。每 1-2 个月补一个新真实案例。
 
+### 7.7 Consultants 页设计（16 人顾问团队 · 上线于 v2.3）
+
+Consultants 页是 v2.3 新增模块，目的：把 JR Academy 承接项目时的外派顾问资源池**可视化、可建立信任**。单一页面，三大组件：PageHero + Capabilities 能力聚合区 + Consultant 卡片网格。
+
+#### 布局结构
+
+```
+PageHero (variant="editorial")
+  eyebrow: AUSTRALIA-WIDE / Teams assembled per engagement
+  title:   Senior engineers, ready to deploy.
+  metaItems: 16 consultants · 6 AU cities · AI · Cloud · Security · Property
+
+/ CAPABILITIES  ← 能力聚合区（6 分组 · ~40 chips）
+  AI & Automation           [LLM] [RAG] [Agent systems] [OpenClaw] [Hermes] [Claude Code] ...
+  Languages & Frameworks    [React] [Next.js] [TypeScript] [Node.js] ...
+  Cloud & DevOps            [AWS] [Azure] [Terraform] [Docker] ...
+  Vendor-Backed Credentials [AWS SA – Pro] [3× AWS Associate] [SC-200] ...
+  Data & Analytics          [BA] [SQL] [Tableau]
+  CMS & Workspace           [WordPress] [M365] [Google Workspace]
+
+/ Consultant grid  ← 4/3/2/1 列响应式
+  [Card × 16]
+
+CtaFooter
+```
+
+#### 7.7.1 Consultant 卡片
+
+每张卡片的信息层级与视觉节奏：
+
+```
+┌──────────────────────────────────┐
+│                                  │
+│       [ NFT Avatar 1:1 ]         │  ← 顶部正方形头像区
+│                                  │
+├──────────────────────────────────┤
+│ Name                    City     │  ← Name (h4) + city (section-label 风)
+│                                  │
+│ [Tag] [Tag] [Tag]                │  ← 最多 3 个 tag（胶囊描边）
+│                                  │
+│ Profile — 1–2 句身份定位，        │  ← fs-body-sm · text-secondary
+│ 带企业雇主 / 年限 / 认证的硬信号。 │
+│                                  │
+│ → Highlight 1                    │  ← 3–4 条 bullet（mono · fs-label）
+│ → Highlight 2                    │     jade 箭头前缀，text-tertiary
+│ → Highlight 3                    │
+│                                  │
+│ ─────────────────────────────    │
+│ FROM   AUD 880+/hr               │  ← rate 行（mono · brand-primary）
+└──────────────────────────────────┘
+```
+
+**设计要点**：
+1. **Avatar 正方形顶部**：不是圆形（避免 LinkedIn 感），1:1 比例 border-bottom 分隔
+2. **层级明确**：Profile 用正文字号（1.4rem），Highlights 降到 label 字号（1.2rem）+ 更浅的 text-tertiary 色，拉开信息权重
+3. **Hover 效果**：border 变 jade + 抬起 4px + 光晕。Tag 也跟着变 jade（联动）
+4. **Rate 格式**：`FROM · AUD 880+/hr`（小时）或 `AUD 2,000+/day`（天）。`FROM` 用 micro 小字做前缀，数值 brand-primary 色突出。数字永远是**对外价格**（consultant 底价已含隐藏 markup），卡片不做任何计算
+5. **不做详情页**：v1 纯展示卡，禁用点击跳转，避免 16 人 × 16 维护成本
+
+#### 7.7.2 NFT Avatar 方案
+
+**目的**：团队一致的视觉语言 > 使用真人证件照（个人肖像授权顾虑、风格不一）。
+
+**技术选型**：[DiceBear](https://www.dicebear.com) `lorelei` 风格（CC0 许可），通过 `scripts/fetch-consultant-avatars.mjs` 一次性拉取成静态 SVG 存进 `public/consultants/`，commit 进仓库。之后与 DiceBear API 解耦。
+
+**生成参数**：
+```
+https://api.dicebear.com/9.x/lorelei/svg
+  ?seed={slug}
+  &backgroundColor=00e5a0,00b4d8      ← 品牌色渐变背景（jade → cyan）
+  &backgroundType=gradientLinear
+  &backgroundRotation=45
+  &hair={MALE_HAIR | FEMALE_HAIR}     ← 按性别分发型集
+  &beardProbability={40 | 0}          ← 男性 40% 概率长胡子
+  &earringsProbability={10 | 60}      ← 女性 60% 概率戴耳环
+```
+
+**Gender coding**：male/female 通过 hair variant 白名单 + beard/earrings 概率**近似区分**。不保证 100%，故脚本保留 `SEED_OVERRIDES` 映射，允许对个别 slug 换 seed 重抽（例：`dexter → dexter-m` 规避误抽成女性观感）。
+
+**为什么不用 Nouns / CryptoPunks**：Nouns 无性别区分，Punks 不是 CC0。Lorelei 是 "插画感 + 可配置 + CC0" 的最佳平衡。
+
+#### 7.7.3 Capabilities 能力聚合区
+
+位置：PageHero 之下、Consultant 网格之上。**作用：让老板扫一眼就知道"这个团队加起来能做多少事"**，不必逐个读 16 张卡。
+
+**分组策略**（**AI 置顶**，因为这是客户最关心的能力）：
+
+| 顺序 | 组名 (EN / ZH) | 包含 |
+| --- | --- | --- |
+| 1 | AI & Automation / AI 与自动化 | LLM · RAG · Agent systems · OpenClaw · Hermes Agent · Claude Code · CDP automation · AI workflows · Office automation |
+| 2 | Languages & Frameworks / 语言与框架 | React · Next.js · TypeScript · JavaScript · Node.js · NestJS · .NET · Python · Golang · C# |
+| 3 | Cloud & DevOps / 云与 DevOps | AWS · Azure · Terraform · AWS CDK · CloudFormation · GitHub Actions · Docker · WSL2 · boto3 |
+| 4 | Vendor-Backed Credentials / 厂商权威认证 | AWS SA – Pro · 3× AWS Associate · Microsoft SC-200 · Google Cybersecurity Pro · Azure Fundamentals · CompTIA A+ |
+| 5 | Data & Analytics / 数据与分析 | BA · SQL · Tableau |
+| 6 | CMS & Workspace / CMS 与办公平台 | WordPress · Microsoft 365 · Google Workspace |
+
+**视觉布局**（桌面）：左侧 mono 小字组名 + 右侧可换行 chip 区。每组之间细 hairline 分隔。移动端堆叠为单列。
+
+```
+AI & AUTOMATION    [LLM] [RAG] [Agent systems] [OpenClaw] [Hermes Agent]
+                   [Claude Code] [CDP automation] [AI workflows] [Office automation]
+─────────────────  ─────────────────────────────────────────────────────────────
+LANGUAGES & ...    [React] [Next.js] [TypeScript] ...
+```
+
+#### 7.7.4 Capability Popover（关键交互）
+
+**问题**：客户多数是非技术老板，裸看 "OpenClaw"、"SC-200"、"RAG" 这种词毫无感知。
+
+**解法**：每个 chip 悬停/聚焦/点击触发 popover，用**一句非技术语言 + 权威信号**解释这是什么：
+
+```
+LLM:  The AI behind ChatGPT and Claude — reads, writes, summarises,
+      and reasons at near-human level. The core engine of modern AI.
+
+RAG:  Turn your company's documents into an AI that answers staff
+      and customer questions instantly — like ChatGPT, but trained
+      on your own business.
+
+AWS SA – Professional:  AWS's highest-level architecture certification.
+      Pass rate under 30%. Proves the holder can design cloud systems
+      at enterprise scale.
+```
+
+**文案语调（非常重要）**：
+1. **从业务结果/权威信号起手**，不是从机制起手
+2. **引用知名品牌/市场地位**借力：Netflix / OpenAI / Meta / Fortune 500 / "全球第一" / "40%+ 网站"
+3. **加可验证的数字**：通过率 <30%、$15.7B 收购、3B+ 用户等
+4. **避免术语嵌套**：中文 ≤80 字，英文 ≤ 2 句
+5. **双语等价**：zh / en 都要体现同样的"有分量"感
+
+**交互行为**：
+- **桌面**：hover chip → 显示 popover；移开或 mouseleave 非 popover 方向 → 消失
+- **键盘**：Tab 聚焦 → 自动显示；Esc 或 blur → 关闭
+- **移动**：tap chip → 显示；再 tap 同一 chip / 点空白 / Esc → 关闭
+- **视口处理**：接近右边自动左移避免溢出；下方空间不足则翻转到 chip 上方
+- **滚动/缩放时自动隐藏**，避免锚点错位
+
+**实现要点**：单个共享 popover 元素（`position: fixed`），通过 `data-explain` 属性承载文本、JS 动态注入。40 个 chip 不代表 40 个 popover 实例。
+
+#### 7.7.5 Consultant 数据模型（`src/data/consultants.ts`）
+
+```ts
+type ConsultantGender = 'male' | 'female';
+type RateUnit = 'hour' | 'day';
+
+interface ConsultantRate {
+  unit: RateUnit;
+  value: number;              // 对外展示值，卡片纯渲染，不换算
+}
+
+interface ConsultantEntry {
+  slug: string;
+  name: string;
+  gender: ConsultantGender;
+  city: { en: string; zh: string };
+  tags: string[];             // 英文不翻译，卡片最多显示 3 个
+  profile: { en: string; zh: string };        // 1–2 句身份定位
+  highlights: { en: string[]; zh: string[] }; // 3–4 条 bullet
+  rates: ConsultantRate[];    // hour / day 可并存
+  avatar: string;             // '/consultants/{slug}.svg'
+  order: number;
+}
+```
+
+**数据填写规则（避免坑）**：
+- **城市不进 profile** — 卡片 header 已单独显示
+- **学校只留 PhD 或 Go8**（Monash / UNSW / Adelaide / Sydney / ANU / UQ / UWA / UMelb）——Swinburne、WSU、RMIT 等一律不提
+- **公司名默认匿名化**：写 "at an AI startup" 而非具体公司名，除非是 ByteDance / Chemist Warehouse 这类有广泛认知度的品牌
+- **Bio 从"潜在老板"视角写**：前置硬信号（雇主名、认证、年限、具体项目数），避免形容词堆砌
+- **rate.value 是对外价**（consultant 底价 × 1.5 后取整 + 下限取整）。founders / principals 可 `no-markup`（Lightman 880/h、Jason 2000/day 按原价）
+
+#### 7.7.6 复用的设计系统元素
+
+| 元素 | 来源 | 用法 |
+| --- | --- | --- |
+| `.card-glass` | § 6.3 | Consultant card 底板 |
+| `.section-label` | § 6.4 | City 显示、chip 组名前缀 |
+| `.btn-primary` / `.btn-ghost` | § 6.1 | CtaFooter 上的 CTA |
+| `--brand-gradient` | § 2.2 | NFT avatar 背景 |
+| `--shadow-glow` | § 5.4 | Card hover 光晕 |
+| `--radius-pill` | § 4.3 | Chip 胶囊圆角 |
+
 ---
 
 ## 八、国际化与双语支持（i18n）
@@ -971,59 +1159,88 @@ html[lang="zh"] { font-family: var(--font-sans-zh); }
 
 ## 十一、开发落地建议
 
-### 11.1 技术栈
+### 11.1 技术栈（**实际上线版本**，已与 v2.0 PRD 中的 Next.js 方案分叉）
+
+v2.0 PRD 曾规划 Next.js 15 + next-intl + Framer Motion + Vercel 的技术栈，实际实现中切换到了更轻、更适合纯 marketing 站的方案：
 
 | 层 | 选型 | 备注 |
 | --- | --- | --- |
-| **框架** | Next.js 15（App Router）| 与 JR Academy 生态一致 |
-| **样式** | Tailwind CSS v4 + CSS Variables | Design tokens 全部以 CSS var 形式定义 |
-| **动效** | Framer Motion | 仅用于克制动效 |
-| **i18n** | next-intl | 与 `jr-academy-web-zh` 一致，团队已有经验 |
-| **字体** | `next/font` 加载 Satoshi / Geist Mono / Noto Sans SC | 按语言分包加载 |
-| **图标** | Lucide | 线性、细描边，风格一致 |
-| **插画** | SVG 手绘（神经树） | 或 Rive 做动画版 |
-| **表单** | React Hook Form + Zod | Contact / Book a Call |
-| **CRM 对接** | HubSpot API / Webhook | Lead 流入母公司 CRM |
-| **部署** | Vercel | 与 Next.js 原生契合 |
-| **Analytics** | Plausible + Google Tag Manager | Plausible 主数据 + GTM 用于广告 pixel |
+| **框架** | **Astro 5** (静态 SSG) | Zero-JS by default，构建产物纯静态 HTML/CSS |
+| **样式** | **Tailwind v4** (CSS-first, `@theme` block) | Design tokens 定义在 `src/styles/global.css`，Tailwind 直接消费 CSS var |
+| **动效** | **CSS-only** (transitions + `scroll-reveal`) | 不引入 Framer Motion，保持 zero-JS |
+| **i18n** | **Astro native i18n** (`astro.config.mjs` 配置) | 文案在 `src/i18n/en.json` / `zh.json`；`useTranslations(locale)` 辅助函数；结构化数据（services、projects、consultants）内联双语字段 |
+| **字体** | `@fontsource-variable/geist-mono` + 系统 `-apple-system` sans fallback | Geist Mono 打包进 bundle，sans 用系统字体避免加载负担 |
+| **图标** | inline SVG（少量手写） | 未引入 Lucide，icon 体量太小不值一个依赖 |
+| **插画** | `src/components/home/NeuralNetwork.astro` — 程序化生成的 4-6-6-4 全连接神经网络 SVG | 无 Rive，纯 Astro 模板循环生成 |
+| **Avatar 生成** | `scripts/fetch-consultant-avatars.mjs` + DiceBear Lorelei API | 一次性拉取成 SVG 存本地（见 §7.7.2）|
+| **表单** | 原生 `<form>` + `fetch()` POST 到 `api.jiangren.com.au/business-inquiry` | 无 React Hook Form/Zod；复用 JR Academy 既有 API |
+| **CRM 对接** | JR Academy API（同表单 endpoint） | 不走 HubSpot；CORS 在 `jr-academy/src/config/cors.ts` 放行 `metatreelab.ai` |
+| **部署** | **GitHub Pages** via `.github/workflows/deploy.yml` | 推 `main` → Actions 构建 → Pages 发布 |
+| **Analytics** | 待定 | 尚未接入 |
+| **包管理** | pnpm | 与 JR Academy 生态一致 |
 
-### 11.2 项目结构建议
+> **为什么从 Next.js 切到 Astro**：marketing 站 99% 是静态内容，Astro 产出的 HTML 比 Next.js 小一个数量级，LCP/CLS/INP 更容易达标；GitHub Pages 免费 + 零运维成本。次要好处：无 runtime JS 开销，天然对爬虫/SEO 友好。
+
+### 11.2 项目结构（实际）
 
 ```
 metatree/
-├── app/
-│   ├── [locale]/              # en | zh
-│   │   ├── layout.tsx
-│   │   ├── page.tsx           # Home
-│   │   ├── services/
-│   │   │   ├── ai/page.tsx
-│   │   │   └── property/page.tsx
+├── src/
+│   ├── pages/                          # Astro 文件路由
+│   │   ├── index.astro                 # EN 首页
+│   │   ├── services/                   # /services/
+│   │   │   ├── index.astro
+│   │   │   ├── ai.astro
+│   │   │   └── property.astro
 │   │   ├── work/
-│   │   │   ├── page.tsx       # 筛选网格
-│   │   │   └── [slug]/page.tsx
-│   │   ├── about/page.tsx
-│   │   └── contact/page.tsx
-│   └── api/
-│       └── contact/route.ts   # 表单提交
-├── components/
-│   ├── Hero.tsx
-│   ├── ServiceSplit.tsx       # 双路径分叉卡片
-│   ├── WorkGrid.tsx
-│   ├── NeuralTree.tsx         # SVG 插画组件
-│   ├── GridLines.tsx          # 隐形网格线
-│   └── ui/
-│       ├── Button.tsx
-│       ├── Card.tsx
-│       ├── SectionLabel.tsx
-│       └── LocaleSwitch.tsx
-├── messages/
-│   ├── en.json
-│   └── zh.json
-├── lib/
-│   ├── tokens.css             # Design tokens
-│   └── i18n.ts
-└── public/
-    └── work/                  # 项目截图
+│   │   │   ├── index.astro             # 筛选网格
+│   │   │   └── [slug].astro            # getStaticPaths 动态路由
+│   │   ├── consultants/
+│   │   │   └── index.astro             # 薄 wrapper → <ConsultantsPage locale="en" />
+│   │   ├── quote.astro
+│   │   ├── about.astro
+│   │   ├── contact.astro
+│   │   └── zh/                         # 中文镜像（每个 EN 路径都有对应的 /zh/X）
+│   │       └── consultants/index.astro # → <ConsultantsPage locale="zh" />
+│   ├── components/
+│   │   ├── pages/                      # 主页面组件（locale-aware）
+│   │   │   ├── AboutPage.astro
+│   │   │   ├── WorkPage.astro
+│   │   │   ├── ConsultantsPage.astro
+│   │   │   └── ...
+│   │   ├── layout/                     # Nav / Footer
+│   │   ├── home/                       # 首页专属（Hero, NeuralNetwork, ServiceSplit, etc.）
+│   │   ├── shared/                     # CtaFooter, GridLines
+│   │   └── ui/                         # PageHero, Logo, ProjectThumbnail
+│   ├── data/                           # TypeScript 数据（非 markdown content collection）
+│   │   ├── services.ts
+│   │   ├── projects.ts
+│   │   └── consultants.ts              # v2.3 新增
+│   ├── content/                        # Astro content collections（仅 testimonials）
+│   │   └── testimonials/*.json
+│   ├── i18n/
+│   │   ├── en.json                     # UI 字符串
+│   │   ├── zh.json
+│   │   └── index.ts                    # useTranslations(locale) helper
+│   ├── layouts/
+│   │   └── BaseLayout.astro            # HTML 根 + hreflang + OG + Nav/Footer
+│   ├── styles/
+│   │   └── global.css                  # Design tokens + @theme + 全局 utility
+│   └── config/
+│       └── site.ts                     # brand · offices · social · localizedHref()
+├── public/
+│   ├── consultants/*.svg               # v2.3 · DiceBear 生成的 16 个 NFT 头像
+│   ├── work/                           # 项目截图
+│   ├── favicon.svg, og.svg, CNAME, robots.txt
+├── scripts/
+│   └── fetch-consultant-avatars.mjs    # v2.3 · 一次性头像抓取
+├── data/                               # 非代码资产（CSV、PRD 草稿）
+│   ├── consultant-draft.csv
+│   └── consultants-prd.md
+├── astro.config.mjs                    # i18n, integrations, site URL
+├── CLAUDE.md                           # Codebase 指引（给 Claude Code 读的）
+├── design.md                           # 本文档
+└── PRD.md                              # 产品需求文档
 ```
 
 ### 11.3 性能目标（Lighthouse）
@@ -1057,9 +1274,10 @@ metatree/
 | v2.0 | 2026-04-11 | 重构为三条业务线（AI Build / AI Adopt / Property Marketing）|
 | v2.1 | 2026-04-11 | 加入 Claude Cowork 培训、AI Agent 主打服务 |
 | v2.2 | 2026-04-11 | 加入中英双语 i18n 章节、Hero 双路径分叉设计、Work 页筛选网格 |
+| v2.3 | 2026-04-16 | **新增 §7.7 Consultants 页设计**（16 人顾问卡片 + NFT 头像方案 + Capabilities 聚合区 + Capability Popover 交互 + Consultant 数据模型与填写规则）；**修正 §11.1/§11.2 技术栈与项目结构**（Next.js → Astro 5 实际落地版）；更新 §7.1 站点地图加入 Consultants 与 Quote 节点 |
 
 ---
 
-**文档版本**：v2.2 · 2026-04-11
+**文档版本**：v2.3 · 2026-04-16
 **文档性质**：PRD + Design Spec
 **维护者**：Metatree Lab · Powered by JR Academy

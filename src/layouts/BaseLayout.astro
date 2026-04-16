@@ -25,6 +25,8 @@ const fullTitle = title === siteConfig.name
   : `${title} — ${siteConfig.name}`;
 const canonical = new URL(path, siteConfig.url).toString();
 
+const GA_ID = 'G-ZX8ETWFWMX';
+
 // Build hreflang alternates
 const enPath = path.replace(/^\/zh/, '') || '/';
 const zhPath = `/zh${enPath === '/' ? '/' : enPath}`;
@@ -73,6 +75,14 @@ const zhUrl = new URL(zhPath, siteConfig.url).toString();
 
     <meta name="theme-color" content="#000000" />
     <meta name="generator" content={Astro.generator} />
+
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+    <script is:inline define:vars={{ GA_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+    </script>
   </head>
   <body>
     <GridLines />
