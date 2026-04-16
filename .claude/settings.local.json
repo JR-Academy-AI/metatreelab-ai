@@ -11,7 +11,13 @@
       "Bash(pnpm dev:*)",
       "Bash(curl:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(xargs cat *)",
+      "Bash(node *)",
+      "Bash(pnpm check *)"
     ]
   }
 }

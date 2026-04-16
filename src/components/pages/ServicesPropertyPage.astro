@@ -65,6 +65,18 @@ const propertyServices = servicesByTrack.property;
     sectionLabel={copy.sectionLabel}
     title={copy.title}
     subtitle={copy.subtitle}
+    variant="editorial"
+    eyebrow={locale === 'zh' ? 'AUSTRALIAN PROPERTY / 编辑级展示 + 转化页面' : 'AUSTRALIAN PROPERTY / Editorial presence + conversion pages'}
+    metaItems={[
+      locale === 'zh' ? '开发商主站' : 'Developer websites',
+      locale === 'zh' ? '楼盘着陆页' : 'Project landing pages',
+      locale === 'zh' ? '双语买家市场' : 'Bilingual buyer market',
+    ]}
+    railItems={
+      locale === 'zh'
+        ? ['懂 launch 到 settlement 的销售节奏', '懂品牌展示，也懂 CRM 与投放转化', '不是模板站，而是可销售的项目叙事']
+        : ['Built around launch-to-settlement sales rhythm', 'Brand presentation and CRM conversion in one system', 'Not template sites, but sales-ready project narratives']
+    }
   />
 
   <!-- SERVICES -->

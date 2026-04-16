@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metatree Lab — Poster</title>
+  <link rel="stylesheet" href="/poster-theme.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.POSTER_CONFIG = {
+      layout: 'build',
+      lang: 'zh',
+      figureImage: '/poster-assets/person-build.png',
+      pageTitle: 'Metatree Lab — 交付海报',
+      fileName: 'metatree-poster-build-zh.png',
+      downloadLabel: '下载 PNG',
+      downloadPreparingLabel: '生成中...',
+      sectionLabel: '/ 交付能力 · BUILD',
+      eyebrow: '从问题定义，到系统上线。',
+      headline: ['从战略梳理', '到正式交付', { text: '把 AI 跑上线' }],
+      subtitle: '把 AI 做成真正能运行、能接手、能上线的系统。',
+      tags: ['RAG', 'Agent', '内部 Copilot'],
+      proofLabel: '客户能拿到什么',
+      proofCopy: '不是方案书，是可用系统和清晰路线图。',
+      stats: [
+        { value: '10+', label: '套系统持续运行' },
+        { value: '5+', label: '年 AI 工程经验' },
+      ],
+      footer: {
+        site: 'metatreelab.ai',
+        lines: ['hello@jiangren.com.au'],
+        note: '真正做过生产环境 AI 的团队',
+      },
+    };
+  </script>
+  <script src="/poster-render.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <script>
+    window.renderPoster(window.POSTER_CONFIG);
+  </script>
+</body>
+</html>

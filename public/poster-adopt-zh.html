@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metatree Lab — Poster</title>
+  <link rel="stylesheet" href="/poster-theme.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.POSTER_CONFIG = {
+      layout: 'adopt',
+      lang: 'zh',
+      figureImage: '/poster-assets/person-adopt.png',
+      pageTitle: 'Metatree Lab — 落地海报',
+      fileName: 'metatree-poster-adopt-zh.png',
+      downloadLabel: '下载 PNG',
+      downloadPreparingLabel: '生成中...',
+      sectionLabel: '/ 团队落地 · ADOPT',
+      eyebrow: '不是只教工具，是把 AI 装进团队。',
+      headline: ['让 AI', '真的进入', { text: '团队流程' }],
+      subtitle: '搭建、培训、交接一体化，让团队真的用起来。',
+      tags: ['搭建', '培训', 'SOP 改造'],
+      proofLabel: '为什么这一张更打动管理层',
+      proofCopy: '你的团队拿到的是新工作方式，不是培训资料。',
+      stats: [
+        { value: '1000+', label: '人完成 AI 训练' },
+        { value: '50+', label: '家企业稳定使用' },
+      ],
+      footer: {
+        site: 'metatreelab.ai',
+        lines: ['hello@jiangren.com.au'],
+        note: '搭建 + 培训 + 交接一体化',
+      },
+    };
+  </script>
+  <script src="/poster-render.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <script>
+    window.renderPoster(window.POSTER_CONFIG);
+  </script>
+</body>
+</html>

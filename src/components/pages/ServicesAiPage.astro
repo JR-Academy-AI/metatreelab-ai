@@ -71,6 +71,18 @@ const proofMatrix = locale === 'zh'
     sectionLabel={copy.sectionLabel}
     title={copy.title}
     subtitle={copy.subtitle}
+    variant="split"
+    eyebrow={locale === 'zh' ? 'BUILD + ADOPT / 双引擎服务结构' : 'BUILD + ADOPT / Two-track delivery model'}
+    metaItems={[
+      `${buildServices.length} ${locale === 'zh' ? '个 Build 服务' : 'Build services'}`,
+      `${adoptServices.length} ${locale === 'zh' ? '个 Adopt 服务' : 'Adopt services'}`,
+      locale === 'zh' ? '真实产品背书' : 'Live product receipts',
+    ]}
+    railItems={
+      locale === 'zh'
+        ? ['Build 面向技术决策人', 'Adopt 面向业务团队', '两条线都能接到生产交付']
+        : ['Build is for technical buyers', 'Adopt is for operational teams', 'Both tracks end in production delivery']
+    }
   />
 
   <!-- BUILD TRACK -->

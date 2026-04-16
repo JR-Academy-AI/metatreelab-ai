@@ -41,6 +41,12 @@ const copy = locale === 'zh'
     };
 
 const sorted = [...projects].sort((a, b) => a.order - b.order);
+const categoryCounts = {
+  all: sorted.length,
+  ai: sorted.filter((project) => project.category === 'ai-systems').length,
+  property: sorted.filter((project) => project.category === 'property').length,
+  brand: sorted.filter((project) => project.category === 'brand').length,
+};
 ---
 
 <BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
@@ -48,6 +54,19 @@ const sorted = [...projects].sort((a, b) => a.order - b.order);
     sectionLabel={copy.sectionLabel}
     title={copy.title}
     subtitle={copy.subtitle}
+    variant="editorial"
+    eyebrow={locale === 'zh' ? 'SELECTED CASES / 已上线项目为主' : 'SELECTED CASES / Production-first portfolio'}
+    metaItems={[
+      `${categoryCounts.all} ${locale === 'zh' ? '个精选项目' : 'selected projects'}`,
+      `${categoryCounts.ai} AI`,
+      `${categoryCounts.property} ${locale === 'zh' ? '房产' : 'Property'}`,
+      `${categoryCounts.brand} ${locale === 'zh' ? '品牌' : 'Brand'}`,
+    ]}
+    railItems={
+      locale === 'zh'
+        ? ['不是概念稿，默认展示已交付项目', 'AI 系统和 property work 会并列出现', '每个项目都能继续下钻到详情页']
+        : ['This page favors shipped work over concept art', 'AI systems and property work sit side by side', 'Each project can be explored in a dedicated detail page']
+    }
   />
 
   <section class="work">

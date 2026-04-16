@@ -8,16 +8,55 @@ interface Props {
   sectionLabel: string;
   title: string;
   subtitle?: string;
+  variant?: 'default' | 'split' | 'editorial' | 'stacked';
+  eyebrow?: string;
+  metaItems?: string[];
+  railItems?: string[];
 }
 
-const { sectionLabel, title, subtitle } = Astro.props;
+const {
+  sectionLabel,
+  title,
+  subtitle,
+  variant = 'default',
+  eyebrow,
+  metaItems = [],
+  railItems = [],
+} = Astro.props;
 ---
 
-<section class="page-hero">
+<section class={`page-hero page-hero--${variant}`}>
   <div class="page-hero__inner container-x">
-    <span class="section-label">{sectionLabel}</span>
-    <h1 class="page-hero__title">{title}</h1>
-    {subtitle && <p class="page-hero__subtitle">{subtitle}</p>}
+    <div class="page-hero__heading">
+      <span class="section-label">{sectionLabel}</span>
+      {eyebrow && <p class="page-hero__eyebrow">{eyebrow}</p>}
+      <h1 class="page-hero__title">{title}</h1>
+    </div>
+
+    {(subtitle || metaItems.length > 0 || railItems.length > 0) && (
+      <div class="page-hero__content">
+        {subtitle && <p class="page-hero__subtitle">{subtitle}</p>}
+
+        {metaItems.length > 0 && (
+          <div class="page-hero__meta" aria-label="Page highlights">
+            {metaItems.map((item) => (
+              <span class="page-hero__meta-item">{item}</span>
+            ))}
+          </div>
+        )}
+
+        {railItems.length > 0 && (
+          <div class="page-hero__rail" aria-label="Page notes">
+            {railItems.map((item, index) => (
+              <div class="page-hero__rail-item">
+                <span class="page-hero__rail-index">/{String(index + 1).padStart(2, '0')}</span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
   </div>
 
   <div class="page-hero__glow" aria-hidden="true"></div>
@@ -32,11 +71,26 @@ const { sectionLabel, title, subtitle } = Astro.props;
   }
 
   .page-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(28rem, 0.8fr);
+    gap: var(--space-6);
+    position: relative;
+    z-index: 2;
+    align-items: end;
+  }
+
+  .page-hero__heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .page-hero__content {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    position: relative;
-    z-index: 2;
+    justify-self: end;
+    max-width: 46rem;
   }
 
   .page-hero__title {
@@ -47,11 +101,88 @@ const { sectionLabel, title, subtitle } = Astro.props;
     max-width: 80rem;
   }
 
+  .page-hero__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--brand-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
   .page-hero__subtitle {
     font-size: var(--fs-body-lg);
     color: var(--text-secondary);
-    max-width: 64rem;
     line-height: var(--lh-normal);
+  }
+
+  .page-hero__meta {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .page-hero__meta-item {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .page-hero__rail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--border-hairline);
+  }
+
+  .page-hero__rail-item {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .page-hero__rail-index {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    min-width: 3.6rem;
+  }
+
+  .page-hero--editorial .page-hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+
+  .page-hero--editorial .page-hero__content {
+    justify-self: stretch;
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.7fr);
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  .page-hero--editorial .page-hero__subtitle {
+    max-width: 72rem;
+  }
+
+  .page-hero--stacked .page-hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .page-hero--stacked .page-hero__content {
+    justify-self: stretch;
+    max-width: 72rem;
   }
 
   .page-hero__glow {
@@ -71,6 +202,24 @@ const { sectionLabel, title, subtitle } = Astro.props;
   }
 
   @media (max-width: 767px) {
+    .page-hero__inner,
+    .page-hero--editorial .page-hero__content {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .page-hero__content {
+      justify-self: stretch;
+      max-width: none;
+    }
+
+    .page-hero__rail {
+      padding-left: 0;
+      padding-top: var(--space-3);
+      border-left: none;
+      border-top: 1px solid var(--border-hairline);
+    }
+
     .page-hero__title {
       font-size: var(--fs-h2);
     }

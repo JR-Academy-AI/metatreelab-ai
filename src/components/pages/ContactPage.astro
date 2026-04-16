@@ -72,6 +72,18 @@ const thanksUrl = locale === 'zh' ? '/zh/thanks/' : '/thanks/';
     sectionLabel={copy.sectionLabel}
     title={copy.title}
     subtitle={copy.subtitle}
+    variant="split"
+    eyebrow={locale === 'zh' ? 'START WITH A BRIEF / 先说问题，再谈方案' : 'START WITH A BRIEF / Problem first, proposal second'}
+    metaItems={[
+      locale === 'zh' ? '一周内回复' : 'Reply within a week',
+      locale === 'zh' ? '可约 30 分钟通话' : '30-min intro call available',
+      locale === 'zh' ? '英文 / 中文都可' : 'English / Chinese',
+    ]}
+    railItems={
+      locale === 'zh'
+        ? ['适合已经知道要解决什么问题的团队', '如果方向不清，我们也会先帮你收敛范围', '不先卖 package，先给下一步建议']
+        : ['Best for teams that already know the problem to solve', 'If the scope is fuzzy, we help narrow it first', 'We do not force a package before a next-step recommendation']
+    }
   />
 
   <script>

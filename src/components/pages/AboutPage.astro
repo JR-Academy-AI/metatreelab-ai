@@ -85,6 +85,13 @@ const featuredTestimonials = testimonials
     sectionLabel={copy.sectionLabel}
     title={copy.title}
     subtitle={copy.subtitle}
+    variant="stacked"
+    eyebrow={locale === 'zh' ? 'WHO WE ARE / 母公司背书 + 真实交付记录' : 'WHO WE ARE / Parent-backed studio with operating proof'}
+    metaItems={[
+      locale === 'zh' ? 'JR Academy 背书' : 'Backed by JR Academy',
+      locale === 'zh' ? '5+ 年运营' : '5+ years operating',
+      locale === 'zh' ? 'AI + Property 双线' : 'AI + Property dual practice',
+    ]}
   />
 
   <!-- CAPABILITY × PROOF MATRIX -->

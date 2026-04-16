@@ -3,83 +3,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metatree Lab — Posters</title>
+<title>Metatree Lab — Poster Directions</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
   body {
     background: #0a0a0a;
-    font-family: 'Inter', -apple-system, sans-serif;
     color: #fff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     padding: 40px;
   }
+
+  .page {
+    max-width: 1760px;
+    margin: 0 auto;
+  }
+
   h1 {
     text-align: center;
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: rgba(255,255,255,0.8);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 14px;
   }
-  .links {
+
+  .intro {
     text-align: center;
-    margin-bottom: 40px;
-  }
-  .links a {
-    display: inline-block;
-    margin: 0 16px;
-    padding: 12px 32px;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 8px;
-    color: #00E5A0;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 500;
-    transition: border-color 0.2s;
-  }
-  .links a:hover {
-    border-color: #00E5A0;
-  }
-  .posters {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-  .poster-frame {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-  .poster-frame label {
+    color: rgba(255,255,255,0.58);
     font-size: 16px;
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 0.08em;
+    line-height: 1.6;
+    max-width: 860px;
+    margin: 0 auto 42px;
+  }
+
+  .group {
+    margin-bottom: 56px;
+  }
+
+  .group-title {
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.52);
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
+
+  .poster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 28px;
+  }
+
+  .card {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    overflow: hidden;
+  }
+
+  .card-head {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.56);
+  }
+
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 20px 0;
+  }
+
+  .card-actions a,
+  .card-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: transparent;
+    color: #00e5a0;
+    text-decoration: none;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .card-actions a:hover,
+  .card-actions button:hover {
+    border-color: #00e5a0;
+  }
+
   iframe {
-    width: 540px;
-    height: 675px;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
+    display: block;
+    width: 100%;
+    height: 540px;
+    border: 0;
     background: #000;
+  }
+
+  @media (max-width: 720px) {
+    body {
+      padding: 20px;
+    }
+
+    iframe {
+      height: 500px;
+    }
   }
 </style>
 </head>
 <body>
-  <h1>Metatree Lab — Promotional Posters</h1>
-  <div class="links">
-    <a href="/poster-zh.html" target="_blank">Chinese Full Size</a>
-    <a href="/poster-en.html" target="_blank">English Full Size</a>
+  <div class="page">
+    <h1>Metatree Lab — Content-Led Poster Directions</h1>
+    <p class="intro">
+      These directions prioritise messaging before visuals. I picked three content angles that are easier to sell:
+      results first, delivery credibility, and team adoption. Each card can open full-size or download directly as PNG.
+    </p>
+
+    <section class="group">
+      <div class="group-title">Chinese / 中文</div>
+      <div class="poster-grid">
+        <article class="card">
+          <div class="card-head">
+            <div class="card-title">结果导向 / ROI</div>
+            <div class="card-desc">先卖回报和效率，适合冷流量和第一次触达。</div>
+          </div>
+          <div class="card-actions">
+            <a href="/poster-zh.html" target="_blank">Open Full Size</a>
+            <button type="button" data-frame="frame-zh-outcome">Download PNG</button>
+          </div>
+          <iframe id="frame-zh-outcome" src="/poster-zh.html" scrolling="no"></iframe>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div class="card-title">交付能力 / Build</div>
+            <div class="card-desc">强调从战略到上线的完整交付，适合技术和决策人。</div>
+          </div>
+          <div class="card-actions">
+            <a href="/poster-build-zh.html" target="_blank">Open Full Size</a>
+            <button type="button" data-frame="frame-zh-build">Download PNG</button>
+          </div>
+          <iframe id="frame-zh-build" src="/poster-build-zh.html" scrolling="no"></iframe>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div class="card-title">团队落地 / Adopt</div>
+            <div class="card-desc">强调搭建、培训、交接一体化，适合老板和管理层。</div>
+          </div>
+          <div class="card-actions">
+            <a href="/poster-adopt-zh.html" target="_blank">Open Full Size</a>
+            <button type="button" data-frame="frame-zh-adopt">Download PNG</button>
+          </div>
+          <iframe id="frame-zh-adopt" src="/poster-adopt-zh.html" scrolling="no"></iframe>
+        </article>
+      </div>
+    </section>
+
+    <section class="group">
+      <div class="group-title">English</div>
+      <div class="poster-grid">
+        <article class="card">
+          <div class="card-head">
+            <div class="card-title">Outcome / ROI</div>
+            <div class="card-desc">Lead with business results. Best for first-touch acquisition.</div>
+          </div>
+          <div class="card-actions">
+            <a href="/poster-en.html" target="_blank">Open Full Size</a>
+            <button type="button" data-frame="frame-en-outcome">Download PNG</button>
+          </div>
+          <iframe id="frame-en-outcome" src="/poster-en.html" scrolling="no"></iframe>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div class="card-title">Build / Delivery</div>
+            <div class="card-desc">Sell engineering credibility and shipped systems.</div>
+          </div>
+          <div class="card-actions">
+            <a href="/poster-build-en.html" target="_blank">Open Full Size</a>
+            <button type="button" data-frame="frame-en-build">Download PNG</button>
+          </div>
+          <iframe id="frame-en-build" src="/poster-build-en.html" scrolling="no"></iframe>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div class="card-title">Adopt / Enablement</div>
+            <div class="card-desc">Sell rollout, training, and actual team behaviour change.</div>
+          </div>
+          <div class="card-actions">
+            <a href="/poster-adopt-en.html" target="_blank">Open Full Size</a>
+            <button type="button" data-frame="frame-en-adopt">Download PNG</button>
+          </div>
+          <iframe id="frame-en-adopt" src="/poster-adopt-en.html" scrolling="no"></iframe>
+        </article>
+      </div>
+    </section>
   </div>
-  <div class="posters">
-    <div class="poster-frame">
-      <label>Chinese / 中文</label>
-      <iframe src="/poster-zh.html" scrolling="no"></iframe>
-    </div>
-    <div class="poster-frame">
-      <label>English</label>
-      <iframe src="/poster-en.html" scrolling="no"></iframe>
-    </div>
-  </div>
+
+  <script>
+    document.querySelectorAll('[data-frame]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const frame = document.getElementById(button.dataset.frame);
+        const downloadPoster = frame?.contentWindow?.downloadPoster;
+
+        if (typeof downloadPoster !== 'function') {
+          window.open(frame.src, '_blank');
+          return;
+        }
+
+        const original = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Preparing...';
+
+        try {
+          await downloadPoster();
+        } finally {
+          button.disabled = false;
+          button.textContent = original;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
