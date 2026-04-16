@@ -22,6 +22,9 @@ const copy = locale === 'zh'
         '可按小时或按天交付，远程为主、墨尔本/悉尼可现场',
         '所有顾问签署 NDA，代码与数据归客户所有',
       ],
+      capabilitiesLabel: '/ CAPABILITIES',
+      capabilitiesTitle: '团队综合能力，一览即知。',
+      capabilitiesSubtitle: '16 位顾问合计覆盖的技术栈、云、AI 工具与认证——按组分类。',
       cityLabel: '城市',
       rateFrom: '起',
       hourUnit: '小时',
@@ -38,12 +41,61 @@ const copy = locale === 'zh'
         'Hourly or day rate, remote-first with on-site in MEL/SYD',
         'All consultants sign NDAs; code and data stay with the client',
       ],
+      capabilitiesLabel: '/ CAPABILITIES',
+      capabilitiesTitle: 'What the team can do, at a glance.',
+      capabilitiesSubtitle: 'Combined stack, cloud, AI tooling and certifications across all 16 consultants — grouped for quick scanning.',
       cityLabel: 'City',
       rateFrom: 'From',
       hourUnit: 'hr',
       dayUnit: 'day',
       avatarAlt: (name: string) => `${name} avatar`,
     };
+
+const capabilityGroups = [
+  {
+    label: { en: 'AI & Automation', zh: 'AI 与自动化' },
+    items: [
+      'LLM', 'RAG', 'Agent systems', 'OpenClaw', 'Hermes Agent',
+      'Claude Code', 'CDP automation', 'AI workflows',
+      'Office automation',
+    ],
+  },
+  {
+    label: { en: 'Languages & Frameworks', zh: '语言与框架' },
+    items: [
+      'React', 'Next.js', 'TypeScript', 'JavaScript',
+      'Node.js', 'NestJS', '.NET',
+      'Python', 'Golang', 'C#',
+    ],
+  },
+  {
+    label: { en: 'Cloud & DevOps', zh: '云与 DevOps' },
+    items: [
+      'AWS', 'Azure',
+      'Terraform', 'AWS CDK', 'CloudFormation',
+      'GitHub Actions', 'Docker', 'WSL2', 'boto3',
+    ],
+  },
+  {
+    label: { en: 'Vendor-Backed Credentials', zh: '厂商权威认证' },
+    items: [
+      'AWS SA – Professional · top-tier architecture',
+      '3× AWS Associate · SA · Dev · SysOps',
+      'Microsoft SC-200 · Security Operations Analyst',
+      'Google Cybersecurity Professional',
+      'Azure Fundamentals · Microsoft cloud baseline',
+      'CompTIA A+ · IT support foundations',
+    ],
+  },
+  {
+    label: { en: 'Data & Analytics', zh: '数据与分析' },
+    items: ['BA / Requirements', 'SQL', 'Tableau'],
+  },
+  {
+    label: { en: 'CMS & Workspace', zh: 'CMS 与办公平台' },
+    items: ['WordPress', 'Microsoft 365', 'Google Workspace'],
+  },
+];
 
 const sorted = [...consultants].sort((a, b) => a.order - b.order);
 
@@ -75,6 +127,31 @@ function formatRates(rates: ConsultantRate[]): string {
     metaItems={metaItems}
     railItems={copy.railItems}
   />
+
+  <section class="capabilities">
+    <div class="capabilities__inner container-x">
+      <header class="capabilities__head">
+        <span class="section-label">{copy.capabilitiesLabel}</span>
+        <h2 class="capabilities__title">{copy.capabilitiesTitle}</h2>
+        <p class="capabilities__subtitle">{copy.capabilitiesSubtitle}</p>
+      </header>
+
+      <div class="capabilities__groups">
+        {
+          capabilityGroups.map((g) => (
+            <div class="capability-group">
+              <span class="capability-group__label">{g.label[locale]}</span>
+              <div class="capability-group__chips">
+                {g.items.map((item) => (
+                  <span class="capability-chip">{item}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
   <section class="consultants">
     <div class="consultants__inner container-x">
@@ -126,9 +203,106 @@ function formatRates(rates: ConsultantRate[]): string {
 </BaseLayout>
 
 <style>
+  .capabilities {
+    position: relative;
+    padding-block: var(--space-7) var(--space-5);
+    z-index: 2;
+  }
+
+  .capabilities__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .capabilities__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: 72rem;
+  }
+
+  .capabilities__title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .capabilities__subtitle {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  .capabilities__groups {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 4fr);
+    gap: var(--space-3) var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .capability-group {
+    display: contents;
+  }
+
+  .capability-group__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    padding-top: 0.4rem;
+  }
+
+  .capability-group__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-hairline);
+  }
+
+  .capability-group:last-child .capability-group__chips {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .capability-chip {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    padding: 0.4rem 1rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
+    transition: border-color var(--dur-normal) var(--ease-out), color var(--dur-normal) var(--ease-out);
+  }
+
+  .capability-chip:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+  }
+
+  @media (max-width: 767px) {
+    .capabilities__groups {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .capability-group__label {
+      padding-top: 0;
+    }
+
+    .capability-group__chips {
+      padding-bottom: var(--space-4);
+    }
+  }
+
   .consultants {
     position: relative;
-    padding-block: var(--space-8);
+    padding-block: var(--space-7) var(--space-8);
     z-index: 2;
   }
 
@@ -253,9 +427,9 @@ function formatRates(rates: ConsultantRate[]): string {
     position: relative;
     padding-left: var(--space-3);
     font-family: var(--font-mono);
-    font-size: var(--fs-body-sm);
-    line-height: var(--lh-normal);
-    color: var(--text-secondary);
+    font-size: var(--fs-label);
+    line-height: 1.5;
+    color: var(--text-tertiary);
   }
 
   .consultant-card__highlights li::before {
