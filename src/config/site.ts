@@ -4,7 +4,7 @@
  */
 
 export const siteConfig = {
-  name: 'Metatree Lab',
+  name: 'Metatree AI Lab',
 
   tagline: {
     en: 'Cut costs. Ship faster. AI that works.',

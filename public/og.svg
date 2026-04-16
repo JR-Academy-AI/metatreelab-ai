@@ -1,0 +1,36 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#000000"/>
+
+  <defs>
+    <linearGradient id="ogGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5A0" />
+      <stop offset="100%" stop-color="#00B4D8" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(600, 260)">
+    <!-- M logo scaled up -->
+    <g transform="scale(4) translate(-16, -16)">
+      <path
+        d="M5 25V7L16 17L27 7V25"
+        stroke="url(#ogGrad)"
+        stroke-width="4.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <circle cx="5" cy="7" r="3.5" fill="url(#ogGrad)" />
+      <circle cx="27" cy="7" r="3.5" fill="url(#ogGrad)" />
+      <circle cx="16" cy="17" r="3.5" fill="url(#ogGrad)" />
+    </g>
+  </g>
+
+  <!-- Brand name -->
+  <text x="600" y="420" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" letter-spacing="6">
+    METATREE AI LAB
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="470" text-anchor="middle" fill="#888888" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="400" letter-spacing="2">
+    Cut costs. Ship faster. AI that works.
+  </text>
+</svg>
