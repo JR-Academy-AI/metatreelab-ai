@@ -48,6 +48,22 @@ const year = new Date().getFullYear();
         <a href={localizedHref('/deck/', locale)} class="section-label">
           Deck
         </a>
+        <a
+          href={locale === 'zh' ? '/poster-zh.html' : '/poster-en.html'}
+          target="_blank"
+          rel="noreferrer"
+          class="section-label footer__icon-link"
+          aria-label="Poster"
+          title="Poster"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="1"/>
+            <line x1="8" y1="8" x2="16" y2="8"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+            <line x1="8" y1="16" x2="13" y2="16"/>
+          </svg>
+          <span>Poster ↗</span>
+        </a>
       </div>
     </div>
   </div>
@@ -127,5 +143,19 @@ const year = new Date().getFullYear();
   .footer__links {
     display: flex;
     gap: var(--space-5);
+  }
+
+  .footer__icon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .footer__icon-link svg {
+    opacity: 0.8;
+  }
+
+  .footer__icon-link:hover svg {
+    opacity: 1;
   }
 </style>
