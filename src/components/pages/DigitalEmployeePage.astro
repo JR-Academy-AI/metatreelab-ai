@@ -1,0 +1,679 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import EngagementModes from '../home/EngagementModes.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { type Locale } from '../../config/site';
+import { servicesByTrack, type ServiceEntry } from '../../data/services';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const copy = locale === 'zh'
+  ? {
+      sectionLabel: '/ AI DIGITAL EMPLOYEE',
+      title: '一个永远不会离职的员工。',
+      subtitle: '入职一次、永久记忆、每次交互都让它更聪明 — 底层是企业级记忆系统，横跨 Slack / 飞书 / 微信 / Teams / CRM 部署。同一套记忆层驱动 Hermes、OpenClaw 和你自研的任何 agent。',
+      pillarsHeading: '/ 为什么这是一条独立产品线',
+      pillars: [
+        {
+          label: '入职一次',
+          text: '传统员工 6 个月才上手，这位员工一次 onboarding 之后永久保留。',
+        },
+        {
+          label: '永久记忆',
+          text: '三层记忆系统（短期 / 长期 / episodic），多后端存储，不是把 prompt 越塞越长。',
+        },
+        {
+          label: '越用越聪明',
+          text: '从每次交互中学习，自动生成可复用 skill — 真的会变强，不是营销话术。',
+        },
+        {
+          label: '跨 agent 共享',
+          text: '同一套记忆层驱动 Hermes / OpenClaw / 自研 agent — 客服、审批、CRM 跟进共享同一个"大脑"。',
+        },
+      ],
+      servicesHeading: '/ SERVICES — 4 种方式把数字员工装进来',
+      archHeading: '/ ARCHITECTURE — 企业级记忆系统',
+      archDesc: '不是一个 prompt + 一个向量库的组装。三层记忆分别承担不同职责，按 workload 选用合适的后端。',
+      archLayers: [
+        {
+          layer: 'SHORT-TERM',
+          name: '短期 / 工作记忆',
+          desc: '当前会话上下文、正在处理的任务、活跃工具调用。',
+          backend: 'In-process / Redis',
+        },
+        {
+          layer: 'LONG-TERM',
+          name: '长期 / 语义记忆',
+          desc: '业务知识、SOP、历史决策、学到的事实。',
+          backend: 'SQLite + FTS5 · pgvector',
+        },
+        {
+          layer: 'EPISODIC',
+          name: 'Episodic / 经验记忆',
+          desc: '过往交互 trace、case study、可复用 skill。',
+          backend: 'Graph DB · Event log',
+        },
+      ],
+      agentsHeading: '/ 同一层记忆，驱动多个 agent',
+      agents: [
+        { name: 'Hermes Agent', role: '自进化多能 agent' },
+        { name: 'OpenClaw 🦞', role: '自托管，原生微信 / 飞书' },
+        { name: 'Custom Agent', role: '你自研的任何 agent' },
+      ],
+      whyHeading: '/ WHY METATREE — 为什么我们能做这件事',
+      whyItems: [
+        { label: '自己在跑', text: '我们团队每天用"agent + 持久记忆 + 自更新 skills"的模式给匠人学院发货 — 交付给你的就是我们自己用的架构。' },
+        { label: 'AI 资产背书', text: '母公司匠人学院有 10+ 套生产 AI 系统（training-rag、SigmaQ、MCP servers、3 款线上 Chrome agent），这些都是真实证据。' },
+        { label: '合规与中国市场', text: '原生支持微信 / 飞书 / 企微，数据可完全自托管 — n8n / Zapier 做不到的地方我们能做。' },
+        { label: '能教能陪跑', text: '不只是搭系统，我们用匠人学院的培训体系把你的团队真的教会 — 做完不消失。' },
+      ],
+      deliverables: '交付内容',
+      proof: '证据',
+    }
+  : {
+      sectionLabel: '/ AI DIGITAL EMPLOYEE',
+      title: 'The employee that never leaves.',
+      subtitle: 'Onboards once, remembers forever, gets sharper every interaction — built on an enterprise-grade memory system, deployed across Slack, Feishu, WeChat, Teams and your CRM. The same memory layer powers Hermes, OpenClaw, and any custom agents you run.',
+      pillarsHeading: '/ Why this is its own product line',
+      pillars: [
+        {
+          label: 'Onboards once',
+          text: 'A human takes 6 months to ramp up. This employee onboards once and retains it all, forever.',
+        },
+        {
+          label: 'Remembers forever',
+          text: 'Three-layer memory (short-term / long-term / episodic) across pluggable backends — not a prompt we keep stretching.',
+        },
+        {
+          label: 'Gets sharper daily',
+          text: 'Learns from every interaction and writes reusable skills. It actually gets better — not marketing spin.',
+        },
+        {
+          label: 'Shared brain',
+          text: 'One memory layer powers Hermes / OpenClaw / your custom agents — support, approvals, CRM follow-ups all share the same mind.',
+        },
+      ],
+      servicesHeading: '/ SERVICES — 4 ways to install it',
+      archHeading: '/ ARCHITECTURE — enterprise-grade memory system',
+      archDesc: 'Not one prompt glued to one vector DB. Three memory layers each doing distinct work, with the right backend per workload.',
+      archLayers: [
+        {
+          layer: 'SHORT-TERM',
+          name: 'Short-term / working memory',
+          desc: 'Current conversation context, in-flight tasks, active tool calls.',
+          backend: 'In-process / Redis',
+        },
+        {
+          layer: 'LONG-TERM',
+          name: 'Long-term / semantic memory',
+          desc: 'Business knowledge, SOPs, past decisions, learned facts.',
+          backend: 'SQLite + FTS5 · pgvector',
+        },
+        {
+          layer: 'EPISODIC',
+          name: 'Episodic memory',
+          desc: 'Past interaction traces, case studies, reusable skills.',
+          backend: 'Graph DB · Event log',
+        },
+      ],
+      agentsHeading: '/ One memory layer, multiple agents',
+      agents: [
+        { name: 'Hermes Agent', role: 'Self-improving general-purpose' },
+        { name: 'OpenClaw 🦞', role: 'Self-hosted, native WeChat / Feishu' },
+        { name: 'Custom Agent', role: 'Anything you build yourself' },
+      ],
+      whyHeading: '/ WHY METATREE — why we can actually build this',
+      whyItems: [
+        { label: 'We run it', text: 'Our team ships JR Academy daily with the exact pattern — agents + persistent memory + self-updating skills. What we deliver is what we use.' },
+        { label: 'AI-asset-backed', text: 'Our parent JR Academy runs 10+ production AI systems (training-rag, SigmaQ, MCP servers, 3 live Chrome agents). These are live receipts, not slideware.' },
+        { label: 'Compliance + China', text: 'Native WeChat / Feishu / WeCom integration and fully self-hosted deployment — we operate where n8n and Zapier cannot.' },
+        { label: 'Build + teach + stay', text: 'Not just installation — we use JR Academy\'s training system to actually enable your team. We don\'t vanish after launch.' },
+      ],
+      deliverables: 'Deliverables',
+      proof: 'Proof',
+    };
+
+const digitalEmployeeServices = servicesByTrack.digitalEmployee;
+---
+
+<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+  <PageHero
+    sectionLabel={copy.sectionLabel}
+    title={copy.title}
+    subtitle={copy.subtitle}
+    variant="split"
+    eyebrow={locale === 'zh' ? '企业级记忆系统 / 跨 agent 共享大脑' : 'Enterprise memory system / Shared brain across agents'}
+    metaItems={[
+      locale === 'zh' ? '4 个子服务' : '4 service tiers',
+      locale === 'zh' ? '3 层记忆架构' : '3-layer memory',
+      locale === 'zh' ? '跨 agent 共享' : 'Cross-agent shared',
+    ]}
+    railItems={
+      locale === 'zh'
+        ? ['入职一次，永久记忆', '记忆层跨 agent 共享，不绑定框架', '既能端到端交付，也能只给你记忆底座']
+        : ['Onboard once, remember forever', 'Memory layer is framework-agnostic', 'Full build or memory-only — you pick']
+    }
+  />
+
+  <!-- PILLARS -->
+  <section class="de-pillars">
+    <div class="de-pillars__inner container-x">
+      <span class="section-label">{copy.pillarsHeading}</span>
+      <div class="de-pillars__grid">
+        {
+          copy.pillars.map((p) => (
+            <div class="de-pillar">
+              <span class="de-pillar__label">{p.label}</span>
+              <p class="de-pillar__text">{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="de-services">
+    <div class="de-services__inner container-x">
+      <div class="de-services__header">
+        <span class="section-label">{copy.servicesHeading}</span>
+      </div>
+
+      <div class="de-services__list">
+        {
+          digitalEmployeeServices.map((s: ServiceEntry) => (
+            <article class={`de-service ${s.flagship ? 'de-service--flagship' : ''}`}>
+              <div class="de-service__top">
+                <div class="de-service__titlegroup">
+                  {s.flagship && <span class="de-service__flagship">FLAGSHIP</span>}
+                  <h3 class="de-service__title">{s.title[locale]}</h3>
+                </div>
+                <span class="de-service__duration">{s.duration}</span>
+              </div>
+              <p class="de-service__subtitle">{s.subtitle[locale]}</p>
+              <p class="de-service__summary">{s.summary[locale]}</p>
+
+              <div class="de-service__deliverables">
+                <span class="section-label">{copy.deliverables}</span>
+                <ul>
+                  {s.deliverables[locale].map((d) => <li>· {d}</li>)}
+                </ul>
+              </div>
+
+              {s.proof && (
+                <div class="de-service__proof">
+                  <span class="section-label">{copy.proof}</span>
+                  <p>{s.proof[locale]}</p>
+                </div>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="de-arch">
+    <div class="de-arch__inner container-x">
+      <div class="de-arch__header">
+        <span class="section-label">{copy.archHeading}</span>
+        <p class="de-arch__desc">{copy.archDesc}</p>
+      </div>
+
+      <div class="de-arch__stack">
+        {
+          copy.archLayers.map((layer, idx) => (
+            <div class={`de-layer de-layer--${idx}`}>
+              <div class="de-layer__left">
+                <span class="de-layer__tag">{layer.layer}</span>
+                <h3 class="de-layer__name">{layer.name}</h3>
+                <p class="de-layer__desc">{layer.desc}</p>
+              </div>
+              <div class="de-layer__right">
+                <span class="de-layer__backend">{layer.backend}</span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="de-agents">
+        <span class="section-label">{copy.agentsHeading}</span>
+        <div class="de-agents__grid">
+          {
+            copy.agents.map((a) => (
+              <div class="de-agent">
+                <h4 class="de-agent__name">{a.name}</h4>
+                <p class="de-agent__role">{a.role}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="de-why">
+    <div class="de-why__inner container-x">
+      <span class="section-label">{copy.whyHeading}</span>
+      <div class="de-why__grid">
+        {
+          copy.whyItems.map((item) => (
+            <div class="de-why__card">
+              <span class="de-why__label">{item.label}</span>
+              <p class="de-why__text">{item.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <EngagementModes locale={locale} />
+  <CtaFooter locale={locale} />
+</BaseLayout>
+
+<style>
+  /* PILLARS */
+  .de-pillars {
+    position: relative;
+    padding-block: var(--space-8);
+    z-index: 2;
+  }
+
+  .de-pillars__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .de-pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+  }
+
+  .de-pillar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: border-color var(--dur-normal) var(--ease-out);
+  }
+
+  .de-pillar:hover {
+    border-color: var(--brand-primary);
+  }
+
+  .de-pillar__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+  }
+
+  .de-pillar__text {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  /* SERVICES */
+  .de-services {
+    position: relative;
+    padding-block: var(--space-8);
+    border-top: 1px solid var(--border-hairline);
+    z-index: 2;
+  }
+
+  .de-services__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .de-services__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .de-service {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--dur-normal) var(--ease-out);
+  }
+
+  .de-service:hover {
+    border-color: var(--border-strong);
+  }
+
+  .de-service--flagship {
+    border-color: rgba(0, 229, 160, 0.3);
+    background: linear-gradient(
+      180deg,
+      rgba(0, 229, 160, 0.05) 0%,
+      var(--bg-glass) 100%
+    );
+  }
+
+  .de-service--flagship:hover {
+    border-color: var(--brand-primary);
+  }
+
+  .de-service__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .de-service__titlegroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex: 1;
+  }
+
+  .de-service__flagship {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: 0.12em;
+    color: var(--brand-primary);
+    width: fit-content;
+    padding: 2px 6px;
+    border: 1px solid var(--brand-primary);
+    border-radius: var(--radius-sm);
+    background: rgba(0, 229, 160, 0.08);
+  }
+
+  .de-service__title {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .de-service__duration {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 4px;
+  }
+
+  .de-service__subtitle {
+    font-size: var(--fs-body);
+    color: var(--text-primary);
+    font-weight: var(--fw-medium);
+  }
+
+  .de-service__summary {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  .de-service__deliverables,
+  .de-service__proof {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .de-service__deliverables ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .de-service__deliverables li {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-snug);
+  }
+
+  .de-service__proof p {
+    font-size: var(--fs-body-sm);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    letter-spacing: -0.005em;
+  }
+
+  /* ARCHITECTURE */
+  .de-arch {
+    position: relative;
+    padding-block: var(--space-9);
+    border-top: 1px solid var(--border-hairline);
+    background: linear-gradient(180deg, rgba(0, 229, 160, 0.015) 0%, transparent 100%);
+    z-index: 2;
+  }
+
+  .de-arch__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .de-arch__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .de-arch__desc {
+    font-size: var(--fs-body-lg);
+    color: var(--text-secondary);
+    max-width: 72rem;
+    line-height: var(--lh-normal);
+  }
+
+  .de-arch__stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .de-layer {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    align-items: center;
+    transition: border-color var(--dur-normal) var(--ease-out);
+  }
+
+  .de-layer:hover {
+    border-color: var(--brand-primary);
+  }
+
+  .de-layer__left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .de-layer__tag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.12em;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+  }
+
+  .de-layer__name {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .de-layer__desc {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  .de-layer__right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .de-layer__backend {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-primary);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .de-agents {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .de-agents__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .de-agent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .de-agent__name {
+    font-size: var(--fs-body-lg);
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
+  }
+
+  .de-agent__role {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    color: var(--brand-primary);
+    letter-spacing: 0.02em;
+  }
+
+  /* WHY */
+  .de-why {
+    position: relative;
+    padding-block: var(--space-8);
+    border-top: 1px solid var(--border-hairline);
+    z-index: 2;
+  }
+
+  .de-why__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .de-why__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .de-why__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: border-color var(--dur-normal) var(--ease-out);
+  }
+
+  .de-why__card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .de-why__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+  }
+
+  .de-why__text {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-normal);
+  }
+
+  @media (max-width: 991px) {
+    .de-pillars__grid,
+    .de-services__list,
+    .de-why__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .de-agents__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .de-layer {
+      grid-template-columns: 1fr;
+    }
+    .de-layer__right {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .de-pillars__grid,
+    .de-services__list,
+    .de-why__grid,
+    .de-agents__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

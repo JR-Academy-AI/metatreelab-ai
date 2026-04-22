@@ -3,12 +3,13 @@
  * Single source of truth for all service pages and card components.
  *
  * Tracks:
- * - build    → AI Systems: Build (high ticket, long cycle)
- * - adopt    → AI Systems: Adopt (mid ticket, short cycle)
- * - property → Property Marketing
+ * - build            → AI Systems: Build (high ticket, long cycle)
+ * - adopt            → AI Systems: Adopt (mid ticket, short cycle)
+ * - digital-employee → AI Digital Employee (enterprise memory + agent platform)
+ * - property         → Property Marketing
  */
 
-export type ServiceTrack = 'build' | 'adopt' | 'property';
+export type ServiceTrack = 'build' | 'adopt' | 'digital-employee' | 'property';
 
 export interface ServiceEntry {
   slug: string;
@@ -606,6 +607,173 @@ export const services: ServiceEntry[] = [
     },
   },
 
+  // ========== DIGITAL EMPLOYEE TRACK ==========
+  // An AI employee that onboards once, remembers forever, and gets sharper every day.
+  // Anchored in an enterprise-grade memory system that also powers Hermes / OpenClaw / custom agents.
+  {
+    slug: 'digital-employee-pilot',
+    track: 'digital-employee',
+    flagship: false,
+    duration: '2-3w',
+    order: 1,
+    tags: ['pilot', 'starter', 'digital-employee'],
+    title: {
+      en: 'Digital Employee Pilot',
+      zh: '数字员工 Pilot',
+    },
+    subtitle: {
+      en: 'One role, one channel, live in 2-3 weeks.',
+      zh: '1 个角色、1 个渠道，2-3 周上线。',
+    },
+    summary: {
+      en: 'Start with a single, well-scoped digital employee — one role (customer support, lead qualifier, internal Q&A, etc.) on one channel (Slack or WeChat). We set up a starter memory layer, build the core skills, and get it running against real traffic. Low commitment, fast validation, clear upgrade path to the full Core engagement.',
+      zh: '从一个定义清晰的单一数字员工开始 — 1 个角色（客服、lead 筛查、内部问答等）× 1 个渠道（Slack 或微信）。我们搭建一套启动版记忆层、开发核心 skill，让它面对真实流量跑起来。低投入、快速验证，向 Core 方案升级路径清晰。',
+    },
+    deliverables: {
+      en: [
+        'Scoped role definition and success metrics',
+        'Single-channel deployment (Slack / Teams / WeChat / Feishu — your pick)',
+        'Starter memory layer (SQLite + FTS5, long-term knowledge ingestion)',
+        '5-10 custom skills for the scoped role',
+        'Eval harness with golden test set',
+        '30-day go-live support',
+      ],
+      zh: [
+        '角色定义与成功指标',
+        '单渠道部署（Slack / Teams / 微信 / 飞书，任选一个）',
+        '启动版记忆层（SQLite + FTS5，长期知识灌入）',
+        '针对该角色的 5-10 个定制 skill',
+        '带 golden test set 的评估基建',
+        '上线后 30 天陪跑',
+      ],
+    },
+  },
+
+  {
+    slug: 'digital-employee-core',
+    track: 'digital-employee',
+    flagship: true,
+    duration: '6-12w',
+    order: 2,
+    tags: ['digital-employee', 'memory', 'flagship', 'agent', 'enterprise'],
+    title: {
+      en: 'AI Digital Employee · Core',
+      zh: 'AI 数字员工 · Core',
+    },
+    subtitle: {
+      en: 'Onboards once, remembers forever, gets sharper every day.',
+      zh: '入职一次，永久记忆，越用越聪明。',
+    },
+    summary: {
+      en: 'The full build: an enterprise-grade digital employee backed by a three-layer memory system (short-term / long-term / episodic) deployed across Slack, Feishu, WeChat, Teams, email and your CRM. Traditional employees take 6 months to ramp up and walk out with their know-how. This one onboards once, accumulates your business knowledge forever, and gets sharper with every interaction. The same memory layer powers Hermes Agent, OpenClaw and any custom agents you deploy.',
+      zh: '完整版构建：企业级数字员工，底层是三层记忆系统（短期 / 长期 / episodic），横跨 Slack、飞书、微信、Teams、邮箱和 CRM 部署。传统员工 6 个月才上手，离职时把 know-how 全带走。这位员工只需 onboarding 一次，业务知识永久沉淀，每次交互都让它更聪明。同一套记忆层驱动 Hermes Agent、OpenClaw 和你自研的任何 agent。',
+    },
+    deliverables: {
+      en: [
+        'Three-layer memory system: short-term / long-term / episodic, multi-backend (SQLite+FTS5 / pgvector / graph)',
+        'Persona & SOP ingestion — encode how your team actually works',
+        'Multi-channel deployment (Slack / Feishu / WeChat / Teams / email / CRM)',
+        'Cross-agent memory sharing — one knowledge layer for Hermes, OpenClaw, custom agents',
+        'Data isolation, access control, audit logging (enterprise-compliance grade)',
+        'Self-improvement loop — employee learns from every interaction and writes reusable skills',
+        'Onboarding program — we train the digital employee alongside your team like a new hire',
+        '90-day ramp-up support + retainer option',
+      ],
+      zh: [
+        '三层记忆系统：短期 / 长期 / episodic，多后端（SQLite+FTS5 / pgvector / 图数据库）',
+        'Persona 与 SOP 灌入 — 把你团队的工作方式编码进去',
+        '多渠道部署（Slack / 飞书 / 微信 / Teams / 邮箱 / CRM）',
+        '跨 agent 记忆共享 — 同一层知识驱动 Hermes、OpenClaw 与自研 agent',
+        '数据隔离、权限边界、审计日志（企业合规级）',
+        '自进化循环 — 员工从每次交互中学习，自动生成可复用 skill',
+        'Onboarding 项目 — 陪你团队像培训新员工一样"训练"数字员工',
+        '90 天 ramp-up 陪跑 + retainer 可选',
+      ],
+    },
+    proof: {
+      en: 'The pattern we run internally — agents + persistent memory + self-updating skills library — is the architecture we deploy for clients. We ship JR Academy with it every day.',
+      zh: '我们内部就是这个模式在跑 — agent + 持久记忆 + 自更新 skills library。每天用它给匠人学院发货，交付给客户的是同一套架构。',
+    },
+  },
+
+  {
+    slug: 'enterprise-memory-platform',
+    track: 'digital-employee',
+    flagship: false,
+    duration: '4-8w',
+    order: 3,
+    tags: ['memory', 'platform', 'infrastructure', 'digital-employee'],
+    title: {
+      en: 'Enterprise Memory Platform',
+      zh: '企业级记忆平台',
+    },
+    subtitle: {
+      en: 'Just the memory backbone — drop into any agent stack you already run.',
+      zh: '只要记忆底座 — 嵌入你已有的任何 agent 栈。',
+    },
+    summary: {
+      en: 'For teams who already have agents but lack a real persistent memory layer. We build the horizontal memory platform your agents plug into — short-term, long-term and episodic memory with pluggable backends (SQLite+FTS5, pgvector, Neo4j), an SDK your engineers call from any framework (LangChain, LlamaIndex, Hermes, OpenClaw, custom), a recall/precision eval harness, and the observability and access-control you need to put it in front of customers.',
+      zh: '适合已经有 agent、但缺真正持久记忆层的团队。我们搭建一套横向记忆平台，你现有的 agent 对接上去就能用 — 短期 / 长期 / episodic 记忆，可插拔后端（SQLite+FTS5、pgvector、Neo4j），给工程师一套 SDK 从任何框架调用（LangChain、LlamaIndex、Hermes、OpenClaw、自研），配套召回/精度评估基建，以及可观测性和权限控制，真正能面向客户使用。',
+    },
+    deliverables: {
+      en: [
+        'Three-layer memory architecture (short-term / long-term / episodic)',
+        'Pluggable backend selection per workload (SQLite+FTS5 / pgvector / graph)',
+        'Memory SDK + API — framework-agnostic integration',
+        'Recall / precision / LLM-judge evaluation harness',
+        'Observability, cost tracking, access control, audit log',
+        'Integration guide for Hermes / OpenClaw / LangChain / custom agents',
+      ],
+      zh: [
+        '三层记忆架构（短期 / 长期 / episodic）',
+        '按 workload 选型的可插拔后端（SQLite+FTS5 / pgvector / 图数据库）',
+        'Memory SDK + API — 框架无关集成',
+        '召回 / 精度 / LLM-judge 评估基建',
+        '可观测性、成本追踪、权限控制、审计日志',
+        'Hermes / OpenClaw / LangChain / 自研 agent 对接指南',
+      ],
+    },
+  },
+
+  {
+    slug: 'digital-employee-retainer',
+    track: 'digital-employee',
+    flagship: false,
+    duration: 'retainer',
+    order: 4,
+    tags: ['retainer', 'operations', 'digital-employee'],
+    title: {
+      en: 'Digital Employee Operations Retainer',
+      zh: '数字员工运维 Retainer',
+    },
+    subtitle: {
+      en: 'Keep your digital employees sharp — skill authoring, memory curation, eval.',
+      zh: '持续让你的数字员工变聪明 — skill 维护、记忆治理、评估。',
+    },
+    summary: {
+      en: 'A long-term partnership that keeps your digital employees improving after launch. Monthly new-skill development, periodic memory audits (dedup, relevance, decay), eval regression testing, adoption tracking and quarterly review. The difference between "we installed an AI employee" and "our AI employee gets better every month".',
+      zh: '上线后持续让数字员工变聪明的长期合作。月度新 skill 开发、定期记忆审计（去重、相关性、衰减）、评估回归测试、adoption 追踪、季度 review。"我们装了个 AI 员工" 和 "我们的 AI 员工每个月都在变强" 的区别就在这里。',
+    },
+    deliverables: {
+      en: [
+        'Monthly new skill development and iteration',
+        'Memory curation — dedup, relevance scoring, decay policy',
+        'Eval regression harness on a growing golden set',
+        'Usage dashboards and adoption tracking',
+        'Quarterly business review with improvement roadmap',
+        'Priority Slack support channel',
+      ],
+      zh: [
+        '月度新 skill 开发与迭代',
+        '记忆治理 — 去重、相关性打分、衰减策略',
+        'Golden set 持续扩展的评估回归基建',
+        '用量面板与 adoption 追踪',
+        '季度业务 review + 改进 roadmap',
+        '优先级 Slack 支持通道',
+      ],
+    },
+  },
+
   // ========== PROPERTY MARKETING TRACK ==========
   // AI-powered: websites launched in days, pitch decks / posters / flyers generated fast
   {
@@ -845,5 +1013,8 @@ export const services: ServiceEntry[] = [
 export const servicesByTrack = {
   build: services.filter((s) => s.track === 'build').sort((a, b) => a.order - b.order),
   adopt: services.filter((s) => s.track === 'adopt').sort((a, b) => a.order - b.order),
+  digitalEmployee: services
+    .filter((s) => s.track === 'digital-employee')
+    .sort((a, b) => a.order - b.order),
   property: services.filter((s) => s.track === 'property').sort((a, b) => a.order - b.order),
 };
