@@ -26,7 +26,13 @@ const copy = locale === 'zh'
     };
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={copy.subtitle}
+  locale={locale}
+  path={Astro.url.pathname}
+  noindex
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

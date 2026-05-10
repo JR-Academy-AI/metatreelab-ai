@@ -4,6 +4,7 @@ import CtaFooter from '../shared/CtaFooter.astro';
 import ProjectThumbnail from '../ui/ProjectThumbnail.astro';
 import { localizedHref, type Locale } from '../../config/site';
 import { type ProjectEntry } from '../../data/projects';
+import { buildCreativeWork } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -38,6 +39,7 @@ const tags = project.tags;
   description={project.summary[locale]}
   locale={locale}
   path={Astro.url.pathname}
+  schema={buildCreativeWork(project, locale)}
 >
   <section class="detail">
     <div class="detail__inner container-x">

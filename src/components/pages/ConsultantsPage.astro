@@ -4,6 +4,7 @@ import PageHero from '../ui/PageHero.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
 import { type Locale } from '../../config/site';
 import { consultants, type ConsultantEntry, type ConsultantRate } from '../../data/consultants';
+import { buildItemList, buildPerson } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -390,9 +391,25 @@ function formatRates(rates: ConsultantRate[]): string {
     })
     .join(' · ');
 }
+
+const description = locale === 'zh'
+  ? '澳洲各地 16 位资深工程师与顾问 — AI 工程、云与 DevOps、网络安全、房产营销、IT 支持。按项目派出，远程为主，墨尔本/悉尼可现场。'
+  : '16 senior engineers and consultants across Australia — AI engineering, cloud & DevOps, cybersecurity, property marketing, and IT support. Available per project, remote-first, on-site in MEL / SYD.';
+
+const consultantsSchema = buildItemList(
+  locale === 'zh' ? 'Metatree AI Lab — 顾问团队' : 'Metatree AI Lab — Consultants',
+  consultants,
+  (c) => buildPerson(c, locale),
+);
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={consultantsSchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

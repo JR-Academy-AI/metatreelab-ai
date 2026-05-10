@@ -353,9 +353,18 @@ const copy = locale === 'zh'
       ctaDesc: 'We typically start with a 2-3 week Pilot. You define the role and scenario — we build it.',
       ctaButton: 'Get in touch',
     };
+
+const description = locale === 'zh'
+  ? 'AI 数字员工的真实企业用例 — 按部门（客服 / 销售 / 运营 / HR）+ 按行业 + 按部署节奏拆，每个场景都有可落地路径。'
+  : 'Real enterprise use cases for the AI Digital Employee — broken down by department (CS / Sales / Ops / HR), by industry, and by deployment cadence. Every scenario has a deliverable path.';
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

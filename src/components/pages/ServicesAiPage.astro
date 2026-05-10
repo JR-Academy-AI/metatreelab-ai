@@ -5,6 +5,7 @@ import EngagementModes from '../home/EngagementModes.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
 import { type Locale } from '../../config/site';
 import { servicesByTrack, type ServiceEntry } from '../../data/services';
+import { buildItemList, buildService } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -45,6 +46,16 @@ const copy = locale === 'zh'
 const buildServices = servicesByTrack.build;
 const adoptServices = servicesByTrack.adopt;
 
+const description = locale === 'zh'
+  ? 'AI Build Track（RAG / Agent / LLM 应用 / 平台工程）+ AI Adopt Track（Claude Cowork / OpenClaw / 工作流自动化）。每条 Track 都有线上产品作证。'
+  : 'AI Build Track (RAG, agents, LLM apps, platform engineering) + AI Adopt Track (Claude Cowork, OpenClaw, workflow automation). Both tracks anchored in live products.';
+
+const aiServicesSchema = buildItemList(
+  locale === 'zh' ? 'AI Build + AI Adopt 服务' : 'AI Build + AI Adopt Services',
+  [...buildServices, ...adoptServices],
+  (s) => buildService(s, locale),
+);
+
 const proofMatrix = locale === 'zh'
   ? [
       { capability: 'RAG 与上下文工程', proof: 'training-rag · LangChain · pgvector on Lambda' },
@@ -66,7 +77,13 @@ const proofMatrix = locale === 'zh'
     ];
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={aiServicesSchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

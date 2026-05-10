@@ -8,6 +8,21 @@
     "bookCall": "Book a call",
     "quote": "Get a Quote"
   },
+  "breadcrumbs": {
+    "home": "Home",
+    "services": "Services",
+    "services_ai": "AI Build & Adopt",
+    "services_digital_employee": "AI Digital Employee",
+    "services_property": "Property Marketing",
+    "use_cases": "Use Cases",
+    "work": "Case Studies",
+    "consultants": "Consultants",
+    "about": "About",
+    "contact": "Contact",
+    "deck": "Deck",
+    "quote": "Quote",
+    "showcase": "Showcase"
+  },
   "hero": {
     "sectionLabel": "/ 01 — YOUR AI PARTNER",
     "title_line1": "Cut costs. Ship faster.",

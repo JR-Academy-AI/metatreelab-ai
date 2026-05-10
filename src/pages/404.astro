@@ -3,7 +3,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../config/site';
 ---
 
-<BaseLayout title="404 — Page not found" locale="en" path="/404/">
+<BaseLayout
+  title="404 — Page not found"
+  description="The page you were looking for doesn't exist."
+  locale="en"
+  path="/404/"
+  noindex
+>
   <section class="notfound">
     <div class="notfound__inner container-x">
       <span class="section-label">/ 404</span>

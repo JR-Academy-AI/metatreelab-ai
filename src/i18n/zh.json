@@ -8,6 +8,21 @@
     "bookCall": "预约沟通",
     "quote": "获取报价"
   },
+  "breadcrumbs": {
+    "home": "首页",
+    "services": "服务",
+    "services_ai": "AI 定制与落地",
+    "services_digital_employee": "AI 数字员工",
+    "services_property": "房产营销",
+    "use_cases": "应用场景",
+    "work": "案例",
+    "consultants": "顾问",
+    "about": "关于",
+    "contact": "联系",
+    "deck": "公司介绍",
+    "quote": "报价",
+    "showcase": "展示"
+  },
   "hero": {
     "sectionLabel": "/ 01 — 你的 AI 合作伙伴",
     "title_line1": "降本增效，",

@@ -17,7 +17,14 @@ const contactHref = localizedHref('/contact/', locale);
 const recurringIdsJson = JSON.stringify([...RECURRING_IDS]);
 ---
 
-<BaseLayout title={q.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={q.title}
+  description={locale === 'zh'
+    ? '互动式报价工具：勾选你需要的服务模块，立即看到价格区间。AI 系统、数字员工、房产营销、长期 retainer 均可组合。'
+    : 'Interactive pricing calculator — pick the modules you need and see a transparent price range instantly. AI systems, digital employee, property marketing, and retainers all combinable.'}
+  locale={locale}
+  path={Astro.url.pathname}
+>
   <PageHero
     sectionLabel={q.sectionLabel}
     title={q.title}

@@ -4,7 +4,8 @@ import PageHero from '../ui/PageHero.astro';
 import EngagementModes from '../home/EngagementModes.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
 import { localizedHref, type Locale } from '../../config/site';
-import { servicesByTrack } from '../../data/services';
+import { services, servicesByTrack } from '../../data/services';
+import { buildItemList, buildService } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -86,9 +87,25 @@ const tracks = [
     accent: 'white',
   },
 ];
+
+const description = locale === 'zh'
+  ? '4 条业务线、39 项服务：AI 定制开发、AI 落地、AI 数字员工、房产营销。每项服务都有线上产品作为证据。'
+  : 'Four service lines, 39 offerings: AI Build, AI Adopt, AI Digital Employee, Property Marketing. Every capability has a live system as proof.';
+
+const servicesSchema = buildItemList(
+  locale === 'zh' ? 'Metatree AI Lab — 服务目录' : 'Metatree AI Lab — Service Catalogue',
+  services,
+  (s) => buildService(s, locale),
+);
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={servicesSchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

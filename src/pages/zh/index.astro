@@ -11,6 +11,25 @@ import StatsRow from '../../components/home/StatsRow.astro';
 import FeaturedWork from '../../components/home/FeaturedWork.astro';
 import CtaFooter from '../../components/shared/CtaFooter.astro';
 import { siteConfig } from '../../config/site';
+import { services } from '../../data/services';
+import { featuredProjects } from '../../data/projects';
+import { buildItemList, buildService, buildCreativeWork } from '../../lib/schema';
+
+const flagshipServices = services.filter((s) => s.flagship);
+const homeFeaturedProjects = featuredProjects.slice(0, 6);
+
+const homeSchema = [
+  buildItemList(
+    '精选服务 — Metatree AI Lab',
+    flagshipServices,
+    (s) => buildService(s, 'zh'),
+  ),
+  buildItemList(
+    '精选案例 — Metatree AI Lab',
+    homeFeaturedProjects,
+    (p) => buildCreativeWork(p, 'zh'),
+  ),
+];
 ---
 
 <BaseLayout
@@ -18,6 +37,7 @@ import { siteConfig } from '../../config/site';
   description={siteConfig.description.zh}
   locale="zh"
   path="/zh/"
+  schema={homeSchema}
 >
   <HeroPlaceholder locale="zh" />
   <ServiceSplit locale="zh" />

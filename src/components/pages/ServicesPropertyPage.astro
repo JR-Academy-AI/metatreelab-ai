@@ -4,6 +4,7 @@ import PageHero from '../ui/PageHero.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
 import { type Locale } from '../../config/site';
 import { servicesByTrack, type ServiceEntry } from '../../data/services';
+import { buildItemList, buildService } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -58,9 +59,25 @@ const copy = locale === 'zh'
     };
 
 const propertyServices = servicesByTrack.property;
+
+const description = locale === 'zh'
+  ? 'AI 驱动的澳洲房产营销：开发商主站、楼盘专属页、品牌视觉、广告着陆页、长期 retainer。懂 off-the-plan 节奏，懂华人买家市场。'
+  : 'AI-powered property marketing for Australia: developer sites, single-project landing pages, brand identity, ad pages, retainers. We know the off-the-plan rhythm and the Chinese buyer market.';
+
+const propertySchema = buildItemList(
+  locale === 'zh' ? '房产营销服务' : 'Property Marketing Services',
+  propertyServices,
+  (s) => buildService(s, locale),
+);
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={propertySchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

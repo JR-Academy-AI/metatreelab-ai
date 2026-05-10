@@ -5,6 +5,7 @@ import EngagementModes from '../home/EngagementModes.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
 import { localizedHref, type Locale } from '../../config/site';
 import { servicesByTrack, type ServiceEntry } from '../../data/services';
+import { buildItemList, buildService } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -147,9 +148,25 @@ const copy = locale === 'zh'
     };
 
 const digitalEmployeeServices = servicesByTrack.digitalEmployee;
+
+const description = locale === 'zh'
+  ? '入职一次、永久记忆、横跨 Slack / 飞书 / 微信 / Teams 部署。三层记忆系统 + 跨 agent 共享大脑，越用越聪明。'
+  : 'Onboard once, remember forever — enterprise digital employee with three-layer memory, shared brain across agents, and Slack / Feishu / WeChat / Teams native integration.';
+
+const digitalEmployeeSchema = buildItemList(
+  locale === 'zh' ? 'AI 数字员工服务' : 'AI Digital Employee Services',
+  digitalEmployeeServices,
+  (s) => buildService(s, locale),
+);
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={digitalEmployeeSchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

@@ -5,6 +5,7 @@ import CtaFooter from '../shared/CtaFooter.astro';
 import ProjectThumbnail from '../ui/ProjectThumbnail.astro';
 import { localizedHref, type Locale } from '../../config/site';
 import { projects, type ProjectEntry } from '../../data/projects';
+import { buildItemList, buildCreativeWork } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -47,9 +48,25 @@ const categoryCounts = {
   property: sorted.filter((project) => project.category === 'property').length,
   brand: sorted.filter((project) => project.category === 'brand').length,
 };
+
+const description = locale === 'zh'
+  ? `${sorted.length} 个精选案例：AI 系统、房产营销、品牌网站 — 全部已上线生产环境。可按业务线筛选。`
+  : `${sorted.length} selected case studies across AI systems, property marketing, and brand work — all shipped to production. Filterable by category.`;
+
+const workSchema = buildItemList(
+  locale === 'zh' ? 'Metatree AI Lab — 案例集' : 'Metatree AI Lab — Case Studies',
+  sorted,
+  (p) => buildCreativeWork(p, locale),
+);
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={workSchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

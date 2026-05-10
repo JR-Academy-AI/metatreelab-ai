@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../ui/PageHero.astro';
 import { siteConfig, type Locale } from '../../config/site';
+import { buildContactPage, buildLocalBusiness } from '../../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -65,9 +66,24 @@ const copy = locale === 'zh'
 
 const API_URL = 'https://api.jiangren.com.au/business-inquiry';
 const thanksUrl = locale === 'zh' ? '/zh/thanks/' : '/thanks/';
+
+const description = locale === 'zh'
+  ? '描述你要解决的 AI 问题——一周内回复 + 下一步建议。Brisbane / Melbourne / Adelaide 三地办公室，远程交付澳洲与亚太市场。'
+  : 'Describe the AI problem you need solved — we reply within a week with a scoped next step. Offices in Brisbane, Melbourne, Adelaide; remote delivery across AU + APAC.';
+
+const contactSchema = [
+  buildContactPage(locale),
+  ...siteConfig.offices.map((office) => buildLocalBusiness(office, locale)),
+];
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={contactSchema}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}

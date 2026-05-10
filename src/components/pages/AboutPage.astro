@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../ui/PageHero.astro';
 import CtaFooter from '../shared/CtaFooter.astro';
 import { siteConfig, type Locale } from '../../config/site';
+import { buildAboutPage } from '../../lib/schema';
 import { getCollection } from 'astro:content';
 
 interface Props {
@@ -78,9 +79,19 @@ const testimonials = await getCollection('testimonials');
 const featuredTestimonials = testimonials
   .filter((t) => t.data.featured)
   .slice(0, 2);
+
+const description = locale === 'zh'
+  ? '我们做两件事：给技术团队做 AI，给澳洲房产团队做营销。母公司在教育科技领域运营 5+ 年，所有 AI 能力都有线上产品作为证据。'
+  : 'AI consulting + digital studio backed by JR Academy. We deliver AI systems for tech teams and marketing for Australian property teams — every capability has a live product as proof.';
 ---
 
-<BaseLayout title={copy.title} locale={locale} path={Astro.url.pathname}>
+<BaseLayout
+  title={copy.title}
+  description={description}
+  locale={locale}
+  path={Astro.url.pathname}
+  schema={buildAboutPage(locale)}
+>
   <PageHero
     sectionLabel={copy.sectionLabel}
     title={copy.title}
