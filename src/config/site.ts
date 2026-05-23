@@ -40,7 +40,7 @@ export const siteConfig = {
 
   social: {
     github: 'https://github.com/JR-Academy-AI',
-    linkedin: 'https://linkedin.com/school/jr-academy',
+    linkedin: 'https://www.linkedin.com/company/metatree-ai-lab',
     instagram: 'https://www.instagram.com/jracademyau/',
   },
 
