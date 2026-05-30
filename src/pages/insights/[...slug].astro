@@ -271,12 +271,162 @@ const blogPostingSchema = {
     margin-top: 0;
   }
 
+  /* ============================================================
+     Inline charts — zero-JS, dependency-free chart primitives.
+     Authored as plain HTML inside markdown. Brand jade→cyan.
+     ============================================================ */
+
+  /* ---- Bar chart ---- */
+  .prose :global(.chart) {
+    margin: var(--space-5) 0;
+    padding: var(--space-4);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+
+  .prose :global(.chart figcaption) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-4);
+  }
+
+  .prose :global(.bar) {
+    display: grid;
+    grid-template-columns: 14rem 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .prose :global(.bar:last-child) {
+    margin-bottom: 0;
+  }
+
+  .prose :global(.bar-label) {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    line-height: var(--lh-snug);
+  }
+
+  .prose :global(.bar-track) {
+    position: relative;
+    display: block;
+    height: 1.2rem;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  .prose :global(.bar-fill) {
+    display: block;
+    height: 100%;
+    width: var(--val);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, #00e5a0, #00b4d8);
+    box-shadow: 0 0 12px rgba(0, 229, 160, 0.25);
+  }
+
+  .prose :global(.bar-value) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  /* ---- Stat row ---- */
+  .prose :global(.stat-row) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-3);
+    margin: var(--space-5) 0;
+  }
+
+  .prose :global(.stat) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+
+  .prose :global(.stat b) {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.02em;
+    color: var(--brand-primary);
+  }
+
+  .prose :global(.stat span) {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-snug);
+    color: var(--text-tertiary);
+  }
+
+  /* ---- Comparison tables ---- */
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-5) 0;
+    font-size: var(--fs-body-sm);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .prose :global(thead th) {
+    background: rgba(0, 229, 160, 0.10);
+    color: var(--brand-accent);
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: left;
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border-hairline);
+    line-height: var(--lh-snug);
+  }
+
+  .prose :global(td) {
+    color: var(--text-secondary);
+  }
+
+  .prose :global(tbody tr:nth-child(even)) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .prose :global(tbody tr:last-child td) {
+    border-bottom: none;
+  }
+
   @media (max-width: 767px) {
     .post__title {
       font-size: var(--fs-h2);
     }
     .prose {
       font-size: var(--fs-body);
+    }
+    .prose :global(.bar) {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+    .prose :global(.bar-value) {
+      text-align: left;
     }
   }
 </style>

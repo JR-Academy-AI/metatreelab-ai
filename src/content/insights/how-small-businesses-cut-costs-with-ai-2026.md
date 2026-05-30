@@ -31,6 +31,12 @@ Rough math: if support eats 18 hours a week at a loaded cost of ~$35/hour, that'
 
 One client, a 12-person e-commerce brand, cut first-response time from 9 hours to under 2 minutes and reassigned one part-time support hire to retention work — same payroll, more revenue.
 
+<div class="stat-row">
+  <div class="stat"><b>9h → &lt;2min</b><span>first-response time on support</span></div>
+  <div class="stat"><b>60-70%</b><span>tickets auto-resolved</span></div>
+  <div class="stat"><b>30-40%</b><span>bookkeeping hours cut</span></div>
+</div>
+
 ## Bookkeeping and admin: the boring goldmine
 
 Document handling is where AI quietly earns its keep. Tools like Dext, Ramp, or a lightweight custom pipeline now read invoices, receipts, and bank statements and push clean data into Xero or QuickBooks with minimal human touch. A bookkeeper who spent 10 hours a week on data entry can drop to 3 and spend the rest on actual analysis.
@@ -42,6 +48,14 @@ For a small business paying $400-800/month for bookkeeping, that's often a 30-40
 You should not be paying agency rates for first drafts anymore. Product descriptions, ad variations, social captions, newsletter copy, and SEO outlines all start as AI drafts that a human edits. A founder who used to outsource blog content at $200-400 an article can now produce a solid draft in minutes and pay an editor a fraction to sharpen it.
 
 The mistake here is publishing the raw output. AI gives you a competent, slightly bland first draft. Your job — or your editor's — is to add the specifics, the opinion, and the real examples that make it worth reading. Used that way, a small marketing budget stretches two to three times further.
+
+<figure class="chart">
+  <figcaption>Estimated annual savings by task area</figcaption>
+  <div class="bar" style="--val:100%"><span class="bar-label">Customer support</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$20k/yr</b></div>
+  <div class="bar" style="--val:60%"><span class="bar-label">Bookkeeping &amp; admin</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$12k/yr</b></div>
+  <div class="bar" style="--val:40%"><span class="bar-label">Content &amp; marketing</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$8k/yr</b></div>
+  <div class="bar" style="--val:25%"><span class="bar-label">Scheduling &amp; admin</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$5k/yr</b></div>
+</figure>
 
 ## A realistic first-90-days roadmap
 

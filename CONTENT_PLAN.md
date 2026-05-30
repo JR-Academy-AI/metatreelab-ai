@@ -83,6 +83,51 @@ The goal is **genuinely useful, human-sounding writing** by a practitioner. Low 
 - **Banned filler** — never write: "In today's fast-paced world", "ever-evolving landscape", "unlock the power of", "game-changer", "revolutionize", "delve into", "it's important to note", "furthermore/moreover" stacking, or paragraphs that open with "Additionally". Cut corporate speak ("synergy", "leverage", "empower", "seamless").
 - **Honesty over hype.** Name what AI can't do and where it goes wrong. Skeptical, specific advice earns citations.
 
+## Visuals / charts (MANDATORY)
+
+**Every article MUST include at least one inline chart** — a bar chart or a stat-row (ideally one of each where the content supports it). Articles must never be walls of text.
+
+Hard rules:
+
+- Charts are **zero-JS inline HTML only**. Never use external images, screenshots, `<img>`, `<canvas>`, or any JS chart library (Chart.js, D3, etc.). The styles already live in `src/pages/insights/[...slug].astro`; you only paste the HTML.
+- **Numbers in every chart MUST match the article body exactly.** If the prose says "60-70% of tickets", the chart says the same. Never invent figures that contradict the text — pick numbers straight from your own paragraphs.
+- Place the chart inside the section it reinforces (e.g. a savings bar chart near the cost section, a stat-row right after a mini-case).
+- **Leave a blank line before and after** each HTML block so the markdown parser passes it through as raw HTML.
+- For bar charts, set `--val` to the bar's relative length as a percentage (the largest/most relevant value is usually `100%`; scale the others proportionally). The `.bar-value` is the human-readable figure shown on the right.
+
+Copy these exact snippets:
+
+**Bar chart** (one `<div class="bar">` per row):
+
+```html
+<figure class="chart">
+  <figcaption>Estimated annual savings by task area</figcaption>
+  <div class="bar" style="--val:100%"><span class="bar-label">Customer support</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$20k/yr</b></div>
+  <div class="bar" style="--val:60%"><span class="bar-label">Bookkeeping &amp; admin</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$12k/yr</b></div>
+  <div class="bar" style="--val:40%"><span class="bar-label">Content &amp; marketing</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">~$8k/yr</b></div>
+</figure>
+```
+
+**Stat row** (2-4 `<div class="stat">` cards — big jade number + small label):
+
+```html
+<div class="stat-row">
+  <div class="stat"><b>9h → &lt;2min</b><span>first-response time on support</span></div>
+  <div class="stat"><b>60-70%</b><span>tickets auto-resolved</span></div>
+  <div class="stat"><b>30-40%</b><span>bookkeeping hours cut</span></div>
+</div>
+```
+
+**Comparison table** (plain markdown — styled automatically by `.prose`; use for before/after):
+
+```markdown
+| Task            | Before AI      | With AI        |
+| --------------- | -------------- | -------------- |
+| First response  | 9 hours        | under 2 min    |
+| Tickets handled | all manual     | 60-70% auto    |
+| Bookkeeping     | 10 hrs/week    | ~3 hrs/week    |
+```
+
 ## Instructions for the daily agent
 
 Each run:
@@ -100,6 +145,7 @@ Each run:
    draft: false
    ---
    ```
-   Follow every writing rule above. Use the seed article (`how-small-businesses-cut-costs-with-ai-2026.md`) as the style template.
-4. Run `pnpm check && pnpm build`.
-5. **Only commit if both pass.** If either fails, fix the article (usually frontmatter) until green, then commit. Never commit a broken build.
+   Follow every writing rule above. Use the seed article (`how-small-businesses-cut-costs-with-ai-2026.md`) as the style template — note how it embeds a bar chart and a stat-row.
+4. **Embed at least one inline chart** (bar chart or stat-row) using the snippets in the "Visuals / charts (MANDATORY)" section above. Make sure the chart numbers match your prose, and leave a blank line before/after each HTML block.
+5. Run `pnpm check && pnpm build`.
+6. **Only commit if both pass.** If either fails, fix the article (usually frontmatter) until green, then commit. Never commit a broken build.

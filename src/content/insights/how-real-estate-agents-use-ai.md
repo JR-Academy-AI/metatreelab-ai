@@ -19,6 +19,12 @@ AI-powered CRMs now handle this natively. Tools like **Follow Up Boss** and **Si
 
 One boutique agency in Brisbane with three agents told us they were averaging 8-day response times on cold leads before they switched. After setting up AI-assisted sequences in Follow Up Boss, hot leads got a response in under 3 minutes and the rest stayed warm automatically. Their lead-to-appointment conversion rate moved from around 12% to just over 19% in 90 days. Same three agents, no new hires.
 
+<div class="stat-row">
+  <div class="stat"><b>8 days → &lt;3min</b><span>response time on cold leads</span></div>
+  <div class="stat"><b>12% → 19%</b><span>lead-to-appointment conversion</span></div>
+  <div class="stat"><b>2-4 deals/yr</b><span>extra closings from faster follow-up</span></div>
+</div>
+
 ## Listing copy: stop staring at a blank page
 
 Writing a compelling property description for the eighth property this month is a grind. Most agents reuse the same phrases ("entertainer's dream", "bathed in natural light") until they stop meaning anything. That's not just a creativity problem — bland copy gets fewer clicks on Domain and realestate.com.au.
@@ -32,6 +38,13 @@ Agents doing this are producing noticeably better copy with no additional cost. 
 Comparative market analyses are time-intensive. Pulling sold data, writing the narrative, formatting it cleanly — that's 2-3 hours per appraisal pitch if you're doing it properly. A growing number of agents use **Pricefinder** or **CoreLogic** alongside AI drafting tools to pull the data, then use a prompt to produce a first draft of the commentary section ("similar 4-bedders in the suburb have sold between $1.15M and $1.28M over the past 90 days with a median of 28 days on market"). The agent validates the numbers, adds the local knowledge, and delivers a polished document in under an hour.
 
 This matters because more appraisals, faster, means more listings. The agents winning market share in 2026 are the ones pitching three times as many vendors per month.
+
+<figure class="chart">
+  <figcaption>Time per task — before AI vs with AI</figcaption>
+  <div class="bar" style="--val:22%"><span class="bar-label">Listing copy</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">45min → ~10min</b></div>
+  <div class="bar" style="--val:33%"><span class="bar-label">CMA / vendor report</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">2-3h → &lt;1h</b></div>
+  <div class="bar" style="--val:1%"><span class="bar-label">Lead follow-up</span><span class="bar-track"><span class="bar-fill"></span></span><b class="bar-value">8 days → &lt;3min</b></div>
+</figure>
 
 ## What to use AI for — and what to keep human
 
