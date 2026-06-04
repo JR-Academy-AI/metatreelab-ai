@@ -10,6 +10,12 @@ chart/stat/table/icon/callout CSS already lives in the scoped `<style>` of
 `src/pages/insights/[...slug].astro`. You only paste the HTML into the markdown — never add
 CSS, images, `<img>`, `<canvas>`, or any JS chart library (Chart.js, D3, etc.).
 
+> **Byline (E-E-A-T):** every Insights article is authored by **Lightman Wang** — keep
+> `author: "Lightman Wang"` in the frontmatter (it is also the schema default). The visible
+> byline, the LinkedIn `sameAs`/`Person` JSON-LD, and the "Written by" author card all resolve
+> from `siteConfig.author`, so no per-article author wiring is needed. See `CONTENT_PLAN.md`
+> for the full frontmatter template.
+
 ## Decision guide — pick visuals by content type
 
 | Your content is…                                                              | Use this visual                | Why                                                              |
