@@ -24,6 +24,7 @@ export interface ProjectEntry {
   outcomes?: { en: string[]; zh: string[] };
   stack?: string[];
   url?: string;
+  cover?: string;
   visible?: boolean;
 }
 
@@ -252,18 +253,65 @@ const allProjects: ProjectEntry[] = [
   {
     slug: 'airbotix',
     category: 'ai-systems',
-    tags: ['AI', 'Robotics', 'EdTech'],
+    tags: ['AI', 'EdTech', 'K-12'],
     year: 2025,
     featured: false,
     order: 11,
     name: 'Airbotix',
     client: 'Airbotix',
+    cover: '/work/airbotix.png',
     summary: {
-      en: 'AI and robotics education platform. Combining artificial intelligence with robotics training to build the next generation of tech talent.',
-      zh: 'AI 与机器人教育平台。将人工智能与机器人培训结合，培养下一代科技人才。',
+      en: 'AI coding education for K-12 students across Australia. Group classes, 1-on-1 tutoring, and Kids OpenCode — a kids-safe AI coding tool built for children, not adults using kids. Australian-built and parent-visible.',
+      zh: 'AI 编程教育平台，面向全澳 K-12 学生。小组班课、1 对 1 辅导，以及 Kids OpenCode — 专为孩子打造的儿童安全 AI 编程工具（而非把成人工具塞给孩子）。澳洲自研、家长可见。',
     },
-    stack: ['AI', 'Robotics', 'Education'],
+    outcomes: {
+      en: [
+        'Group classes and 1-on-1 AI coding tutoring',
+        'Kids OpenCode — a kids-safe AI coding tool of its own',
+        'Parent-visible learning, built for children not adults',
+        'Australian-built K-12 EdTech',
+      ],
+      zh: [
+        '小组班课 + 1 对 1 AI 编程辅导',
+        'Kids OpenCode — 自研的儿童安全 AI 编程工具',
+        '家长可见的学习过程，专为孩子而非成人设计',
+        '澳洲自研的 K-12 EdTech',
+      ],
+    },
+    stack: ['AI', 'EdTech', 'AI Tutoring'],
     url: 'https://airbotix.ai',
+  },
+
+  {
+    slug: 'deeprouter',
+    category: 'ai-systems',
+    tags: ['AI', 'LLM Gateway', 'API'],
+    year: 2026,
+    featured: false,
+    order: 6,
+    name: 'DeepRouter',
+    client: 'Metatree Lab',
+    cover: '/work/deeprouter.png',
+    summary: {
+      en: 'Unified AI API gateway for the China market — pay in CNY via WeChat or Alipay to call GPT, Claude, Gemini, DeepSeek, Kimi and Qwen through one API key. No overseas credit card, no per-provider signups, pure pay-as-you-go billing.',
+      zh: '面向中国市场的统一 AI API 网关 — 用人民币通过微信或支付宝充值，一个 API key 即可调用 GPT、Claude、Gemini、DeepSeek、Kimi、Qwen 等主流模型。无需海外信用卡、无需逐家注册，纯按量计费。',
+    },
+    outcomes: {
+      en: [
+        'One API key for OpenAI, Anthropic, Google, DeepSeek, Kimi, Qwen, xAI',
+        'Top up in CNY via WeChat Pay / Alipay from ¥5 — no overseas card',
+        'Pay-as-you-go with the exact per-call charge in billing history',
+        'Built on AWS; ICP-registered with business invoicing',
+      ],
+      zh: [
+        '一个 API key 接入 OpenAI、Anthropic、Google、DeepSeek、Kimi、Qwen、xAI',
+        '人民币微信 / 支付宝充值，¥5 起 — 无需海外信用卡',
+        '纯按量计费，每次调用在账单中显示实际花费',
+        '基于 AWS 构建；ICP 备案、可开企业发票',
+      ],
+    },
+    stack: ['LLM Gateway', 'Multi-model API', 'AWS', 'WeChat Pay'],
+    url: 'https://deeprouter.co',
   },
 
   {
