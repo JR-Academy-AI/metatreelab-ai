@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AISA — Adelaide Independent Schools Alliance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#16294C; --navy-d:#0F1E3A; --navy-2:#1B3157; --gold:#C39A4E; --gold-l:#D4AF63;
+    --cream:#F6F2EA; --paper:#FBF9F3; --gray:#F1EDE4; --ink:#1B2536; --muted:#6E7686; --line:#E4DECF;
+    --sans:'Inter',-apple-system,sans-serif; --serif:'Playfair Display',Georgia,serif;
+    --maxw:1200px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.6;font-size:15.5px}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 36px}
+  .serif{font-family:var(--serif)}
+  .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .gold-line{width:60px;height:2px;background:var(--gold);border:none}
+  svg.ic{width:38px;height:38px;stroke:var(--gold);stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .mock-banner{background:var(--navy-d);color:#aebbd1;font-size:11px;letter-spacing:.14em;text-align:center;padding:6px;text-transform:uppercase}
+
+  /* header */
+  header{position:sticky;top:0;z-index:40;background:rgba(251,249,243,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:78px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .star{width:30px;height:30px;flex:none}
+  .logo .lt{display:flex;align-items:baseline;gap:9px}
+  .logo .lt .a{font-family:var(--serif);font-weight:700;font-size:25px;color:var(--navy);letter-spacing:.02em}
+  .logo .lt .full{font-size:10.5px;line-height:1.25;color:var(--muted);border-left:1px solid var(--line);padding-left:9px;max-width:120px}
+  .navlinks{display:flex;align-items:center;gap:30px;font-size:14px;font-weight:500;color:#3c4椅}
+  .navlinks{color:#3a4458}
+  .navlinks a{padding-bottom:3px}
+  .navlinks a.on{border-bottom:2px solid var(--gold);color:var(--navy)}
+  .navlinks a:hover{color:var(--navy)}
+  .enquire{background:var(--navy);color:#fff;font-size:13.5px;font-weight:500;padding:11px 20px;border-radius:4px;display:inline-flex;gap:8px;align-items:center}
+  .enquire:hover{background:var(--navy-d)}
+  @media(max-width:900px){.navlinks a:not(.enquire){display:none}.logo .full{display:none}}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;padding:60px 0 0}
+  .hero .wrap{display:grid;grid-template-columns:1fr 1.08fr;gap:30px;align-items:center}
+  .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,5vw,62px);line-height:1.07;color:var(--navy);letter-spacing:-.01em}
+  .hero h1 em{font-style:italic;color:var(--gold);font-weight:500}
+  .hero .gold-line{margin:26px 0}
+  .hero p{font-size:16px;color:var(--muted);max-width:42ch;line-height:1.7}
+  .hero .ctas{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+  .btn-navy{background:var(--navy);color:#fff;font-size:13.5px;font-weight:500;padding:14px 26px;border-radius:4px;display:inline-flex;gap:9px;align-items:center}
+  .btn-navy:hover{background:var(--navy-d)}
+  .btn-out{border:1px solid var(--line);color:var(--navy);font-size:13.5px;font-weight:500;padding:14px 26px;border-radius:4px;display:inline-flex;gap:9px;align-items:center;background:#fff}
+  .btn-out:hover{border-color:var(--gold)}
+  .hero-figure img{width:100%;height:auto;filter:drop-shadow(0 26px 44px rgba(22,41,76,.20))}
+  @media(max-width:900px){.hero .wrap{grid-template-columns:1fr}.hero-figure{order:-1}}
+
+  /* stats bar */
+  .stats{position:relative;z-index:5;margin-top:-6px}
+  .stats .wrap{transform:translateY(34px)}
+  .stats-card{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 20px 50px rgba(22,41,76,.10);
+    display:grid;grid-template-columns:repeat(4,1fr)}
+  .stat{display:flex;align-items:center;gap:16px;padding:26px 28px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:none}
+  .stat svg.ic{width:34px;height:34px;flex:none}
+  .stat .n{font-family:var(--serif);font-weight:700;font-size:27px;color:var(--navy);line-height:1}
+  .stat .l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:5px;line-height:1.35}
+  @media(max-width:820px){.stats-card{grid-template-columns:1fr 1fr}.stat:nth-child(2){border-right:none}.stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line)}}
+
+  /* why */
+  .why{padding:120px 0 86px;text-align:center}
+  .why h2{font-family:var(--serif);font-weight:600;font-size:clamp(28px,3vw,38px);color:var(--navy)}
+  .why .gold-line{margin:18px auto 0}
+  .why .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:36px;margin-top:56px;text-align:center}
+  .why .col{padding:0 6px}
+  .why .col .icw{height:46px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .why .col h3{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--navy);margin-bottom:12px}
+  .why .col p{font-size:13.5px;color:var(--muted);line-height:1.65}
+  @media(max-width:820px){.why .grid{grid-template-columns:1fr 1fr;gap:40px 28px}}
+
+  /* partner schools (navy) */
+  .partners{background:var(--navy);color:#fff;padding:80px 0}
+  .partners .wrap{display:grid;grid-template-columns:.62fr 2fr;gap:48px}
+  .partners h2{font-family:var(--serif);font-weight:600;font-size:clamp(26px,2.6vw,34px);line-height:1.15}
+  .partners .gold-line{margin:22px 0}
+  .partners .pintro{font-size:14.5px;color:#c2cbdd;line-height:1.7;max-width:26ch}
+  .partners .viewall{display:inline-flex;gap:9px;align-items:center;margin-top:26px;color:var(--gold-l);font-size:13px;font-weight:600;letter-spacing:.04em}
+  .pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .ptile{background:#fff;border-radius:8px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:14px;transition:.22s}
+  .ptile:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.3)}
+  .ptile img{max-width:100%;max-height:100%;object-fit:contain}
+  @media(max-width:820px){.partners .wrap{grid-template-columns:1fr}.pgrid{grid-template-columns:repeat(3,1fr)}}
+
+  /* enrolment journey */
+  .journey{background:var(--gray);padding:84px 0}
+  .journey .wrap{display:grid;grid-template-columns:.6fr 2fr;gap:46px;align-items:center}
+  .journey h2{font-family:var(--serif);font-weight:600;font-size:clamp(24px,2.5vw,32px);color:var(--navy);line-height:1.18}
+  .journey .gold-line{margin:20px 0}
+  .journey .jsub{font-size:14px;color:var(--muted);max-width:24ch}
+  .jsteps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative}
+  .jstep{text-align:center;position:relative}
+  .jstep .circ{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--gold);background:var(--paper);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;z-index:2}
+  .jstep .circ svg.ic{width:26px;height:26px}
+  .jstep .num{position:absolute;top:-4px;right:calc(50% - 40px);width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;z-index:3}
+  .jstep h4{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--navy)}
+  .jstep p{font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.55;padding:0 6px}
+  .jsteps:before{content:"";position:absolute;top:32px;left:12%;right:12%;border-top:1px dashed #c9bfa6;z-index:1}
+  @media(max-width:760px){.journey .wrap{grid-template-columns:1fr}.jsteps{grid-template-columns:1fr 1fr;gap:30px 14px}.jsteps:before{display:none}}
+
+  /* testimonials */
+  .testi{padding:84px 0;position:relative}
+  .testi .wrap{display:grid;grid-template-columns:.7fr 2fr;gap:40px}
+  .testi h2{font-family:var(--serif);font-weight:600;font-size:clamp(24px,2.5vw,32px);color:var(--navy);line-height:1.18}
+  .testi .gold-line{margin-top:18px}
+  .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+  .tq{font-size:14px;color:#3c4458;line-height:1.7;font-style:italic}
+  .tperson{display:flex;align-items:center;gap:11px;margin-top:18px}
+  .tperson .av{width:38px;height:38px;border-radius:50%;background-size:cover;background-position:center;background-color:var(--gray)}
+  .tperson .nm{font-weight:600;font-size:13px;color:var(--navy)}
+  .tperson .ro{font-size:11.5px;color:var(--muted)}
+  .bigquote{position:absolute;font-family:var(--serif);font-size:120px;color:var(--gold);opacity:.18;line-height:1;left:36px;top:60px}
+  @media(max-width:820px){.testi .wrap{grid-template-columns:1fr}.tg{grid-template-columns:1fr}}
+
+  /* enquire */
+  .enquire-sec{display:grid;grid-template-columns:1fr 1.4fr}
+  .enquire-sec .img{position:relative;min-height:440px;background-size:cover;background-position:center;background-color:var(--navy)}
+  .enquire-sec .img .ov{position:absolute;inset:0;background:linear-gradient(120deg,rgba(15,30,58,.35),rgba(15,30,58,.05))}
+  .enquire-sec .img .script{position:absolute;left:34px;top:60px;z-index:2;font-family:'Dancing Script',cursive;font-size:30px;color:#fff;line-height:1.3;max-width:9ch;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+  .enquire-sec .form{padding:64px 5%;background:var(--paper);display:grid;grid-template-columns:1.6fr .9fr;gap:36px}
+  .efields h2{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--navy)}
+  .efields .ed{font-size:13.5px;color:var(--muted);margin:10px 0 22px;max-width:40ch}
+  .erow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .inp{border:1px solid var(--line);background:#fff;border-radius:5px;padding:12px 13px;font-size:13.5px;color:var(--muted)}
+  .inp.full{grid-column:1/-1}
+  textarea.inp{min-height:84px;resize:none}
+  .esub{background:var(--navy);color:#fff;border:none;width:100%;padding:14px;border-radius:5px;font-size:13.5px;font-weight:500;margin-top:4px;cursor:pointer}
+  .esub:hover{background:var(--navy-d)}
+  .econtact{font-size:13px;color:#3c4458}
+  .econtact .it{display:flex;gap:11px;align-items:flex-start;margin-bottom:20px}
+  .econtact svg.ic{width:18px;height:18px;flex:none;margin-top:2px}
+  @media(max-width:900px){.enquire-sec{grid-template-columns:1fr}.enquire-sec .form{grid-template-columns:1fr}}
+
+  /* footer */
+  footer{background:var(--navy-d);color:#9fabc4;padding:54px 0 26px;font-size:13px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;padding-bottom:30px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .foot-grid .logo .a{color:#fff}.foot-grid .logo .full{color:#9fabc4;border-color:rgba(255,255,255,.2)}
+  .foot-grid p{margin-top:14px;max-width:30ch;line-height:1.65;font-size:12.5px}
+  .foot-grid b{color:#dde4ef;display:block;margin-bottom:13px;font-size:12px;letter-spacing:.06em;font-weight:600}
+  .foot-grid a{display:block;padding:4px 0;color:#9fabc4;font-size:12.5px}
+  .foot-grid a:hover{color:#fff}
+  .social{display:flex;gap:10px;margin-top:4px}
+  .social span{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--gold-l);font-size:12px;font-weight:600}
+  .foot-bot{display:flex;justify-content:space-between;margin-top:22px;flex-wrap:wrap;gap:10px;font-size:11.5px;color:#7e8aa3}
+  .foot-bot .tag{color:var(--gold-l);font-weight:500;letter-spacing:.04em}
+  @media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="mock-banner">Design mockup · AISA marketing site (Phase 1) · built by Metatree AI Lab</div>
+
+<!-- HEADER -->
+<header>
+  <div class="wrap nav">
+    <div class="logo">
+      <img src="logos/aisa-logo.png" alt="Adelaide Independent Schools Alliance" style="height:48px;width:auto" />
+    </div>
+    <nav class="navlinks">
+      <a href="#" class="on">Home</a>
+      <a href="#partners">Our Partners</a>
+      <a href="#journey">Enrolment</a>
+      <a href="#">Prospectus</a>
+      <a href="#enquire">Contact</a>
+      <a class="enquire" href="#enquire">Enquire Now →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1 class="serif">Adelaide's Leading Independent Schools, <em>Connected</em>.</h1>
+      <hr class="gold-line" />
+      <p>AISA connects international families with Adelaide's leading independent schools and provides trusted guidance for a world-class education and global pathways.</p>
+      <div class="ctas">
+        <a class="btn-navy" href="#partners">Explore Schools →</a>
+        <a class="btn-out" href="#">Download Prospectus ↓</a>
+      </div>
+    </div>
+    <div class="hero-figure">
+      <img src="hero-students.png" alt="Students of the Adelaide Independent Schools Alliance" />
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="wrap">
+    <div class="stats-card">
+      <div class="stat"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-5h6v5"/></svg><div><div class="n">20</div><div class="l">Premier Partner Schools</div></div></div>
+      <div class="stat"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg><div><div class="n">2,000+</div><div class="l">International Students Each Year</div></div></div>
+      <div class="stat"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M15 20c0-2.4 1.5-4 4-4"/></svg><div><div class="n">1,200+</div><div class="l">Dedicated Teachers</div></div></div>
+      <div class="stat"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.6-4 3.8 1 5.6L12 21l-5 1 1-5.6-4-3.8 5.5-.6z"/></svg><div><div class="n">150+</div><div class="l">Years of Educational Excellence</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY -->
+<section class="why">
+  <div class="wrap">
+    <h2 class="serif">Why AISA</h2>
+    <hr class="gold-line" />
+    <div class="grid">
+      <div class="col"><div class="icw"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M10 21v-6h4v6"/></svg></div><h3 class="serif">Premier Partner Schools</h3><p>A curated alliance of Adelaide's most respected independent schools, known for academic excellence and holistic education.</p></div>
+      <div class="col"><div class="icw"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6 7-6s7 2 7 6"/></svg></div><h3 class="serif">Personalised Guidance</h3><p>From enquiry to enrolment and beyond, our experienced team provides one-to-one support for international families.</p></div>
+      <div class="col"><div class="icw"><svg class="ic" viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-1.5-7 0v12c2-1.5 5-1.5 7 0M12 6c2-1.5 5-1.5 7 0v12c-2-1.5-5-1.5-7 0M12 6v12"/></svg></div><h3 class="serif">Pathways &amp; English Support</h3><p>Tailored academic pathways and English language support to help students thrive and achieve their global ambitions.</p></div>
+      <div class="col"><div class="icw"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v9H4z"/><path d="M12 20v-5M9 13.5c0-1.7 1.3-3 3-3s3 1.3 3 3"/></svg></div><h3 class="serif">Safe. Welcoming. Adelaide.</h3><p>Experience a safe, liveable city with a strong sense of community, beautiful lifestyle and world-class opportunities.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER SCHOOLS -->
+<section class="partners" id="partners">
+  <div class="wrap">
+    <div>
+      <h2 class="serif">Our Partner Schools</h2>
+      <hr class="gold-line" />
+      <p class="pintro">Exceptional schools. Shared values. Extraordinary futures.</p>
+      <a class="viewall" href="#">View all schools →</a>
+    </div>
+    <div class="pgrid">
+      <div class="ptile"><img src="logos/ais.jpg" alt="Adelaide International School" /></div>
+      <div class="ptile"><img src="logos/blackfriars.jpg" alt="Blackfriars Priory School" /></div>
+      <div class="ptile"><img src="logos/concordia.jpg" alt="Concordia College" /></div>
+      <div class="ptile"><img src="logos/loreto.jpg" alt="Loreto College" /></div>
+      <div class="ptile"><img src="logos/mercedes.jpg" alt="Mercedes College" /></div>
+      <div class="ptile"><img src="logos/olsh.jpg" alt="Our Lady of the Sacred Heart College" /></div>
+      <div class="ptile"><img src="logos/pulteney.jpg" alt="Pulteney Grammar School" /></div>
+      <div class="ptile"><img src="logos/scotch.jpg" alt="Scotch College" /></div>
+      <div class="ptile"><img src="logos/st-aloysius.jpg" alt="St Aloysius College" /></div>
+      <div class="ptile"><img src="logos/st-dominics-priory-college.jpg" alt="St Dominic's Priory College" /></div>
+      <div class="ptile"><img src="logos/st-george.jpg" alt="St George College" /></div>
+      <div class="ptile"><img src="logos/st-johns-grammar.jpg" alt="St John's Grammar School" /></div>
+      <div class="ptile"><img src="logos/st-peters-college.jpg" alt="St Peter's College" /></div>
+      <div class="ptile"><img src="logos/st-peters-girls.jpg" alt="St Peter's Girls' School" /></div>
+      <div class="ptile"><img src="logos/trinity.jpg" alt="Trinity College" /></div>
+      <div class="ptile"><img src="logos/usc.jpg" alt="University Senior College" /></div>
+      <div class="ptile"><img src="logos/walford.jpg" alt="Walford Anglican School for Girls" /></div>
+      <div class="ptile"><img src="logos/wilderness.jpg" alt="Wilderness School" /></div>
+      <div class="ptile"><img src="logos/woodcroft-college-crest.jpg" alt="Woodcroft College" /></div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section class="journey" id="journey">
+  <div class="wrap">
+    <div>
+      <h2 class="serif">Your Enrolment Journey</h2>
+      <hr class="gold-line" />
+      <p class="jsub">A simple, supported process from start to finish.</p>
+    </div>
+    <div class="jsteps">
+      <div class="jstep"><div class="circ"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg></div><span class="num">1</span><h4 class="serif">Enquire</h4><p>Get in touch with our team. We're here to understand your family's needs.</p></div>
+      <div class="jstep"><div class="circ"><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></div><span class="num">2</span><h4 class="serif">Submit Documents</h4><p>We guide you through the required documents and application process.</p></div>
+      <div class="jstep"><div class="circ"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 19c0-3 2.5-4.5 6-4.5M14 19c0-2.5 2-4 5-4"/></svg></div><span class="num">3</span><h4 class="serif">School Matching</h4><p>We recommend the best-fit schools and support your applications.</p></div>
+      <div class="jstep"><div class="circ"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div><span class="num">4</span><h4 class="serif">Offer / CoE / Next Steps</h4><p>Receive your offer and CoE. We support your visa and arrival in Adelaide.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi">
+  <span class="bigquote serif">&rdquo;</span>
+  <div class="wrap">
+    <div><h2 class="serif">Trusted by Families around the World</h2><hr class="gold-line" /></div>
+    <div class="tg">
+      <div><p class="tq">"AISA made the entire process seamless. The support and guidance gave us confidence every step of the way."</p><div class="tperson"><span class="av" style="background-image:url('https://picsum.photos/seed/chenfamily/80/80')"></span><div><div class="nm">The Chen Family</div><div class="ro">China</div></div></div></div>
+      <div><p class="tq">"The schools are outstanding and the care for international students is truly exceptional."</p><div class="tperson"><span class="av" style="background-image:url('https://picsum.photos/seed/mariap/80/80')"></span><div><div class="nm">Maria L., Parent</div><div class="ro">Brazil</div></div></div></div>
+      <div><p class="tq">"Professional, responsive and reliable. AISA is our trusted partner in Australia."</p><div class="tperson"><span class="av" style="background-image:url('https://picsum.photos/seed/eduworld/80/80')"></span><div><div class="nm">EduWorld Consulting</div><div class="ro">Education Agent, Vietnam</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ENQUIRE -->
+<section class="enquire-sec" id="enquire">
+  <div class="img" style="background-image:url('adelaide-bg.png')">
+    <div class="ov"></div>
+    <div class="script">Let's build their brighter future together.</div>
+  </div>
+  <div class="form">
+    <div class="efields">
+      <h2 class="serif">Enquire Now</h2>
+      <p class="ed">We'd love to hear from you. Complete the form and our team will be in touch shortly.</p>
+      <div class="erow"><div class="inp">Full Name</div><div class="inp">Email Address</div></div>
+      <div class="erow"><div class="inp">Country ▾</div><div class="inp">Phone Number</div></div>
+      <div class="erow"><div class="inp full">Your Message</div></div>
+      <button class="esub">Submit Enquiry →</button>
+    </div>
+    <div class="econtact">
+      <div class="it"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>admissions@aisa.edu.au</span></div>
+      <div class="it"><svg class="ic" viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2c1 2 3 4 5 5l2-3 5 2v4c0 1-1 2-2 2C9 21 3 15 3 6c0-1 1-2 2-2z"/></svg><span>+61 8 7081 3940</span></div>
+      <div class="it"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21c5-5 8-8.5 8-12a8 8 0 10-16 0c0 3.5 3 7 8 12z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Adelaide, South Australia, Australia</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo"><span style="background:#fff;padding:9px 13px;border-radius:6px;display:inline-block"><img src="logos/aisa-logo.png" alt="AISA" style="height:30px;width:auto;display:block" /></span></div>
+        <p>Connecting international families with Adelaide's leading independent schools for a world of opportunities.</p>
+      </div>
+      <div><b>Quick Links</b><a href="#">Home</a><a href="#partners">Our Partners</a><a href="#journey">Enrolment</a><a href="#">Prospectus</a><a href="#enquire">Contact</a></div>
+      <div><b>Information</b><a href="#">Why Adelaide</a><a href="#">Student Life</a><a href="#">Visa Information</a><a href="#">News &amp; Events</a><a href="#">FAQs</a></div>
+      <div><b>Follow Us</b><div class="social"><span>f</span><span>ig</span><span>in</span><span>yt</span></div>
+        <b style="margin-top:24px">Accredited</b><span style="font-size:12px">Accredited Agency 2024–2025</span></div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 Adelaide Independent Schools Alliance · All Rights Reserved · Privacy Policy</span>
+      <span class="tag">Excellence. Connection. Opportunity.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

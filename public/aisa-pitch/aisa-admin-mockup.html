@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AISA Super Admin — Design Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#16294C; --navy-d:#0F1E3A; --navy-2:#1E335C; --gold:#C39A4E; --gold-l:#D4AF63;
+    --cream:#F4F1EA; --paper:#FBF9F4; --line:#E5DFD2; --ink:#1B2536; --muted:#727A88;
+    --sans:'Inter',-apple-system,sans-serif; --serif:'Playfair Display',Georgia,serif;
+    --amber-b:#FFF3D6; --amber-t:#9a6b00; --green-b:#D8F0E2; --green-t:#0a7a52; --red-b:#FBE0E0; --red-t:#b23b3b; --blue-b:#E1EAF6; --blue-t:#2c5896;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+  img{display:block;max-width:100%}
+
+  .mock-banner{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--navy-d);color:#aebbd1;font-size:11px;letter-spacing:.14em;text-align:center;padding:6px;text-transform:uppercase}
+
+  /* sidebar */
+  .side{width:236px;flex:none;background:var(--navy);color:#c5cfe2;display:flex;flex-direction:column;padding:24px 0;position:sticky;top:0;height:100vh}
+  .side .brand{padding:8px 22px 22px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:14px}
+  .side .brand .mk{width:34px;height:34px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;padding:5px}
+  .side .brand .mk img{width:100%;height:auto}
+  .side .brand .tt b{color:#fff;font-family:var(--serif);font-size:17px;display:block;line-height:1}
+  .side .brand .tt span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8295b5}
+  .side .grp{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6f80a0;padding:16px 22px 8px}
+  .side a{display:flex;align-items:center;gap:12px;padding:11px 22px;color:#c5cfe2;text-decoration:none;font-size:14px;border-left:3px solid transparent}
+  .side a:hover{background:rgba(255,255,255,.04);color:#fff}
+  .side a.on{background:rgba(195,154,78,.14);border-left-color:var(--gold);color:#fff;font-weight:600}
+  .side a .ic{width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.6;fill:none}
+  .side a .badge{margin-left:auto;background:var(--gold);color:var(--navy-d);font-size:11px;font-weight:700;border-radius:99px;padding:1px 8px}
+  .side .user{margin-top:auto;padding:16px 22px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px}
+  .side .user .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#C39A4E,#D4AF63);display:flex;align-items:center;justify-content:center;color:var(--navy-d);font-weight:700;font-size:13px}
+  .side .user b{color:#fff;font-size:13px;display:block}.side .user span{font-size:11px;color:#8295b5}
+
+  /* main */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .top{background:var(--paper);border-bottom:1px solid var(--line);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:20}
+  .top h1{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--navy)}
+  .top h1 span{font-size:13px;font-family:var(--sans);color:var(--muted);font-weight:400;margin-left:10px}
+  .top .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 14px;width:280px;color:var(--muted);font-size:13px}
+  .content{padding:28px 32px 50px}
+
+  /* kpis */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:26px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .kpi .l{font-size:12px;color:var(--muted);letter-spacing:.03em}
+  .kpi .n{font-family:var(--serif);font-weight:700;font-size:34px;color:var(--navy);line-height:1;margin-top:8px}
+  .kpi .d{font-size:11.5px;margin-top:8px}
+  .kpi .d.up{color:var(--green-t)}.kpi .d.warn{color:var(--red-t)}
+  .kpi.accent{background:var(--navy);border-color:var(--navy)}
+  .kpi.accent .l{color:#aebbd1}.kpi.accent .n{color:#fff}.kpi.accent .d{color:var(--gold-l)}
+
+  /* toolbar */
+  .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{border:0;background:none;padding:9px 16px;font-size:13px;color:var(--muted);cursor:pointer;border-right:1px solid var(--line)}
+  .seg button:last-child{border-right:0}
+  .seg button.on{background:var(--navy);color:#fff;font-weight:600}
+  .drop{background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 14px;font-size:13px;color:var(--ink)}
+  .drop:after{content:" ▾";color:var(--muted)}
+  .spacer{flex:1}
+  .btn-export{background:var(--gold);color:var(--navy-d);border:0;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer}
+
+  /* table */
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
+  tbody td{padding:15px 18px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+  tbody tr:hover{background:#FBF8F1}
+  tbody tr:last-child td{border-bottom:0}
+  .appl{display:flex;align-items:center;gap:11px}
+  .appl .av{width:34px;height:34px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--navy);font-size:13px;flex:none}
+  .appl b{display:block;color:var(--ink);font-weight:600}
+  .appl span{font-size:11.5px;color:var(--muted)}
+  .prefs{display:flex;gap:5px;flex-wrap:wrap}
+  .prefs em{font-style:normal;background:var(--cream);border:1px solid var(--line);border-radius:5px;font-size:11px;padding:3px 7px;color:#3c4458}
+  .prefs .more{color:var(--muted);font-size:11px;align-self:center}
+  .pill{display:inline-block;font-size:12px;font-weight:600;padding:4px 11px;border-radius:99px}
+  .pill.rev{background:var(--amber-b);color:var(--amber-t)}
+  .pill.off{background:var(--green-b);color:var(--green-t)}
+  .pill.miss{background:var(--red-b);color:var(--red-t)}
+  .pill.sub{background:var(--blue-b);color:var(--blue-t)}
+  .coe{font-weight:600;color:var(--green-t)}
+  .coe.none{color:#bdb6a6;font-weight:400}
+  .rowact{color:var(--gold);font-weight:600;font-size:12.5px;cursor:pointer}
+  .flag{font-size:14px}
+  @media(max-width:1100px){.kpis{grid-template-columns:1fr 1fr}.side{width:74px}.side .brand .tt,.side a span.tx,.side .user b,.side .user span,.side .grp{display:none}}
+</style>
+</head>
+<body>
+<div class="mock-banner">Design mockup · AISA Super Admin (Phase 1) · built by Metatree AI Lab — this is what you see after you log in</div>
+
+<!-- SIDEBAR -->
+<aside class="side">
+  <div class="brand">
+    <span class="mk"><img src="logos/aisa-logo.png" alt="AISA" /></span>
+    <div class="tt"><b>AISA</b><span>Admin</span></div>
+  </div>
+  <span class="grp">Admissions</span>
+  <a class="on" href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10"/></svg><span class="tx">Applications</span><span class="badge">64</span></a>
+  <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h10l3 4v14H4V7z"/><path d="M9 13l2 2 4-4"/></svg><span class="tx">Offers / CoE</span></a>
+  <a href="#"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg><span class="tx">Students</span></a>
+  <span class="grp">Network</span>
+  <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13"/></svg><span class="tx">Schools</span></a>
+  <a href="#"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.2"/><path d="M3 19c0-3 2.5-4.5 6-4.5"/></svg><span class="tx">Agents</span></a>
+  <span class="grp">Insights</span>
+  <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="tx">Reports</span></a>
+  <a href="#"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1l2-1.6-2-3.4-2.4 1a7 7 0 00-1.7-1l-.4-2.5H10l-.4 2.5a7 7 0 00-1.7 1l-2.4-1-2 3.4L5.1 11a7 7 0 000 2l-2 1.6 2 3.4 2.4-1a7 7 0 001.7 1l.4 2.5h3.6l.4-2.5a7 7 0 001.7-1l2.4 1 2-3.4-2-1.6a7 7 0 00.1-1z"/></svg><span class="tx">Settings</span></a>
+  <div class="user">
+    <span class="av">SA</span>
+    <div><b>S. Admin</b><span>AISA Admissions</span></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="top">
+    <h1>Applications <span>· Intake 2026 · Semester 1</span></h1>
+    <div class="search">🔍 &nbsp;Search applicant, agent, passport…</div>
+  </div>
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi accent"><div class="l">Total applications</div><div class="n">248</div><div class="d">▲ 18% vs last intake</div></div>
+      <div class="kpi"><div class="l">In review</div><div class="n">64</div><div class="d">across 20 schools</div></div>
+      <div class="kpi"><div class="l">Offers / CoE issued</div><div class="n">112</div><div class="d up">▲ on track</div></div>
+      <div class="kpi"><div class="l">Documents missing</div><div class="n">18</div><div class="d warn">needs follow-up</div></div>
+    </div>
+
+    <!-- toolbar -->
+    <div class="toolbar">
+      <div class="seg"><button class="on">All</button><button>In review</button><button>Offers</button><button>Docs missing</button></div>
+      <span class="drop">School: All 20</span>
+      <span class="drop">Agent: All</span>
+      <span class="drop">Country: All</span>
+      <span class="spacer"></span>
+      <button class="btn-export">Export ↓</button>
+    </div>
+
+    <!-- table -->
+    <div class="panel">
+      <table>
+        <thead><tr><th>Applicant</th><th>Country</th><th>Agent</th><th>School preferences (1–5)</th><th>Status</th><th>Offer / CoE</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="appl"><span class="av">LW</span><div><b>Li Wei</b><span>Year 10 · ID #A-2041</span></div></div></td><td>🇨🇳 China</td><td>EduPath CN</td><td><div class="prefs"><em>Scotch</em><em>Loreto</em><span class="more">+2</span></div></td><td><span class="pill rev">In review</span></td><td><span class="coe none">—</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">NM</span><div><b>Nguyen Minh</b><span>Year 11 · ID #A-2038</span></div></div></td><td>🇻🇳 Vietnam</td><td>VN Study</td><td><div class="prefs"><em>Pulteney</em><em>St Peter's</em></div></td><td><span class="pill off">Offer issued</span></td><td><span class="coe">CoE ✓</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">PA</span><div><b>Putri Ayu</b><span>Year 9 · ID #A-2036</span></div></div></td><td>🇮🇩 Indonesia</td><td>ID Agents</td><td><div class="prefs"><em>Wilderness</em><span class="more">+1</span></div></td><td><span class="pill miss">Docs missing</span></td><td><span class="coe none">—</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">ZY</span><div><b>Zhang Yu</b><span>Year 8 · ID #A-2033</span></div></div></td><td>🇨🇳 China</td><td>EduPath CN</td><td><div class="prefs"><em>Concordia</em><span class="more">+3</span></div></td><td><span class="pill sub">Submitted</span></td><td><span class="coe none">—</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">TL</span><div><b>Tan Wei Lin</b><span>Year 11 · ID #A-2030</span></div></div></td><td>🇲🇾 Malaysia</td><td>Global Ed</td><td><div class="prefs"><em>Walford</em><em>Wilderness</em></div></td><td><span class="pill rev">In review</span></td><td><span class="coe none">—</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">AR</span><div><b>Aditya R.</b><span>Year 10 · ID #A-2028</span></div></div></td><td>🇮🇩 Indonesia</td><td>ID Agents</td><td><div class="prefs"><em>Mercedes</em><span class="more">+2</span></div></td><td><span class="pill off">Offer issued</span></td><td><span class="coe">CoE ✓</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">CJ</span><div><b>Chen Jia</b><span>Year 7 · ID #A-2025</span></div></div></td><td>🇨🇳 China</td><td>Bright Future</td><td><div class="prefs"><em>St Peter's Girls</em><span class="more">+1</span></div></td><td><span class="pill off">Offer issued</span></td><td><span class="coe">CoE ✓</span></td><td><span class="rowact">Open →</span></td></tr>
+          <tr><td><div class="appl"><span class="av">TB</span><div><b>Tran Bao</b><span>Year 9 · ID #A-2022</span></div></div></td><td>🇻🇳 Vietnam</td><td>VN Study</td><td><div class="prefs"><em>Trinity</em><span class="more">+2</span></div></td><td><span class="pill sub">Submitted</span></td><td><span class="coe none">—</span></td><td><span class="rowact">Open →</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
