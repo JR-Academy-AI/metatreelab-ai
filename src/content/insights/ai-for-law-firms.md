@@ -3,7 +3,7 @@ title: "AI for Law Firms: What's Safe to Automate and What Isn't"
 description: "A practical guide for law firm principals on where AI saves real time and money in 2026 — and where it creates professional indemnity risk you cannot afford."
 pubDate: 2026-05-31
 tags: ["AI for law firms", "legal technology", "law firm management"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

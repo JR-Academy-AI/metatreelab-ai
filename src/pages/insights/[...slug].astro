@@ -33,6 +33,12 @@ const dateFmt = new Intl.DateTimeFormat('en-AU', {
 const pubDateIso = entry.data.pubDate.toISOString();
 const modifiedIso = (entry.data.updatedDate ?? entry.data.pubDate).toISOString();
 
+// Author — a real Person byline (E-E-A-T). When the frontmatter author matches
+// the site's known author, attach the full profile (LinkedIn, title, bio);
+// otherwise fall back to a bare name.
+const authorName = entry.data.author;
+const authorProfile = authorName === siteConfig.author.name ? siteConfig.author : null;
+
 // BlogPosting JSON-LD — critical for SEO + AI-citation.
 const blogPostingSchema = {
   '@context': 'https://schema.org',
@@ -45,9 +51,14 @@ const blogPostingSchema = {
   keywords: entry.data.tags.join(', '),
   inLanguage: 'en-AU',
   author: {
-    '@type': 'Organization',
-    name: 'Metatree Lab',
-    url: siteConfig.url,
+    '@type': 'Person',
+    name: authorName,
+    ...(authorProfile && {
+      url: authorProfile.url,
+      sameAs: [authorProfile.url],
+      jobTitle: authorProfile.jobTitle,
+      worksFor: { '@type': 'Organization', name: siteConfig.name, url: siteConfig.url },
+    }),
   },
   publisher: {
     '@type': 'Organization',
@@ -91,7 +102,11 @@ const breadcrumbSchema = buildBreadcrumb(
         <h1 class="post__title">{entry.data.title}</h1>
         <div class="post__meta">
           <time datetime={pubDateIso}>{dateFmt.format(entry.data.pubDate)}</time>
-          <span class="post__by">{entry.data.author}</span>
+          <span class="post__by">
+            By {authorProfile ? (
+              <a href={authorProfile.url} target="_blank" rel="author noopener noreferrer">{authorName}</a>
+            ) : authorName}
+          </span>
         </div>
         {
           entry.data.tags.length > 0 && (
@@ -107,6 +122,35 @@ const breadcrumbSchema = buildBreadcrumb(
       <div class="prose">
         <Content />
       </div>
+
+      {
+        authorProfile && (
+          <footer class="post__author">
+            <img
+              class="post__author-avatar"
+              src={authorProfile.avatar}
+              alt={authorProfile.name}
+              width="64"
+              height="64"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="post__author-body">
+              <span class="post__author-label">WRITTEN BY</span>
+              <a
+                class="post__author-name"
+                href={authorProfile.url}
+                target="_blank"
+                rel="author noopener noreferrer"
+              >
+                {authorProfile.name} ↗
+              </a>
+              <span class="post__author-role">{authorProfile.jobTitle}</span>
+              <p class="post__author-bio">{authorProfile.bio}</p>
+            </div>
+          </footer>
+        )
+      }
     </div>
   </article>
 </BaseLayout>
@@ -177,6 +221,75 @@ const breadcrumbSchema = buildBreadcrumb(
     padding: 0.4rem 0.9rem;
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-pill);
+  }
+
+  .post__by a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-hairline);
+    transition: color var(--dur-normal) var(--ease-out);
+  }
+
+  .post__by a:hover {
+    color: var(--brand-primary);
+  }
+
+  /* ---- Author bio card (E-E-A-T) ---- */
+  .post__author {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .post__author-avatar {
+    width: 4rem;
+    height: 4rem;
+    flex: none;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-hairline);
+    background: var(--bg-glass);
+  }
+
+  .post__author-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .post__author-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+  }
+
+  .post__author-name {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .post__author-name:hover {
+    color: var(--brand-primary);
+  }
+
+  .post__author-role {
+    font-size: var(--fs-body-sm);
+    color: var(--brand-accent);
+  }
+
+  .post__author-bio {
+    margin-top: var(--space-2);
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-normal);
+    color: var(--text-secondary);
   }
 
   /* ---- Article typography (no @tailwindcss/typography installed) ---- */

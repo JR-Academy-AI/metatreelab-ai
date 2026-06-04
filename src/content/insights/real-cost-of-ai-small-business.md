@@ -3,7 +3,7 @@ title: "The Real Cost of AI for a Small Business: Tools vs Custom Builds in 2026
 description: "A plain-English pricing guide for SMB owners: what off-the-shelf AI tools actually cost versus commissioning custom AI, with rough figures and when each makes sense."
 pubDate: 2026-06-01
 tags: ["AI cost", "small business AI", "AI tools", "AI ROI"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

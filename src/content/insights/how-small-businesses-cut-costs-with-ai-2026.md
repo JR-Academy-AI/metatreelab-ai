@@ -3,7 +3,7 @@ title: "How Small Businesses Can Cut Costs with AI in 2026"
 description: "A practical, no-hype guide for SMB owners on using AI to cut real operating costs in 2026 — with rough numbers, specific tools, and where to start first."
 pubDate: 2026-05-29
 tags: ["AI for business", "cost reduction", "small business"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

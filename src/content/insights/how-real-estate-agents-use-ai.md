@@ -3,7 +3,7 @@ title: "How Real Estate Agents Use AI to Close More Deals"
 description: "Practical ways real estate agents are using AI in 2026 to follow up faster, write better listings, and win more deals — with real numbers and named tools."
 pubDate: 2026-05-29
 tags: ["AI for real estate", "real estate technology", "lead conversion"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

@@ -3,7 +3,7 @@ title: "AI for Accounting Firms: Where It Saves the Most Hours"
 description: "Practical guide for accounting firm owners on which AI tools cut the most admin hours — with real numbers, named tools, and a mini case study."
 pubDate: 2026-05-29
 tags: ["AI for accounting", "accounting automation", "small business", "professional services"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

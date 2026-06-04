@@ -26,6 +26,16 @@ export const siteConfig = {
     yearsInProduction: 5,
   },
 
+  // Default byline for Insights articles — drives the visible byline and the
+  // BlogPosting `author` Person (E-E-A-T). Mirrors the team.ts entry.
+  author: {
+    name: 'Lightman Wang',
+    jobTitle: 'Founder & AI Strategy Lead',
+    url: 'https://www.linkedin.com/in/lightman-wang/',
+    bio: 'Full-stack product leader with 5+ years building AI-powered education and SaaS platforms. Leads AI strategy engagements, agent architecture design, and platform engineering for enterprise clients across Australia and APAC.',
+    avatar: '/consultants/lightman.svg',
+  },
+
   contact: {
     email: 'hello@jiangren.com.au',
     phone: '+61 421 672 555',

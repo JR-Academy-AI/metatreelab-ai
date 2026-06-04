@@ -35,7 +35,7 @@ const insights = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
-    author: z.string().default('Metatree Lab'),
+    author: z.string().default('Lightman Wang'),
     draft: z.boolean().default(false),
   }),
 });

@@ -3,7 +3,7 @@ title: "AI ROI: How to Tell If a Tool Is Actually Paying Off"
 description: "How to measure real AI ROI for your small business — a practical framework with specific metrics, payback calculations, and red flags that tell you when to cut a tool."
 pubDate: 2026-06-02
 tags: ["AI ROI", "AI tools", "small business", "cost reduction"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

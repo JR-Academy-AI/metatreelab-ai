@@ -3,7 +3,7 @@ title: "How Restaurants Use AI to Cut Waste and Boost Bookings"
 description: "Practical AI tools for restaurant owners in 2026: cut food waste by 35%, reduce no-shows, and automate scheduling — with real numbers and a case study."
 pubDate: 2026-05-30
 tags: ["AI for restaurants", "food waste reduction", "restaurant operations"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 

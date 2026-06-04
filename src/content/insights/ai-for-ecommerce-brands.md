@@ -3,7 +3,7 @@ title: "How E-commerce Brands Use AI to Lift Conversion in 2026"
 description: "A practical guide for e-commerce founders on using AI to lift conversion rates — personalization, smart search, email flows, and real results with named tools."
 pubDate: 2026-06-03
 tags: ["AI for e-commerce", "conversion rate optimization", "personalization", "small business"]
-author: "Metatree Lab"
+author: "Lightman Wang"
 draft: false
 ---
 
