@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 能帮你的生意做这 5 件事 — Metatree Lab</title>
+<meta name="description" content="2026 老板上手指南:不吹概念,只讲哪些活今天就能交给 AI。客服、记账、文案、提案、排班——附真实数字、90 天路线和自查表。Metatree Lab 出品。" />
+<meta property="og:title" content="AI 能帮你的生意做这 5 件事 — Metatree Lab" />
+<meta property="og:description" content="2026 老板上手指南:不吹概念,只讲哪些活今天就能交给 AI。" />
+<meta property="og:type" content="article" />
+<link rel="icon" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#000; --bg-elev:#0a0a0b; --glass:rgba(255,255,255,.03);
+    --txt:#fff; --txt-2:rgba(255,255,255,.66); --txt-3:rgba(255,255,255,.45); --txt-4:rgba(255,255,255,.28);
+    --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.05); --line-strong:rgba(255,255,255,.16);
+    --brand:#00e5a0; --brand-2:#00b4d8; --accent:#7df9c5;
+    --grad:linear-gradient(135deg,#00e5a0 0%,#00c89e 25%,#00b4d8 60%,#0095c4 100%);
+    --glow:radial-gradient(circle,rgba(0,229,160,.35) 0%,rgba(0,180,216,.12) 50%,transparent 100%);
+    --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --maxw:880px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg);color:var(--txt);font-family:var(--sans);
+    line-height:1.7;font-size:17px;letter-spacing:.01em;
+    overflow-x:hidden;position:relative;
+  }
+  /* grid + glow backdrop */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);
+    background-size:64px 64px;mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 80%);
+  }
+  body::after{
+    content:"";position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+    width:1200px;height:700px;z-index:0;pointer-events:none;
+    background:var(--glow);filter:blur(20px);opacity:.55;
+  }
+  .wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  a{color:var(--brand);text-decoration:none}
+
+  .label{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--brand)}
+
+  /* ---------- HERO / COVER ---------- */
+  .hero{padding:88px 0 56px;border-bottom:1px solid var(--line)}
+  .hero .label{display:inline-block;margin-bottom:28px;padding:7px 14px;border:1px solid var(--line-strong);border-radius:999px;color:var(--accent)}
+  .hero h1{
+    font-size:clamp(38px,7vw,68px);font-weight:900;line-height:1.04;letter-spacing:-.02em;margin-bottom:24px;
+  }
+  .hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .sub{font-size:clamp(17px,2.4vw,21px);color:var(--txt-2);max-width:640px;font-weight:500}
+  .hero .by{margin-top:28px;font-size:14px;color:var(--txt-3);font-family:var(--mono);letter-spacing:.04em}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+  .chip{font-size:13px;color:var(--txt-2);border:1px solid var(--line);background:var(--glass);padding:7px 14px;border-radius:999px}
+  .chip b{color:var(--brand);font-weight:700}
+
+  /* shared section */
+  section{padding:56px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  h2{font-size:clamp(26px,4vw,38px);font-weight:800;line-height:1.15;letter-spacing:-.015em;margin:14px 0 22px}
+  h3{font-size:21px;font-weight:700;margin:30px 0 12px}
+  p{color:var(--txt-2);margin:0 0 18px}
+  p strong,li strong{color:var(--txt);font-weight:700}
+  .lead{font-size:19px;color:var(--txt)}
+
+  ul.bullets{list-style:none;margin:8px 0 22px}
+  ul.bullets li{position:relative;padding-left:26px;margin-bottom:12px;color:var(--txt-2)}
+  ul.bullets li::before{content:"";position:absolute;left:4px;top:11px;width:8px;height:8px;border-radius:50%;background:var(--grad)}
+
+  /* questions block */
+  .qs{display:grid;gap:14px;margin-top:36px}
+  .q{display:flex;gap:16px;align-items:flex-start;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .q .n{font-family:var(--mono);font-size:13px;color:var(--brand);font-weight:600;flex-shrink:0;margin-top:3px}
+  .q p{margin:0;color:var(--txt);font-weight:500}
+
+  /* callout */
+  .callout{background:linear-gradient(135deg,rgba(0,229,160,.07),rgba(0,180,216,.04));border:1px solid rgba(0,229,160,.22);border-left:3px solid var(--brand);border-radius:14px;padding:22px 26px;margin:26px 0}
+  .callout p{margin:0;color:var(--txt);font-size:18px;font-weight:500}
+  blockquote{border-left:3px solid var(--line-strong);padding:6px 0 6px 20px;margin:22px 0;color:var(--txt-2);font-style:normal}
+  blockquote strong{color:var(--brand)}
+
+  /* numbered five things */
+  .thing{display:flex;gap:24px;margin-top:8px}
+  .thing .idx{font-family:var(--mono);font-size:clamp(40px,8vw,72px);font-weight:600;line-height:.9;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0;opacity:.85}
+  .thing .body{flex:1;min-width:0}
+  .thing h2{margin-top:0}
+
+  /* stat row */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:24px 0}
+  .stat{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .stat b{display:block;font-size:30px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+  .stat span{display:block;font-size:13px;color:var(--txt-3);margin-top:6px;line-height:1.4}
+
+  /* mini case */
+  .case{background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+  .case .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-2);display:block;margin-bottom:8px}
+  .case p{margin:0;color:var(--txt-2)}
+  .step{font-size:15px;color:var(--txt-3);margin-top:14px}
+  .step b{color:var(--accent);font-weight:600}
+
+  /* bar chart */
+  .chart{margin:28px 0}
+  .chart .cap{font-size:13px;color:var(--txt-3);margin-bottom:18px;font-family:var(--mono)}
+  .bar{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:16px}
+  .bar .bl{display:flex;justify-content:space-between;align-items:baseline;font-size:15px}
+  .bar .bl .v{font-weight:700;color:var(--txt)}
+  .bar .track{height:9px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden}
+  .bar .fill{height:100%;border-radius:999px;background:var(--grad);box-shadow:0 0 16px rgba(0,229,160,.4)}
+
+  /* roadmap */
+  .road{list-style:none;counter-reset:r;margin-top:24px}
+  .road li{counter-increment:r;position:relative;padding:0 0 26px 56px;border-left:1px solid var(--line);margin-left:18px}
+  .road li:last-child{border-left:1px solid transparent;padding-bottom:0}
+  .road li::before{content:counter(r);position:absolute;left:-18px;top:-4px;width:36px;height:36px;border-radius:50%;background:var(--bg-elev);border:1px solid var(--brand);color:var(--brand);font-family:var(--mono);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .road li h3{margin:0 0 6px}
+  .road li p{margin:0}
+
+  /* pitfalls */
+  .pits{display:grid;gap:14px;margin-top:24px}
+  .pit{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .pit h3{margin:0 0 8px;color:#ffb4b4;font-size:17px}
+  .pit p{margin:0;font-size:15px}
+
+  /* self-check */
+  .check-group{margin-top:22px}
+  .check-group h3{font-size:17px;color:var(--brand);margin:22px 0 10px}
+  .chk{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;cursor:pointer;transition:border-color .2s,background .2s}
+  .chk:hover{border-color:var(--line-strong)}
+  .chk input{appearance:none;width:20px;height:20px;border:1.5px solid var(--line-strong);border-radius:6px;flex-shrink:0;margin-top:2px;cursor:pointer;position:relative;transition:.2s}
+  .chk input:checked{background:var(--grad);border-color:transparent}
+  .chk input:checked::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#001b14;font-size:13px;font-weight:800}
+  .chk:has(input:checked){border-color:rgba(0,229,160,.4);background:rgba(0,229,160,.05)}
+  .chk span{color:var(--txt-2);font-size:15px}
+  .score{margin-top:20px;background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;padding:18px 22px;font-size:16px;color:var(--txt-2)}
+  .score b{color:var(--brand);font-size:22px;font-weight:800;font-family:var(--mono)}
+
+  /* CTA */
+  .cta{text-align:center;background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(0,180,216,.05));border:1px solid rgba(0,229,160,.25);border-radius:24px;padding:48px 28px;margin:8px 0 0}
+  .cta h2{margin-top:0}
+  .cta p{max-width:520px;margin:0 auto 28px}
+  .btn{display:inline-flex;align-items:center;gap:10px;background:var(--grad);color:#00130d;font-weight:800;font-size:17px;padding:16px 32px;border-radius:999px;box-shadow:0 0 40px rgba(0,229,160,.3);transition:transform .2s}
+  .btn:hover{transform:translateY(-2px)}
+
+  /* footer */
+  footer{padding:48px 0 64px;text-align:center}
+  footer .label{display:block;margin-bottom:14px}
+  footer p{font-size:14px;color:var(--txt-3);max-width:560px;margin:0 auto}
+
+  @media (max-width:560px){
+    body{font-size:16px}
+    .thing{gap:14px}
+    .thing .idx{font-size:40px}
+    section{padding:44px 0}
+  }
+  @media print{
+    body{background:#fff;color:#000}
+    body::before,body::after{display:none}
+    .label,.hero h1 .g,.stat b,.thing .idx{-webkit-text-fill-color:initial;color:#0a7a5a}
+    .btn{display:none}
+    a{color:#0a7a5a}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO / COVER ===================== -->
+<header class="hero">
+  <div class="wrap">
+    <span class="label">/ 免费干货 · METATREE LAB</span>
+    <h1>AI 能帮你的生意<br /><span class="g">做这 5 件事</span></h1>
+    <p class="sub">2026 老板上手指南 —— 不吹概念,只讲哪些活今天就能交给 AI。</p>
+    <p class="by">作者:Lightman Wang · Metatree Lab(匠人学院旗下 AI 工作室)</p>
+    <div class="chips">
+      <span class="chip">📖 阅读约 <b>12</b> 分钟</span>
+      <span class="chip">📊 全部基于 <b>真实</b> 客户数字</span>
+      <span class="chip">✅ 含「先动哪一件」自查表</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== INTRO ===================== -->
+<section>
+  <div class="wrap">
+    <span class="label">/ 00 — 写在前面</span>
+    <h2>别再听「颠覆一切」和「探索可能性」</h2>
+    <p>市面上给中小企业的 AI 建议,不是太亢奋(「颠覆你的行业!」),就是太空(「去探索无限可能」)。两种都付不了工资。</p>
+    <p>我们工作室每周都在给客户落地这些东西,看到的规律很一致:<strong>省钱、提效从来不是靠一个机器人取代一整个部门</strong>,而是把五件没人想干、却天天吃掉团队时间的破事,各砍掉 30–60%。</p>
+    <p>这本小册子就讲这五件事:它们是哪些、能省多少、从哪一件先动手。看完你不会变成 AI 专家,但你会知道<strong>自己的生意明天能从哪儿开始。</strong></p>
+
+    <div class="qs">
+      <div class="q"><span class="n">Q1</span><p>我这种生意,AI 到底能帮上什么忙?</p></div>
+      <div class="q"><span class="n">Q2</span><p>大概要花多少钱、多久能见效?</p></div>
+      <div class="q"><span class="n">Q3</span><p>那么多事,我应该先从哪一件下手?</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== METHOD ===================== -->
+<section>
+  <div class="wrap">
+    <span class="label">/ 心法 — 先做一件事</span>
+    <h2>列出「没人想干」的活</h2>
+    <p>买任何工具之前,花一个下午,把团队里这类活列出来——<strong>重复、有规则、跟文字打交道</strong>。这张清单就是你的 AI 候选名单。一家典型的服务型公司,通常长这样:</p>
+    <ul class="bullets">
+      <li>一遍遍回答那 20 个老问题</li>
+      <li>在报价工具、开票工具、表格之间来回搬数据</li>
+      <li>从零起草提案、跟进邮件、招聘 JD</li>
+      <li>读发票收据,再把数字敲进会计软件</li>
+      <li>写营销文案、产品描述的初稿</li>
+    </ul>
+    <div class="callout"><p>这五类,今天都已经是「被解决了的问题」——没有一件需要你请数据科学家。下面逐个拆。</p></div>
+  </div>
+</section>
+
+<!-- ===================== THING 1 ===================== -->
+<section>
+  <div class="wrap">
+    <div class="thing">
+      <div class="idx">01</div>
+      <div class="body">
+        <span class="label">/ 重复客户咨询</span>
+        <h2>回答那 20 个老问题</h2>
+        <p>一家零售或服务公司,每周收 200–400 条咨询,通常要占掉一个人 15–20 小时。用你<strong>自己的</strong> FAQ、历史工单、产品资料喂出来的客服助手,能自动处理其中 60–70%,剩下的也能先起草好回复。</p>
+        <div class="stats">
+          <div class="stat"><b>9h → 2min</b><span>首次响应时间</span></div>
+          <div class="stat"><b>60–70%</b><span>咨询自动解决</span></div>
+          <div class="stat"><b>~$20k/年</b><span>典型节省</span></div>
+        </div>
+        <div class="case">
+          <span class="tag">真实案例 · 电商</span>
+          <p>一家 12 人的电商品牌,把首次响应从 9 小时压到 2 分钟以内,把一个兼职客服调去做客户留存——<strong>工资没变,营收更高。</strong></p>
+        </div>
+        <p class="step"><b>第一步 →</b> 把过去 3 个月最常被问的 20 个问题导出来,这就是喂给助手的第一批"教材"。关键不在工具多贵,而在喂它你自己的内容,不是通用答案。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THING 2 ===================== -->
+<section>
+  <div class="wrap">
+    <div class="thing">
+      <div class="idx">02</div>
+      <div class="body">
+        <span class="label">/ 记账与单据</span>
+        <h2>读发票、录数据这种闷声活</h2>
+        <p>这是 AI 闷声赚钱的地方。现在的工具能读发票、收据、银行流水,把干净的数据直接推进 Xero 或 QuickBooks,基本不用人碰。一个原来每周花 10 小时录入的记账,可以降到 3 小时,剩下的时间拿去做真正的分析。</p>
+        <div class="stats">
+          <div class="stat"><b>30–40%</b><span>记账工时砍掉</span></div>
+          <div class="stat"><b>10h → 3h</b><span>每周录入时间</span></div>
+          <div class="stat"><b>~$12k/年</b><span>典型节省</span></div>
+        </div>
+        <p class="step"><b>第一步 →</b> 对一个每月花 $400–800 记账的小生意,这通常意味着工时砍 30–40%,或者业务长大了也不用再请第二个会计。不性感,但非常实在。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THING 3 ===================== -->
+<section>
+  <div class="wrap">
+    <div class="thing">
+      <div class="idx">03</div>
+      <div class="body">
+        <span class="label">/ 文案与营销</span>
+        <h2>别再花代理公司的钱买初稿</h2>
+        <p>2026 年了,<strong>初稿不该再按代理公司的价钱买</strong>。产品描述、广告变体、社媒文案、邮件营销、SEO 大纲——全都可以先让 AI 出初稿,再让人来改。一个原来 $200–400 一篇外包文章的老板,现在几分钟出一版能用的初稿,只需付一小笔钱请人润色。</p>
+        <div class="stats">
+          <div class="stat"><b>$200–400</b><span>每篇外包成本省下</span></div>
+          <div class="stat"><b>2–3×</b><span>同样预算的产出</span></div>
+          <div class="stat"><b>~$8k/年</b><span>典型节省</span></div>
+        </div>
+        <div class="callout"><p>唯一的坑:别把 AI 原始输出直接发出去。它给的是一版能用、但有点平的初稿;你(或编辑)的活,是加上具体细节、观点和真实案例,让它真正值得读。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THING 4 ===================== -->
+<section>
+  <div class="wrap">
+    <div class="thing">
+      <div class="idx">04</div>
+      <div class="body">
+        <span class="label">/ 提案与文书</span>
+        <h2>那些「从空白页开始写」的活</h2>
+        <p>提案、跟进邮件、招聘 JD——最吃高薪员工的时间。把你的提案模板、过往成单、服务说明喂给工具,让它出第一版,人来定稿。我们见过把单份提案<strong>从 4 小时压到 1 小时以内</strong>的,省下来的全是高单价的工时。</p>
+        <div class="case">
+          <span class="tag">真实案例 · 营销公司</span>
+          <p>一家 14 人营销公司,原本嫌 $120/月 的工具"鸡肋"。把它从写博客开头挪去写客户提案后,每月省 24 小时、回收约 $1,560——<strong>13:1 的回报。工具没变,变的是用它干什么。</strong></p>
+        </div>
+        <p class="step"><b>第一步 →</b> 先找出最吃资深员工时间的那件文书活,把工具对准它。同样的工具,用对地方和用错地方,回报能差十倍。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THING 5 ===================== -->
+<section>
+  <div class="wrap">
+    <div class="thing">
+      <div class="idx">05</div>
+      <div class="body">
+        <span class="label">/ 搬数据与排班</span>
+        <h2>系统间的隐形时间黑洞</h2>
+        <p>报价 → 开票 → 表格之间手动复制粘贴,是最隐形的时间黑洞;排班则大多靠"上周大概多少人、这周感觉怎样"拍脑袋。</p>
+        <ul class="bullets">
+          <li><strong>搬数据</strong>:用自动化流程把系统之间打通,省掉重复录入。</li>
+          <li><strong>排班</strong>:用工具直接读你的 POS 实际销量来预测下周需求,经理每周省 2–3 小时,更少了"周二排太多""周六没人补"。</li>
+        </ul>
+        <div class="stats">
+          <div class="stat"><b>2–3h/周</b><span>经理排班时间省回</span></div>
+          <div class="stat"><b>~$5k/年</b><span>典型节省</span></div>
+        </div>
+        <p class="step"><b>第一步 →</b> 排班省的钱不算最多,但它顺手、好上手,很适合当第一个练手项目——先拿它建立团队对 AI 的信心。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SAVINGS CHART ===================== -->
+<section>
+  <div class="wrap">
+    <span class="label">/ 一张账</span>
+    <h2>这五件事大概能省多少</h2>
+    <p>以下是我们在客户身上<strong>实际看到的范围,不是保证</strong>——具体取决于你有多少活是重复性的。</p>
+    <div class="chart">
+      <div class="cap">典型年度节省(按任务领域)</div>
+      <div class="bar"><div class="bl"><span>客户咨询 / 客服</span><span class="v">~$20k/年</span></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
+      <div class="bar"><div class="bl"><span>记账与单据</span><span class="v">~$12k/年</span></div><div class="track"><div class="fill" style="width:60%"></div></div></div>
+      <div class="bar"><div class="bl"><span>文案与营销</span><span class="v">~$8k/年</span></div><div class="track"><div class="fill" style="width:40%"></div></div></div>
+      <div class="bar"><div class="bl"><span>排班与行政</span><span class="v">~$5k/年</span></div><div class="track"><div class="fill" style="width:25%"></div></div></div>
+    </div>
+    <div class="callout"><p>起步预算:每月 <strong>$200–500</strong> 工具费 + 几天配置时间。对多数中小企业,第一个季度通常能换回每月 <strong>$1,500–4,000</strong> 的工时。</p></div>
+  </div>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section>
+  <div class="wrap">
+    <span class="label">/ 90 天落地</span>
+    <h2>别一次全上,按这个顺序走</h2>
+    <ol class="road">
+      <li><h3>挑一件最痛的活</h3><p>通常是客服或行政。先量它现在花多少小时——没有基线,后面没法判断值不值。</p></li>
+      <li><h3>先试现成工具一个月</h3><p>别一上来就定制。绝大多数省钱来自买得到的工具,不是自己造的。</p></li>
+      <li><h3>盯省下的工时,别盯新鲜感</h3><p>30 天内没腾出真实时间,就砍掉。设一个具体目标:"这工具每周省 X 小时"。</p></li>
+      <li><h3>然后才考虑定制</h3><p>当现成工具确实塞不进你的特殊流程、而且量大到值得时,再谈定制开发。</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== PITFALLS ===================== -->
+<section>
+  <div class="wrap">
+    <span class="label">/ 避坑</span>
+    <h2>三个最常见的坑</h2>
+    <div class="pits">
+      <div class="pit"><h3>⚠ 半年「AI 转型计划」才见回报</h3><p>要你先做半年规划才看得到一分钱回报的,绕开。真正的成效几周内就该冒出来。</p></div>
+      <div class="pit"><h3>⚠ 把 AI 原始输出直接发出去</h3><p>AI 起草,人审核——尤其碰到钱、合同、客户隐私的,一定留人工把关。跳过这步,聪明的省钱操作会变成昂贵的事故。</p></div>
+      <div class="pit"><h3>⚠ 订了一堆却不量化</h3><p>两个用对、且你真在追踪的工具,胜过六个开着自动续费、没人看的订阅。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SELF-CHECK ===================== -->
+<section>
+  <div class="wrap">
+    <span class="label">/ 自查</span>
+    <h2>你的生意先动哪一件?</h2>
+    <p>对照打勾——某一组勾得越多,那一件就越该先动手。</p>
+    <div class="check-group" id="checks">
+      <h3>客服</h3>
+      <label class="chk"><input type="checkbox"><span>每周回答大量重复问题(超过 10 小时)</span></label>
+      <label class="chk"><input type="checkbox"><span>客户抱怨回复慢</span></label>
+      <h3>记账 / 行政</h3>
+      <label class="chk"><input type="checkbox"><span>每周有人花数小时录发票、收据、对账</span></label>
+      <label class="chk"><input type="checkbox"><span>在不同系统之间手动搬数据</span></label>
+      <h3>文案 / 营销</h3>
+      <label class="chk"><input type="checkbox"><span>在外包或自己硬写产品描述、社媒、邮件</span></label>
+      <label class="chk"><input type="checkbox"><span>内容产出慢,跟不上节奏</span></label>
+      <h3>文书 / 提案</h3>
+      <label class="chk"><input type="checkbox"><span>资深员工花大量时间写提案、跟进邮件</span></label>
+      <label class="chk"><input type="checkbox"><span>每份文书都从空白页重来</span></label>
+      <h3>排班 / 调度</h3>
+      <label class="chk"><input type="checkbox"><span>排班靠拍脑袋,经常排多或排少</span></label>
+      <label class="chk"><input type="checkbox"><span>经理每周花好几小时排班</span></label>
+    </div>
+    <div class="score" id="score">已勾选 <b>0</b> / 10 — 勾得越多,你能从 AI 省下的时间越多。</div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section>
+  <div class="wrap">
+    <div class="cta">
+      <span class="label">/ 下一步</span>
+      <h2>30 分钟,免费 AI 诊断</h2>
+      <p>这本册子讲的是「通用」五件事。但你的生意到底<strong>先动哪一件、能省多少、用买的还是造的</strong>,得看你真实的流程。我们看你实际的工作流,告诉你最值得先做的两三件事——只给方案,不推销。</p>
+      <a class="btn" href="https://metatreelab.ai/contact/">预约免费诊断 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <span class="label">METATREE LAB · metatreelab.ai</span>
+    <p>Metatree Lab 是匠人学院(JR Academy)旗下的 AI 数字工作室,服务三条线:AI Build(定制开发)、AI Adopt(团队落地)、Property Marketing(地产营销)。我们不卖概念,只交付能用的东西。</p>
+  </div>
+</footer>
+
+<script>
+  // 自查表实时计数(渐进增强,无 JS 也能勾)
+  (function () {
+    var group = document.getElementById('checks');
+    var out = document.querySelector('#score b');
+    if (!group || !out) return;
+    group.addEventListener('change', function () {
+      out.textContent = group.querySelectorAll('input:checked').length;
+    });
+  })();
+</script>
+</body>
+</html>
