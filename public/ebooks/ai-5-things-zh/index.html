@@ -153,6 +153,8 @@
   .lead-form__hook{font-size:15px;color:var(--txt-2);margin:0 0 16px;line-height:1.6}
   .lead-form__hook b{color:var(--txt);font-weight:700}
   .lead-form__row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .lead-form__row--inline{grid-template-columns:1fr auto;align-items:stretch}
+  .lead-form__row--inline .btn-form{width:auto;white-space:nowrap;padding-left:26px;padding-right:26px}
   .lead-form input,.lead-form select{width:100%;background:#0c0c0e;border:1px solid var(--line-strong);border-radius:10px;padding:13px 14px;color:var(--txt);font-family:inherit;font-size:15px;outline:none;transition:border-color .2s}
   .lead-form input::placeholder{color:var(--txt-4)}
   .lead-form select{color:var(--txt-4);appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%2300e5a0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
@@ -167,7 +169,7 @@
   .lead-done__ic{width:52px;height:52px;border-radius:50%;background:var(--grad);color:#00130d;font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
   .lead-done__t{font-size:20px;font-weight:800;color:var(--txt);margin:0 0 8px}
   .lead-done__d{font-size:15px;color:var(--txt-2);margin:0 auto 18px;max-width:440px}
-  @media(max-width:560px){.lead-form__row{grid-template-columns:1fr}}
+  @media(max-width:560px){.lead-form__row{grid-template-columns:1fr}.lead-form__row--inline .btn-form{width:100%}}
 
   /* footer */
   footer{padding:48px 0 64px;text-align:center}
@@ -224,27 +226,13 @@
     </div>
 
     <form class="lead-form" id="lead-top" novalidate>
-      <p class="lead-form__hook">📩 留下邮箱,我们把这份指南的 <b>完整 PDF 版</b> + <b>你所在行业的定制版</b> 发给你,并帮你预约一次免费 AI 诊断。</p>
-      <div class="lead-form__row">
-        <input class="lf-name" type="text" placeholder="怎么称呼你 *" autocomplete="name" required />
+      <p class="lead-form__hook">📩 输入邮箱,<b>立即下载这份指南的 PDF 版</b>(也可以直接往下读)。</p>
+      <div class="lead-form__row lead-form__row--inline">
         <input class="lf-email" type="email" placeholder="你的邮箱 *" autocomplete="email" required />
+        <button type="submit" class="lf-submit btn-form">立即下载 PDF →</button>
       </div>
-      <div class="lead-form__row">
-        <input class="lf-company" type="text" placeholder="公司名(选填)" autocomplete="organization" />
-        <select class="lf-industry" required>
-          <option value="">所在行业 *</option>
-          <option value="餐饮">餐饮</option>
-          <option value="地产 / 中介">地产 / 中介</option>
-          <option value="会计 / 财税">会计 / 财税</option>
-          <option value="电商 / 零售">电商 / 零售</option>
-          <option value="律所 / 法律">律所 / 法律</option>
-          <option value="其他专业服务">其他专业服务</option>
-          <option value="其他">其他</option>
-        </select>
-      </div>
-      <button type="submit" class="lf-submit btn-form">领取这份指南 →</button>
       <p class="lf-status"></p>
-      <p class="lf-fine">我们不发垃圾邮件,随时可退订。</p>
+      <p class="lf-fine">输入邮箱即可下载,我们不发垃圾邮件。</p>
     </form>
   </div>
 </header>
@@ -464,30 +452,16 @@
 <section>
   <div class="wrap">
     <div class="cta">
-      <span class="label">/ 下一步</span>
-      <h2>领取完整版 + 免费 AI 诊断</h2>
-      <p>留下邮箱,我们把这份指南的 <strong>PDF 版</strong> 和 <strong>你所在行业的定制版</strong>(餐饮 / 地产 / 会计 / 电商 / 律所…)发给你,并帮你预约一次 30 分钟免费 AI 诊断——只给方案,不推销。</p>
+      <span class="label">/ 带走这份指南</span>
+      <h2>输入邮箱,立即下载 PDF</h2>
+      <p>把这份《AI 能帮你的生意做这 5 件事》存成 PDF 随时翻。想聊聊你的生意先从哪件事省钱?<a href="https://metatreelab.ai/contact/">预约一次免费 AI 诊断 →</a></p>
       <form class="lead-form lead-form--bare" id="lead-bottom" novalidate>
-        <div class="lead-form__row">
-          <input class="lf-name" type="text" placeholder="怎么称呼你 *" autocomplete="name" required />
+        <div class="lead-form__row lead-form__row--inline">
           <input class="lf-email" type="email" placeholder="你的邮箱 *" autocomplete="email" required />
+          <button type="submit" class="lf-submit btn-form">立即下载 PDF →</button>
         </div>
-        <div class="lead-form__row">
-          <input class="lf-company" type="text" placeholder="公司名(选填)" autocomplete="organization" />
-          <select class="lf-industry" required>
-            <option value="">所在行业 *</option>
-            <option value="餐饮">餐饮</option>
-            <option value="地产 / 中介">地产 / 中介</option>
-            <option value="会计 / 财税">会计 / 财税</option>
-            <option value="电商 / 零售">电商 / 零售</option>
-            <option value="律所 / 法律">律所 / 法律</option>
-            <option value="其他专业服务">其他专业服务</option>
-            <option value="其他">其他</option>
-          </select>
-        </div>
-        <button type="submit" class="lf-submit btn-form">领取 + 预约诊断 →</button>
         <p class="lf-status"></p>
-        <p class="lf-fine">我们不发垃圾邮件,随时可退订。</p>
+        <p class="lf-fine">输入邮箱即可下载,我们不发垃圾邮件。</p>
       </form>
     </div>
   </div>
@@ -512,55 +486,55 @@
     });
   })();
 
-  // 留资表单 → POST 到 JR Academy business-inquiry(网站现有后端,已配 CORS)
+  // 输入邮箱 → 抓取线索(尽力而为,不阻塞)+ 立即下载 PDF
   (function () {
     var API = 'https://api.jiangren.com.au/business-inquiry';
-    var EMAIL = 'hello@jiangren.com.au';
+    var PDF = 'ai-5-things-for-business.pdf'; // 同目录下的 PDF 文件
+    var DLNAME = 'AI能帮你的生意做这5件事-Metatree.pdf';
 
-    function val(form, sel) { var el = form.querySelector(sel); return el ? el.value.trim() : ''; }
+    function triggerDownload() {
+      var a = document.createElement('a');
+      a.href = PDF; a.download = DLNAME;
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+
+    function captureLead(email) {
+      var local = (email.split('@')[0] || '').trim();
+      var body = {
+        companyName: '(电子书下载)',
+        contactName: local || '(未填)',
+        email: email,
+        services: ['ai-adopt'],
+        description: '【电子书下载】AI 能帮你的生意做这 5 件事 ｜ 来源:metatreelab.ai/ebooks/ai-5-things-zh'
+      };
+      // 后端线索写入失败也不影响用户下载
+      return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(function () {});
+    }
 
     function showSuccess(form) {
       var done = document.createElement('div');
       done.className = 'lead-done';
       done.innerHTML =
         '<div class="lead-done__ic">✓</div>' +
-        '<p class="lead-done__t">收到了!</p>' +
-        '<p class="lead-done__d">完整 PDF 版 + 你所在行业的定制版会发到你邮箱,我们也会尽快联系你预约免费诊断。</p>' +
-        '<button type="button" class="btn-form" onclick="window.print()">顺手存成 PDF →</button>';
+        '<p class="lead-done__t">开始下载了!</p>' +
+        '<p class="lead-done__d">没有自动开始的话,<a href="' + PDF + '" download="' + DLNAME + '">点这里下载 PDF</a>。</p>';
       form.replaceWith(done);
     }
 
     document.querySelectorAll('.lead-form').forEach(function (form) {
-      form.addEventListener('submit', async function (e) {
+      form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var name = val(form, '.lf-name');
-        var email = val(form, '.lf-email');
-        var company = val(form, '.lf-company');
-        var industry = val(form, '.lf-industry');
+        var emailEl = form.querySelector('.lf-email');
+        var email = (emailEl ? emailEl.value : '').trim();
         var status = form.querySelector('.lf-status');
         var btn = form.querySelector('.lf-submit');
 
-        if (!name || !email || !industry) { status.textContent = '请填写称呼、邮箱和行业。'; return; }
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { status.textContent = '邮箱格式不对,再检查一下。'; return; }
 
-        var label = btn.textContent;
-        btn.disabled = true; btn.textContent = '提交中…'; status.textContent = '';
-
-        var body = {
-          companyName: company || '(未填)',
-          contactName: name,
-          email: email,
-          services: ['ai-adopt'],
-          description: '【电子书领取】AI 能帮你的生意做这 5 件事 ｜ 行业:' + industry + ' ｜ 来源:metatreelab.ai/ebooks/ai-5-things-zh'
-        };
-
-        try {
-          var res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-          if (res.ok) { showSuccess(form); }
-          else { status.textContent = '提交失败,请直接邮件 ' + EMAIL; btn.disabled = false; btn.textContent = label; }
-        } catch (err) {
-          status.textContent = '网络错误,请直接邮件 ' + EMAIL; btn.disabled = false; btn.textContent = label;
-        }
+        btn.disabled = true; btn.textContent = '准备中…'; status.textContent = '';
+        captureLead(email);   // 后台抓线索
+        triggerDownload();    // 立即下载
+        showSuccess(form);
       });
     });
   })();
