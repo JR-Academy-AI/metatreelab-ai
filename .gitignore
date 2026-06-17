@@ -43,3 +43,15 @@ delivery/
 # Private pricing anchors used by the /proposal skill — contain real client
 # contract values, names, and internal hourly rates. NEVER commit to a public repo.
 .claude/skills/proposal/references/
+
+# Internal marketing strategy — positioning, GTM playbooks, channel plans,
+# competitive analysis, ICP targeting, budgets, and funnel/KPI data. Competitive
+# and commercially sensitive. Lives in the repo for working use but is NEVER
+# committed to this PUBLIC repo.
+marketing/
+
+# Productized "agency memory" template — the replicable project-based file/logic
+# structure (design.md → records → AI-generated content) packaged as a sellable
+# product for real-estate agencies. Internal product IP. Local working use only,
+# NEVER committed to this PUBLIC repo.
+agency/

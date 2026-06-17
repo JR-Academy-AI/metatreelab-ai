@@ -197,5 +197,5 @@ locale: "{{zh|en}}"
 - **Live examples we built**：
   - JR Academy training-rag (LangChain + pgvector on AWS Lambda) — daily prod traffic
   - Hermes Agent — multi-channel deployment template we'll reuse
-  - LandIQ (public pitch deck: https://australiaitgroup.github.io/landiq/pitch)
+  - LandIQ (public pitch deck: https://landgear.github.io/landiq-brand/pitch)
 - **Open questions**：{{我们还需要客户回答什么才能进入 M0}}

@@ -95,7 +95,7 @@ locale: "{{zh|en}}"
 
 {{可选 — 客户是 AU 房产 / 大型 build 时加：}}
 
-> 我们用同样的"先 collateral 打开对话、再 milestone 分期 build"打法服务了 **LandIQ**（AI 房产可行性平台）— 完整在线 pitch deck：https://australiaitgroup.github.io/landiq/pitch
+> 我们用同样的"先 collateral 打开对话、再 milestone 分期 build"打法服务了 **LandIQ**（AI 房产可行性平台）— 完整在线 pitch deck：https://landgear.github.io/landiq-brand/pitch
 
 ---
 

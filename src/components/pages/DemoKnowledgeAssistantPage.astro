@@ -1,0 +1,883 @@
+---
+/**
+ * DemoKnowledgeAssistantPage — flagship "Try it" demo.
+ *
+ * Two synced panels:
+ *  - LEFT  : an animated data-flow pipeline (company sources → AI digital employee
+ *            → you). When a question is asked, the relevant sources light up, data
+ *            packets flow into the AI brain, it cycles retrieve→reason→generate, then
+ *            flows the answer out. This is the "wow / it's actually working" visual.
+ *  - RIGHT : the chat — types out an answer grounded in a named company document and
+ *            cites the source.
+ *
+ * Front-end-only mock with canned data — no backend, no real LLM. The point is to let
+ * an AI-naive buyer *see* the machinery, not just read a chat bubble.
+ * See marketing/strategy/conversion-strategy.md (gitignored).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+const copy = zh
+  ? {
+      sectionLabel: '/ DEMO — 数字员工 · 知识助手',
+      title: '问一句话，看 AI 从公司的「大脑」里把答案取出来。',
+      subtitle:
+        '左边是背后的运转：你的问题会从公司的文档库、数据库、记忆系统里实时检索；右边是结果——带出处的答案。点任意一个问题，看它跑起来。',
+      appName: 'Acme 贸易 · 公司知识助手',
+      indexed: '已索引 1,284 份公司文档',
+      youLabel: '你',
+      thinking: '正在检索公司文档…',
+      sourceLabel: '来源',
+      promptsLabel: '点击一个问题试试 ▾',
+      restart: '↺ 重新开始',
+      disclaimer: '演示用模拟数据 · 真实部署会接入你自己的文档库与数据库',
+      // pipeline
+      plSources: '公司数据源',
+      plBrain: '数字员工',
+      plLlm: 'LLM 大模型',
+      plLlmNote: '= AI 核心',
+      plYou: '你',
+      plIdle: '待命',
+      plRetrieve: '检索中',
+      plGenerate: '生成中',
+      plDone: '已作答',
+      plHits: (n: number) => `命中 ${n} 段`,
+      nodes: { doc: '文档库', db: '业务数据库', mem: '记忆系统', kb: '知识库' },
+      explainLabel: '/ 刚才发生了什么',
+      explainTitle: '这不是聊天机器人，是会查公司资料的「数字员工」',
+      explainPoints: [
+        '它从你公司的文档、数据库、记忆系统里实时检索——不是凭空编',
+        '员工用大白话问，不用记关键词、不用知道文件存在哪',
+        '每个回答都带出处，可点开核对，放心用',
+        '7×24 在线，新人当天上手，老员工不再被反复打断',
+      ],
+      ctaTryYours: '想看它读你自己的文档和数据库？',
+      ctaBtn: '聊聊怎么接入',
+      backToHub: '← 回到所有 Demo',
+    }
+  : {
+      sectionLabel: '/ DEMO — Digital Employee · Knowledge Assistant',
+      title: 'Ask a question — watch AI pull the answer from your company’s brain.',
+      subtitle:
+        'On the left, the machinery: your question is retrieved live from the company’s document store, database and memory system. On the right, the result — a sourced answer. Click any question to watch it run.',
+      appName: 'Acme Trading · Company Knowledge Assistant',
+      indexed: '1,284 company documents indexed',
+      youLabel: 'You',
+      thinking: 'Searching company documents…',
+      sourceLabel: 'Source',
+      promptsLabel: 'Click a question to try ▾',
+      restart: '↺ Start over',
+      disclaimer: 'Demo with sample data · a real deployment connects your own docs & databases',
+      plSources: 'Company sources',
+      plBrain: 'Digital employee',
+      plLlm: 'LLM',
+      plLlmNote: '= the AI',
+      plYou: 'You',
+      plIdle: 'Idle',
+      plRetrieve: 'Retrieving',
+      plGenerate: 'Generating',
+      plDone: 'Answered',
+      plHits: (n: number) => `${n} passages matched`,
+      nodes: { doc: 'Documents', db: 'Database', mem: 'Memory', kb: 'Knowledge base' },
+      explainLabel: '/ What just happened',
+      explainTitle: 'Not a chatbot — a “digital employee” that looks things up',
+      explainPoints: [
+        'It retrieves live from your docs, database and memory system — nothing made up',
+        'Staff ask in plain language — no keywords, no knowing where the file lives',
+        'Every answer cites its source, so people can verify and trust it',
+        'Available 24/7 — new hires productive day one, seniors stop getting interrupted',
+      ],
+      ctaTryYours: 'Want to see it read your own documents and databases?',
+      ctaBtn: 'Talk to us about it',
+      backToHub: '← Back to all demos',
+    };
+
+// Canned Q&A — localized + which source nodes each question "hits" + a passage count.
+const qaRaw = [
+  {
+    id: 'returns',
+    sources: ['doc'],
+    hits: 3,
+    q: { en: 'What is the return policy?', zh: '退货政策是几天？' },
+    a: {
+      en: 'Unopened items can be fully refunded within 14 days of delivery. Opened items with no quality fault are refundable minus a 15% restocking fee.',
+      zh: '未拆封商品自客户签收之日起 14 天内可全额退款；已拆封但无质量问题的，扣除 15% 折旧费后退款。',
+    },
+    src: { en: 'After-Sales Handbook v3 · §2.1', zh: '《售后服务手册 v3》· §2.1' },
+  },
+  {
+    id: 'vip',
+    sources: ['db', 'doc'],
+    hits: 5,
+    q: { en: 'What discount do VIP customers get?', zh: 'VIP 客户的折扣是多少？' },
+    a: {
+      en: 'Gold VIPs get 12% off, Silver VIPs 8%. Any single order over $5,000 stacks an extra 3%.',
+      zh: '金牌 VIP 享 12% 折扣，银牌 VIP 享 8%；单笔订单满 $5,000 可额外叠加 3%。',
+    },
+    src: { en: 'Sales Pricing Policy 2026 · Table B', zh: '《销售价格政策 2026》· 表 B' },
+  },
+  {
+    id: 'shipping',
+    sources: ['doc', 'mem'],
+    hits: 2,
+    q: { en: 'What is the cut-off for same-day shipping?', zh: '几点前下单当天发货？' },
+    a: {
+      en: 'Orders paid before 3:00 PM on a business day ship the same day. Next-day delivery within metro Melbourne.',
+      zh: '工作日下午 3:00 前付款的订单当天发出，墨尔本市区次日送达。',
+    },
+    src: { en: 'Logistics Operating Procedure · §4.3', zh: '《物流操作规程》· §4.3' },
+  },
+  {
+    id: 'leave',
+    sources: ['doc', 'kb'],
+    hits: 4,
+    q: { en: 'How do I apply for annual leave?', zh: '年假怎么申请？' },
+    a: {
+      en: 'Submit a request in the system 2 weeks ahead; your manager approves within 3 business days. 20 days a year, up to 5 carried over.',
+      zh: '提前 2 周在系统提交申请，主管 3 个工作日内审批；年假每年 20 天，最多可结转 5 天到次年。',
+    },
+    src: { en: 'Employee Handbook · §6.2', zh: '《员工手册》· §6.2' },
+  },
+];
+
+const qa = qaRaw.map((item) => ({
+  id: item.id,
+  q: item.q[locale],
+  a: item.a[locale],
+  src: item.src[locale],
+  sources: item.sources,
+  hits: item.hits,
+}));
+const qaJson = JSON.stringify(qa);
+
+const nodeList = [
+  { id: 'doc', icon: '📚' },
+  { id: 'db', icon: '🗄️' },
+  { id: 'mem', icon: '🧠' },
+  { id: 'kb', icon: '🌐' },
+] as const;
+
+const contactHref = localizedHref('/contact/', locale);
+const hubHref = localizedHref('/demo/', locale);
+
+const description = zh
+  ? '在线体验 AI 数字员工：左侧实时数据流动图（文档库/数据库/记忆系统→AI→你）+ 右侧带出处的对话。模拟演示。'
+  : 'Try an AI digital employee: a live data-flow diagram (docs/database/memory → AI → you) beside a sourced chat. Simulated demo.';
+---
+
+<BaseLayout title={zh ? 'Demo · 数字员工知识助手' : 'Demo · Digital Employee Knowledge Assistant'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="ka">
+    <div class="ka__inner container-x">
+      <a href={hubHref} class="ka__back">{copy.backToHub}</a>
+
+      <div class="ka__stage">
+        <!-- LEFT: animated data-flow pipeline -->
+        <aside class="ka__pipeline card-glass" id="ka-pipeline" aria-hidden="true">
+          <div class="pl">
+            <span class="pl__coltag">{copy.plSources}</span>
+            <div class="pl__sources">
+              {nodeList.map((n) => (
+                <div class="pl__node" data-node={n.id}>
+                  <span class="pl__node-icon">{n.icon}</span>
+                  <span class="pl__node-label">{copy.nodes[n.id]}</span>
+                </div>
+              ))}
+            </div>
+
+            <div class="pl__link" data-link="in">
+              <i></i><i></i><i></i>
+            </div>
+
+            <div class="pl__brain" id="pl-brain">
+              <span class="pl__brain-icon">🦞</span>
+              <span class="pl__brain-name">{copy.plBrain}</span>
+              <span class="pl__brain-core">
+                <span class="pl__brain-core-spark">✦</span>{copy.plLlm}
+                <span class="pl__brain-core-note">{copy.plLlmNote}</span>
+              </span>
+              <span class="pl__brain-state" id="pl-state">{copy.plIdle}</span>
+              <span class="pl__hits" id="pl-hits"></span>
+            </div>
+
+            <div class="pl__link" data-link="out">
+              <i></i><i></i><i></i>
+            </div>
+
+            <div class="pl__you" id="pl-you">
+              <span class="pl__you-icon">💬</span>
+              <span class="pl__you-label">{copy.plYou}</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT: chat app -->
+        <div class="ka__app card-glass">
+          <header class="ka__appbar">
+            <div class="ka__appbar-left">
+              <span class="ka__dot" aria-hidden="true"></span>
+              <span class="ka__appname">{copy.appName}</span>
+            </div>
+            <span class="ka__indexed">📚 {copy.indexed}</span>
+          </header>
+
+          <div class="ka__transcript" id="ka-transcript" aria-live="polite"></div>
+
+          <div class="ka__prompts" id="ka-prompts">
+            <span class="ka__prompts-label">{copy.promptsLabel}</span>
+            <div class="ka__chips">
+              {qa.map((item) => (
+                <button class="ka__chip" type="button" data-qid={item.id}>{item.q}</button>
+              ))}
+            </div>
+          </div>
+
+          <footer class="ka__appfoot">
+            <span class="ka__disclaimer">⚠︎ {copy.disclaimer}</span>
+            <button class="ka__restart" id="ka-restart" type="button" hidden>{copy.restart}</button>
+          </footer>
+        </div>
+      </div>
+
+      <!-- Explainer -->
+      <div class="ka__explain">
+        <span class="section-label">{copy.explainLabel}</span>
+        <h2 class="ka__explain-title">{copy.explainTitle}</h2>
+        <ul class="ka__points">
+          {copy.explainPoints.map((p) => <li>{p}</li>)}
+        </ul>
+        <div class="ka__try">
+          <p>{copy.ctaTryYours}</p>
+          <a href={contactHref} class="btn-primary">{copy.ctaBtn} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="03" />
+</BaseLayout>
+
+<script is:inline define:vars={{
+  qaJson,
+  labels: {
+    you: copy.youLabel,
+    thinking: copy.thinking,
+    source: copy.sourceLabel,
+    idle: copy.plIdle,
+    retrieve: copy.plRetrieve,
+    generate: copy.plGenerate,
+    done: copy.plDone,
+    hitsPrefix: zh ? '命中 ' : '',
+    hitsSuffix: zh ? ' 段' : ' matched',
+  },
+}}>
+  function initKnowledgeAssistant() {
+    const transcript = document.getElementById('ka-transcript');
+    const prompts = document.getElementById('ka-prompts');
+    const restartBtn = document.getElementById('ka-restart');
+    const pipeline = document.getElementById('ka-pipeline');
+    const brain = document.getElementById('pl-brain');
+    const stateEl = document.getElementById('pl-state');
+    const hitsEl = document.getElementById('pl-hits');
+    const youEl = document.getElementById('pl-you');
+    if (!transcript || !prompts) return;
+
+    const QA = JSON.parse(qaJson);
+    const byId = {};
+    QA.forEach(function (item) { byId[item.id] = item; });
+
+    let busy = false;
+    const timers = [];
+    const answered = {};
+
+    function t(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearTimers() { timers.forEach(clearTimeout); timers.length = 0; }
+    function scrollDown() { transcript.scrollTop = transcript.scrollHeight; }
+
+    /* ---------- pipeline control ---------- */
+    function plReset() {
+      if (!pipeline) return;
+      pipeline.querySelectorAll('.pl__node').forEach(function (n) { n.classList.remove('is-active'); });
+      pipeline.querySelectorAll('.pl__link').forEach(function (l) { l.classList.remove('is-flowing'); });
+      if (brain) brain.classList.remove('is-working', 'is-done');
+      if (youEl) youEl.classList.remove('is-active');
+      if (stateEl) stateEl.textContent = labels.idle;
+      if (hitsEl) { hitsEl.textContent = ''; hitsEl.classList.remove('is-in'); }
+    }
+
+    function plRetrieve(item) {
+      if (!pipeline) return;
+      // light the source nodes this question hits
+      (item.sources || []).forEach(function (id) {
+        const node = pipeline.querySelector('.pl__node[data-node="' + id + '"]');
+        if (node) node.classList.add('is-active');
+      });
+      const inLink = pipeline.querySelector('.pl__link[data-link="in"]');
+      if (inLink) inLink.classList.add('is-flowing');
+      if (brain) brain.classList.add('is-working');
+      if (stateEl) stateEl.textContent = labels.retrieve;
+      // count up matched passages
+      if (hitsEl && item.hits) {
+        let n = 0;
+        hitsEl.classList.add('is-in');
+        (function tick() {
+          n += 1;
+          hitsEl.textContent = labels.hitsPrefix + n + labels.hitsSuffix;
+          if (n < item.hits) t(tick, 110);
+        })();
+      }
+    }
+
+    function plGenerate() {
+      if (!pipeline) return;
+      const inLink = pipeline.querySelector('.pl__link[data-link="in"]');
+      const outLink = pipeline.querySelector('.pl__link[data-link="out"]');
+      if (inLink) inLink.classList.remove('is-flowing');
+      if (outLink) outLink.classList.add('is-flowing');
+      if (stateEl) stateEl.textContent = labels.generate;
+      if (youEl) youEl.classList.add('is-active');
+    }
+
+    function plDone() {
+      if (!pipeline) return;
+      const outLink = pipeline.querySelector('.pl__link[data-link="out"]');
+      if (outLink) outLink.classList.remove('is-flowing');
+      if (brain) { brain.classList.remove('is-working'); brain.classList.add('is-done'); }
+      if (stateEl) stateEl.textContent = labels.done;
+    }
+
+    /* ---------- chat ---------- */
+    function addUser(text) {
+      const row = document.createElement('div');
+      row.className = 'ka__msg ka__msg--user';
+      const who = document.createElement('span');
+      who.className = 'ka__who';
+      who.textContent = labels.you;
+      const bubble = document.createElement('div');
+      bubble.className = 'ka__bubble';
+      bubble.textContent = text;
+      row.appendChild(who);
+      row.appendChild(bubble);
+      transcript.appendChild(row);
+      scrollDown();
+    }
+
+    function addThinking() {
+      const row = document.createElement('div');
+      row.className = 'ka__msg ka__msg--ai';
+      row.innerHTML =
+        '<span class="ka__who ka__who--ai">🦞</span>' +
+        '<div class="ka__bubble ka__bubble--thinking">' +
+        '<span class="ka__think-text"></span>' +
+        '<span class="ka__dots"><i></i><i></i><i></i></span></div>';
+      row.querySelector('.ka__think-text').textContent = labels.thinking + ' ';
+      transcript.appendChild(row);
+      scrollDown();
+      return row;
+    }
+
+    function typeAnswer(bubble, text, done) {
+      let i = 0;
+      bubble.textContent = '';
+      function step() {
+        i += 2;
+        bubble.textContent = text.slice(0, i);
+        scrollDown();
+        if (i < text.length) { t(step, 18); }
+        else { bubble.textContent = text; done(); }
+      }
+      step();
+    }
+
+    function ask(id) {
+      const item = byId[id];
+      if (!item || busy || answered[id]) return;
+      busy = true;
+      answered[id] = true;
+
+      const chip = prompts.querySelector('[data-qid="' + id + '"]');
+      if (chip) chip.classList.add('is-asked');
+
+      plReset();
+      addUser(item.q);
+      const thinkingRow = addThinking();
+      plRetrieve(item);
+
+      t(function () {
+        plGenerate();
+        thinkingRow.innerHTML =
+          '<span class="ka__who ka__who--ai">🦞</span>' +
+          '<div class="ka__bubble ka__answer"></div>';
+        const bubble = thinkingRow.querySelector('.ka__answer');
+
+        typeAnswer(bubble, item.a, function () {
+          const src = document.createElement('div');
+          src.className = 'ka__source';
+          src.innerHTML =
+            '<span class="ka__source-tag">▸ ' + labels.source + '</span>' +
+            '<span class="ka__source-doc"></span>';
+          src.querySelector('.ka__source-doc').textContent = item.src;
+          bubble.appendChild(src);
+          t(function () { src.classList.add('is-in'); }, 30);
+          scrollDown();
+          plDone();
+
+          busy = false;
+          if (restartBtn) restartBtn.hidden = false;
+          if (Object.keys(answered).length >= QA.length) prompts.classList.add('is-done');
+        });
+      }, 1100);
+    }
+
+    prompts.addEventListener('click', function (e) {
+      const btn = e.target.closest('.ka__chip');
+      if (!btn) return;
+      ask(btn.getAttribute('data-qid'));
+    });
+
+    if (restartBtn) {
+      restartBtn.addEventListener('click', function () {
+        clearTimers();
+        busy = false;
+        for (const k in answered) delete answered[k];
+        transcript.innerHTML = '';
+        prompts.classList.remove('is-done');
+        prompts.querySelectorAll('.ka__chip').forEach(function (c) { c.classList.remove('is-asked'); });
+        restartBtn.hidden = true;
+        plReset();
+      });
+    }
+  }
+
+  initKnowledgeAssistant();
+  document.addEventListener('astro:after-swap', initKnowledgeAssistant);
+</script>
+
+<style>
+  .ka { padding-block: var(--space-7) var(--space-9); }
+
+  .ka__back {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-4);
+  }
+  .ka__back:hover { color: var(--brand-primary); }
+
+  /* ===== Stage: pipeline + chat side by side ===== */
+  .ka__stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+
+  /* ===== Pipeline (left) ===== */
+  .ka__pipeline {
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+
+  .pl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    height: 100%;
+  }
+
+  .pl__coltag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-1);
+  }
+
+  .pl__sources {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .pl__node {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    border: 1px solid var(--border-hairline);
+    transition: border-color var(--dur-normal) var(--ease-out),
+      box-shadow var(--dur-normal) var(--ease-out),
+      transform var(--dur-normal) var(--ease-out);
+  }
+  .pl__node-icon { font-size: 1.6rem; line-height: 1; }
+  .pl__node-label {
+    font-size: var(--fs-body-sm);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .pl__node.is-active {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow);
+    transform: translateY(-1px);
+    animation: pl-pulse 1.1s ease-in-out infinite;
+  }
+  .pl__node.is-active .pl__node-label { color: var(--text-primary); }
+
+  /* connectors — brand-gradient animated arrows */
+  .pl__link {
+    position: relative;
+    width: 1.6rem;
+    height: 3.6rem;
+  }
+  /* the rail line (brand gradient, dim until flowing) */
+  .pl__link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0.7rem;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 1px;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--brand-primary) 28%, transparent),
+      color-mix(in srgb, var(--brand-secondary) 28%, transparent)
+    );
+    transition: filter var(--dur-normal) var(--ease-out);
+  }
+  /* the arrowhead pointing into the next node */
+  .pl__link::after {
+    content: '';
+    position: absolute;
+    bottom: 0.1rem;
+    left: 50%;
+    margin-left: -0.42rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    border-right: 2px solid color-mix(in srgb, var(--brand-secondary) 40%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--brand-secondary) 40%, transparent);
+    transform: rotate(45deg);
+    transition: border-color var(--dur-normal) var(--ease-out), filter var(--dur-normal) var(--ease-out);
+  }
+  /* cascading chevrons = the animated arrow, jade→cyan trail */
+  .pl__link i {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-left: -0.4rem;
+    border-right: 2px solid var(--brand-primary);
+    border-bottom: 2px solid var(--brand-primary);
+    transform: rotate(45deg);
+    opacity: 0;
+  }
+  .pl__link i:nth-child(2) { border-color: var(--brand-accent); }
+  .pl__link i:nth-child(3) { border-color: var(--brand-secondary); }
+
+  .pl__link.is-flowing::before { filter: drop-shadow(0 0 8px var(--brand-glow)); }
+  .pl__link.is-flowing::after {
+    border-color: var(--brand-secondary);
+    filter: drop-shadow(0 0 6px var(--brand-glow));
+  }
+  .pl__link.is-flowing i { animation: pl-flow 1s ease-in-out infinite; filter: drop-shadow(0 0 5px var(--brand-glow)); }
+  .pl__link.is-flowing i:nth-child(2) { animation-delay: 0.33s; }
+  .pl__link.is-flowing i:nth-child(3) { animation-delay: 0.66s; }
+
+  /* brain */
+  .pl__brain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    width: 100%;
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__brain-icon { font-size: 2.6rem; line-height: 1; }
+  .pl__brain-name {
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    font-size: var(--fs-body-sm);
+  }
+  .pl__brain-state {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* LLM core — the "AI" inside the digital employee */
+  .pl__brain-core {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.35rem 0 0.1rem;
+    padding: 0.28rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--brand-secondary) 45%, transparent);
+    background: color-mix(in srgb, var(--brand-secondary) 9%, transparent);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__brain-core-spark { color: var(--brand-primary); }
+  .pl__brain-core-note { color: var(--text-tertiary); font-weight: var(--fw-regular); }
+  .pl__brain.is-working .pl__brain-core {
+    border-color: var(--brand-secondary);
+    box-shadow: 0 0 12px -3px var(--brand-glow);
+  }
+  .pl__brain.is-working .pl__brain-core-spark { animation: pl-spin 1.4s linear infinite; display: inline-block; }
+  .pl__brain.is-working {
+    border-color: var(--brand-primary);
+    box-shadow: var(--shadow-glow);
+    animation: pl-pulse 1s ease-in-out infinite;
+  }
+  .pl__brain.is-working .pl__brain-state { color: var(--brand-primary); }
+  .pl__brain.is-working .pl__brain-icon { animation: pl-spin 1.4s linear infinite; }
+  .pl__brain.is-done { border-color: color-mix(in srgb, var(--brand-primary) 50%, transparent); }
+  .pl__brain.is-done .pl__brain-state { color: var(--brand-primary); }
+
+  .pl__hits {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--brand-primary);
+    height: 0;
+    opacity: 0;
+    transition: opacity var(--dur-normal) var(--ease-out);
+  }
+  .pl__hits.is-in { height: auto; opacity: 1; }
+
+  /* you */
+  .pl__you {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--bg-base);
+    border: 1px solid var(--border-hairline);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__you-icon { font-size: 1.6rem; line-height: 1; }
+  .pl__you-label { font-size: var(--fs-body-sm); color: var(--text-secondary); }
+  .pl__you.is-active {
+    border-color: var(--brand-primary);
+    box-shadow: var(--shadow-glow);
+  }
+  .pl__you.is-active .pl__you-label { color: var(--text-primary); }
+
+  /* ===== Chat app (right) ===== */
+  .ka__app {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ka__appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-hairline);
+    background: var(--bg-elevated);
+  }
+  .ka__appbar-left { display: flex; align-items: center; gap: var(--space-2); }
+  .ka__dot {
+    width: 0.8rem; height: 0.8rem; border-radius: 50%;
+    background: var(--brand-primary); box-shadow: 0 0 8px var(--brand-primary);
+  }
+  .ka__appname { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .ka__indexed { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary); }
+
+  .ka__transcript {
+    flex: 1;
+    min-height: 20rem;
+    max-height: 42rem;
+    overflow-y: auto;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .ka__msg {
+    display: flex;
+    gap: var(--space-2);
+    align-items: flex-start;
+    max-width: 92%;
+    animation: ka-in var(--dur-normal) var(--ease-out);
+  }
+  .ka__msg--user { align-self: flex-end; flex-direction: row-reverse; }
+
+  .ka__who {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-tertiary);
+    padding-top: var(--space-2);
+    white-space: nowrap;
+  }
+  .ka__who--ai { font-size: 1.8rem; padding-top: 0; line-height: 1; }
+
+  .ka__bubble {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--text-primary);
+    border: 1px solid var(--border-hairline);
+  }
+  .ka__msg--user .ka__bubble {
+    background: color-mix(in srgb, var(--brand-primary) 14%, transparent);
+    border-color: color-mix(in srgb, var(--brand-primary) 30%, transparent);
+  }
+  .ka__msg--ai .ka__bubble { background: var(--bg-base); }
+
+  .ka__bubble--thinking {
+    display: inline-flex; align-items: center;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono); font-size: var(--fs-body-sm);
+  }
+  .ka__dots i {
+    display: inline-block; width: 0.4rem; height: 0.4rem; margin-left: 0.25rem;
+    border-radius: 50%; background: var(--brand-primary);
+    animation: ka-blink 1.2s infinite ease-in-out;
+  }
+  .ka__dots i:nth-child(2) { animation-delay: 0.2s; }
+  .ka__dots i:nth-child(3) { animation-delay: 0.4s; }
+
+  .ka__source {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+    margin-top: var(--space-3); padding-top: var(--space-3);
+    border-top: 1px dashed var(--border-hairline);
+    opacity: 0; transform: translateY(4px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .ka__source.is-in { opacity: 1; transform: none; }
+  .ka__source-tag {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand-primary);
+  }
+  .ka__source-doc {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    padding: 0.2rem 0.7rem; border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, transparent);
+  }
+
+  .ka__prompts { padding: var(--space-4); border-top: 1px solid var(--border-hairline); background: var(--bg-elevated); }
+  .ka__prompts.is-done { opacity: 0.5; }
+  .ka__prompts-label {
+    display: block; font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: var(--space-3);
+  }
+  .ka__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .ka__chip {
+    font-family: var(--font-sans); font-size: var(--fs-body-sm); color: var(--text-primary);
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
+  }
+  .ka__chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); transform: translateY(-1px); }
+  .ka__chip.is-asked { opacity: 0.4; pointer-events: none; text-decoration: line-through; }
+
+  .ka__appfoot {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-hairline);
+  }
+  .ka__disclaimer { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-muted); }
+  .ka__restart {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    background: none; border: none; cursor: pointer;
+  }
+  .ka__restart:hover { color: var(--brand-primary); }
+
+  /* ===== Explainer ===== */
+  .ka__explain { max-width: 64rem; margin-top: var(--space-7); }
+  .ka__explain-title {
+    font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: -0.02em;
+    color: var(--text-primary); margin: var(--space-2) 0 var(--space-4);
+  }
+  .ka__points { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .ka__points li {
+    position: relative; padding-left: var(--space-5);
+    color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.55;
+  }
+  .ka__points li::before {
+    content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold);
+  }
+  .ka__try {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6); padding: var(--space-5);
+    border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-hairline);
+  }
+  .ka__try p { margin: 0; font-size: var(--fs-body-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  /* ===== Keyframes ===== */
+  @keyframes ka-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes ka-blink { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+  @keyframes pl-flow { 0% { top: -0.3rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { top: 2.5rem; opacity: 0; } }
+  @keyframes pl-pulse { 0%, 100% { box-shadow: 0 0 0 1px var(--brand-primary), 0 0 12px -2px var(--brand-glow); } 50% { box-shadow: 0 0 0 1px var(--brand-primary), 0 0 22px 2px var(--brand-glow); } }
+  @keyframes pl-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 919px) {
+    .ka__stage { grid-template-columns: 1fr; }
+    /* pipeline becomes a horizontal strip on top */
+    .pl { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: var(--space-3); }
+    .pl__coltag { width: 100%; text-align: center; }
+    .pl__sources { width: auto; grid-template-columns: 1fr 1fr; }
+    .pl__link { width: 3.6rem; height: 1.6rem; }
+    .pl__link::before {
+      top: 50%; bottom: auto; left: 0; right: 0.7rem;
+      width: auto; height: 2px; margin-left: 0; margin-top: -1px;
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--brand-primary) 28%, transparent),
+        color-mix(in srgb, var(--brand-secondary) 28%, transparent));
+    }
+    .pl__link::after {
+      top: 50%; bottom: auto; left: auto; right: 0.1rem;
+      margin-left: 0; margin-top: -0.42rem; transform: rotate(-45deg);
+    }
+    .pl__link i {
+      top: 50%; left: 0; margin-left: 0; margin-top: -0.4rem; transform: rotate(-45deg);
+    }
+    .pl__link.is-flowing i { animation: pl-flow-h 1s ease-in-out infinite; }
+    .pl__brain { width: auto; }
+  }
+  @keyframes pl-flow-h { 0% { left: -0.3rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { left: 2.6rem; opacity: 0; } }
+
+  @media (max-width: 767px) {
+    .ka__msg { max-width: 100%; }
+    .ka__indexed { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ka__msg, .ka__dots i, .pl__node.is-active, .pl__brain.is-working, .pl__brain.is-working .pl__brain-icon, .pl__brain.is-working .pl__brain-core-spark, .pl__link.is-flowing i { animation: none; }
+  }
+</style>

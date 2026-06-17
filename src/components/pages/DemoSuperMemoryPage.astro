@@ -1,0 +1,947 @@
+---
+/**
+ * DemoSuperMemoryPage — "AI Super-Memory System" demo (#5 on the hub).
+ *
+ * Story in two phases, both front-end-only mocks (no backend, no LLM):
+ *  1. INGEST — every employee files a daily report; each one flows along brand-gradient
+ *     arrows into the company brain (LLM long-term memory), which accumulates them.
+ *  2. RECALL — anyone asks the brain a cross-team question; it answers instantly and
+ *     cites which employee/day the memory came from.
+ *
+ * Shares the pipeline visual language (nodes, gradient arrows, glowing LLM brain) with
+ * DemoKnowledgeAssistantPage so the demos feel like one system.
+ * See marketing/strategy/conversion-strategy.md (gitignored).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+const copy = zh
+  ? {
+      sectionLabel: '/ DEMO — AI 超级记忆系统',
+      title: '全员汇报给 AI，AI 反过来给每个人派活——一个会指挥的企业大脑。',
+      subtitle:
+        '左边是架构：大家每天的进展先汇报给 AI，沉淀成「企业长期记忆」；AI 再综合全员情况，主动给每个人派下一步任务（还会说明为什么），也能随时被追问。先点「模拟全员今日汇报」，再让 AI 派工。',
+      plTeam: '全员',
+      plBrain: '企业大脑',
+      plLlm: 'LLM 长期记忆',
+      plLlmNote: '= AI 核心',
+      plAsk: '追问',
+      plIdle: '待命',
+      plIngest: '记忆中',
+      plRecall: '检索记忆',
+      plDispatch: '分析派工',
+      plDone: '已完成',
+      dispatchBtn: '🧠 让 AI 分析并派工',
+      dispatching: 'AI 分析中…',
+      taskTo: '派给',
+      taskWhy: '为什么',
+      consoleName: '企业超级记忆 · Console',
+      capsLabel: '企业大脑能做什么',
+      caps: [
+        { id: 'record', icon: '📥', label: '记录工作', desc: '全员进展沉淀成长期记忆' },
+        { id: 'assign', icon: '📤', label: '分配工作', desc: 'AI 综合全员后主动派活' },
+        { id: 'recall', icon: '🔍', label: '追问检索', desc: '随时溯源查询' },
+      ],
+      divRecord: '① 记录工作 · 全员汇报',
+      divAssign: '② 分配工作 · AI 派工',
+      divRecall: '③ 追问检索',
+      memoryCount: (n: number) => `已记忆 ${n} 条`,
+      feedEmpty: '还没有记忆。点下方「模拟全员今日汇报」，看 AI 把每个人的进展记下来。',
+      reportBtn: '▶ 模拟全员今日汇报',
+      reporting: '汇报中…',
+      askLabel: '现在随便追问 ▾',
+      youLabel: '你',
+      sourceLabel: '记忆来源',
+      restart: '↺ 重新开始',
+      disclaimer: '演示用模拟数据 · 真实部署会接入你的日报 / IM / 周报系统',
+      explainLabel: '/ 这套系统解决什么',
+      explainTitle: '一个会记忆、也会指挥的企业大脑',
+      explainPoints: [
+        '每个人的进展自动沉淀成公司资产，不靠某个人脑子记',
+        'AI 综合全员状态，主动给每个人派下一步任务，还讲清为什么',
+        '跨部门信息被串起来——客服反映的问题能直接变成项目组的任务',
+        '每条记忆 / 任务都标明来自谁、哪天，可追溯、可信任',
+      ],
+      ctaTryYours: '想把它接到你团队的日报和聊天记录上？',
+      ctaBtn: '聊聊怎么接入',
+      backToHub: '← 回到所有 Demo',
+    }
+  : {
+      sectionLabel: '/ DEMO — AI Super-Memory System',
+      title: 'Everyone reports to the AI — and the AI assigns the work back. A brain that runs the company.',
+      subtitle:
+        'On the left, the architecture: daily updates flow into the AI as long-term company memory; the AI then reads the whole picture and assigns each person their next task (with the reason), and can be queried any time. Click “Simulate today’s reports”, then let the AI assign tasks.',
+      plTeam: 'Team',
+      plBrain: 'Company brain',
+      plLlm: 'LLM long-term memory',
+      plLlmNote: '= the AI',
+      plAsk: 'Ask',
+      plIdle: 'Idle',
+      plIngest: 'Remembering',
+      plRecall: 'Recalling',
+      plDispatch: 'Assigning',
+      plDone: 'Done',
+      dispatchBtn: '🧠 Let AI assign tasks',
+      dispatching: 'AI analysing…',
+      taskTo: 'To',
+      taskWhy: 'Why',
+      consoleName: 'Enterprise Super-Memory · Console',
+      capsLabel: 'What the company brain does',
+      caps: [
+        { id: 'record', icon: '📥', label: 'Record work', desc: 'Everyone’s progress becomes long-term memory' },
+        { id: 'assign', icon: '📤', label: 'Assign work', desc: 'AI reads the picture and assigns tasks' },
+        { id: 'recall', icon: '🔍', label: 'Recall & ask', desc: 'Query anything, with sources, any time' },
+      ],
+      divRecord: '① Record work · daily reports',
+      divAssign: '② Assign work · AI dispatch',
+      divRecall: '③ Recall & ask',
+      memoryCount: (n: number) => `${n} memories stored`,
+      feedEmpty: 'No memories yet. Click “Simulate today’s reports” below and watch the AI remember everyone’s updates.',
+      reportBtn: '▶ Simulate today’s reports',
+      reporting: 'Reporting…',
+      askLabel: 'Now ask anything ▾',
+      youLabel: 'You',
+      sourceLabel: 'From memory',
+      restart: '↺ Start over',
+      disclaimer: 'Demo with sample data · a real deployment connects your reports / chat / standups',
+      explainLabel: '/ What this solves',
+      explainTitle: 'A company brain that both remembers and directs',
+      explainPoints: [
+        'Everyone’s progress becomes a company asset — not stuck in one person’s head',
+        'The AI reads the whole picture and assigns each person’s next task, with the reason',
+        'Cross-team signals connect — a support issue becomes a project task',
+        'Every memory and task says who and when — traceable and trusted',
+      ],
+      ctaTryYours: 'Want it wired to your team’s standups and chat history?',
+      ctaBtn: 'Talk to us about it',
+      backToHub: '← Back to all demos',
+    };
+
+const team = [
+  {
+    id: 'sales', icon: '🧑‍💼',
+    name: { en: 'Sales · Lin', zh: '销售 · Lin' },
+    report: {
+      en: 'Followed up Vista Realty — they want a 3-bed quote by Thursday.',
+      zh: '跟进了 Vista 地产，对方要 3 房报价，周四前回。',
+    },
+  },
+  {
+    id: 'support', icon: '🎧',
+    name: { en: 'Support · Amy', zh: '客服 · Amy' },
+    report: {
+      en: 'Processed Mr. Zhang’s refund (wrong size); suggest adding a size chart.',
+      zh: '张先生退款已处理，原因尺寸不符；建议补充尺码图。',
+    },
+  },
+  {
+    id: 'pm', icon: '🛠️',
+    name: { en: 'Project · Tom', zh: '项目 · Tom' },
+    report: {
+      en: 'AISA project M1 signed off; M2 integration starts next week.',
+      zh: 'AISA 项目 M1 验收通过，下周进入 M2 集成。',
+    },
+  },
+  {
+    id: 'finance', icon: '📊',
+    name: { en: 'Finance · Kay', zh: '财务 · Kay' },
+    report: {
+      en: '12 refunds in June, clustered on Jun 8, mostly sizing issues.',
+      zh: '6 月退款共 12 笔，集中在 6/8，多为尺寸问题。',
+    },
+  },
+];
+
+const queries = [
+  {
+    id: 'vista',
+    sources: ['sales'],
+    q: { en: 'Who is handling Vista Realty?', zh: 'Vista 地产现在谁在跟？' },
+    a: {
+      en: 'Sales Lin — followed up today; they want a 3-bed quote by Thursday.',
+      zh: '销售 Lin 在跟，今天刚跟进，对方要 3 房报价，周四前回。',
+    },
+    src: { en: 'Sales Lin · today’s report', zh: '销售 Lin · 今日日报' },
+  },
+  {
+    id: 'refunds',
+    sources: ['finance', 'support'],
+    q: { en: 'Why so many refunds this month?', zh: '这个月退款为什么多？' },
+    a: {
+      en: '12 refunds in June, clustered on Jun 8, mostly sizing. Support already suggested adding a size chart.',
+      zh: '6 月共 12 笔退款，集中在 6/8，多因尺寸不符；客服已建议补充尺码图。',
+    },
+    src: { en: 'Finance Kay + Support Amy · reports', zh: '财务 Kay + 客服 Amy · 日报' },
+  },
+  {
+    id: 'aisa',
+    sources: ['pm'],
+    q: { en: 'Where is the AISA project?', zh: 'AISA 项目进度到哪了？' },
+    a: {
+      en: 'M1 signed off; M2 integration begins next week.',
+      zh: 'M1 已验收通过，下周进入 M2 集成阶段。',
+    },
+    src: { en: 'Project Tom · report', zh: '项目 Tom · 日报' },
+  },
+];
+
+// AI-dispatched tasks — the brain reads everyone's status and assigns next actions.
+const tasks = [
+  {
+    to: 'pm',
+    text: { en: 'Add a size chart to the product pages this week', zh: '本周给商品页加上尺码图' },
+    why: {
+      en: 'Support flagged sizing refunds; Finance confirmed they clustered on Jun 8.',
+      zh: '客服反映退款多因尺寸不符，财务确认 6 月退款集中在 6/8。',
+    },
+  },
+  {
+    to: 'sales',
+    text: { en: 'Send the Vista 3-bed quote and follow up before Thursday', zh: '周四前把 Vista 3 房报价发出并回访' },
+    why: { en: 'Your report today said they want it by Thursday.', zh: '你今天的日报提到对方周四要报价。' },
+  },
+  {
+    to: 'support',
+    text: { en: 'Update refund scripts to point customers to the size chart', zh: '更新退款话术，主动引导客户看尺码图' },
+    why: { en: 'To cut sizing-related refunds at the source.', zh: '从源头减少尺寸类退款。' },
+  },
+];
+
+const teamLocalized = team.map((m) => ({ id: m.id, icon: m.icon, name: m.name[locale], report: m.report[locale] }));
+const queriesLocalized = queries.map((q) => ({ id: q.id, sources: q.sources, q: q.q[locale], a: q.a[locale], src: q.src[locale] }));
+const tasksLocalized = tasks.map((tk) => {
+  const m = team.find((x) => x.id === tk.to);
+  return { to: tk.to, icon: m ? m.icon : '📌', toName: m ? m.name[locale] : tk.to, text: tk.text[locale], why: tk.why[locale] };
+});
+const teamJson = JSON.stringify(teamLocalized);
+const queriesJson = JSON.stringify(queriesLocalized);
+const tasksJson = JSON.stringify(tasksLocalized);
+
+const contactHref = localizedHref('/contact/', locale);
+const hubHref = localizedHref('/demo/', locale);
+
+const description = zh
+  ? '在线体验 AI 超级记忆系统：全员日报汇报给 AI 形成企业长期记忆，任何人可随时追问并溯源。模拟演示。'
+  : 'Try an AI super-memory system: everyone’s daily reports build a long-term company memory anyone can query with sources. Simulated demo.';
+---
+
+<BaseLayout title={zh ? 'Demo · AI 超级记忆系统' : 'Demo · AI Super-Memory System'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="sm">
+    <div class="sm__inner container-x">
+      <a href={hubHref} class="sm__back">{copy.backToHub}</a>
+
+      <div class="sm__stage">
+        <!-- LEFT: architecture pipeline -->
+        <aside class="sm__pipeline card-glass" aria-hidden="true">
+          <div class="pl">
+            <span class="pl__coltag">{copy.plTeam}</span>
+            <div class="pl__sources">
+              {teamLocalized.map((m) => (
+                <div class="pl__node" data-emp={m.id}>
+                  <span class="pl__node-icon">{m.icon}</span>
+                  <span class="pl__node-label">{m.name}</span>
+                </div>
+              ))}
+            </div>
+
+            <div class="pl__link" data-link="in"><i></i><i></i><i></i></div>
+
+            <div class="pl__brain" id="sm-brain">
+              <span class="pl__brain-icon">🧠</span>
+              <span class="pl__brain-name">{copy.plBrain}</span>
+              <span class="pl__brain-core">
+                <span class="pl__brain-core-spark">✦</span>{copy.plLlm}
+                <span class="pl__brain-core-note">{copy.plLlmNote}</span>
+              </span>
+              <span class="pl__brain-state" id="sm-state">{copy.plIdle}</span>
+              <span class="pl__hits" id="sm-count"></span>
+            </div>
+
+            <div class="pl__link" data-link="out"><i></i><i></i><i></i></div>
+
+            <div class="pl__you" id="sm-ask">
+              <span class="pl__you-icon">🔍</span>
+              <span class="pl__you-label">{copy.plAsk}</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT: memory console -->
+        <div class="sm__app card-glass">
+          <header class="sm__appbar">
+            <div class="sm__appbar-left">
+              <span class="sm__dot" aria-hidden="true"></span>
+              <span class="sm__appname">{copy.consoleName}</span>
+            </div>
+            <span class="sm__count" id="sm-count2">{copy.memoryCount(0)}</span>
+          </header>
+
+          <div class="sm__caps">
+            <span class="sm__caps-label">{copy.capsLabel}</span>
+            <div class="sm__caps-row">
+              {copy.caps.map((c) => (
+                <div class="sm__cap" data-cap={c.id}>
+                  <span class="sm__cap-icon">{c.icon}</span>
+                  <span class="sm__cap-name">{c.label}</span>
+                  <span class="sm__cap-desc">{c.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="sm__feed" id="sm-feed" aria-live="polite">
+            <p class="sm__empty" id="sm-empty">{copy.feedEmpty}</p>
+          </div>
+
+          <div class="sm__controls" id="sm-controls">
+            <button class="btn-primary sm__report" id="sm-report" type="button">{copy.reportBtn}</button>
+            <button class="btn-primary sm__dispatch" id="sm-dispatch" type="button" hidden>{copy.dispatchBtn}</button>
+            <div class="sm__ask" id="sm-ask-row" hidden>
+              <span class="sm__ask-label">{copy.askLabel}</span>
+              <div class="sm__chips">
+                {queriesLocalized.map((q) => (
+                  <button class="sm__chip" type="button" data-qid={q.id}>{q.q}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <footer class="sm__appfoot">
+            <span class="sm__disclaimer">⚠︎ {copy.disclaimer}</span>
+            <button class="sm__restart" id="sm-restart" type="button" hidden>{copy.restart}</button>
+          </footer>
+        </div>
+      </div>
+
+      <!-- Explainer -->
+      <div class="sm__explain">
+        <span class="section-label">{copy.explainLabel}</span>
+        <h2 class="sm__explain-title">{copy.explainTitle}</h2>
+        <ul class="sm__points">
+          {copy.explainPoints.map((p) => <li>{p}</li>)}
+        </ul>
+        <div class="sm__try">
+          <p>{copy.ctaTryYours}</p>
+          <a href={contactHref} class="btn-primary">{copy.ctaBtn} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="03" />
+</BaseLayout>
+
+<script is:inline define:vars={{
+  teamJson, queriesJson, tasksJson,
+  labels: {
+    you: copy.youLabel, source: copy.sourceLabel,
+    idle: copy.plIdle, ingest: copy.plIngest, recall: copy.plRecall, dispatch: copy.plDispatch, done: copy.plDone,
+    reporting: copy.reporting, reportBtn: copy.reportBtn,
+    dispatching: copy.dispatching, dispatchBtn: copy.dispatchBtn, taskTo: copy.taskTo, taskWhy: copy.taskWhy,
+    divRecord: copy.divRecord, divAssign: copy.divAssign, divRecall: copy.divRecall,
+    whySep: zh ? '：' : ': ',
+    countPrefix: zh ? '已记忆 ' : '', countSuffix: zh ? ' 条' : ' memories stored',
+  },
+}}>
+  function initSuperMemory() {
+    const feed = document.getElementById('sm-feed');
+    const empty = document.getElementById('sm-empty');
+    const reportBtn = document.getElementById('sm-report');
+    const dispatchBtn = document.getElementById('sm-dispatch');
+    const askRow = document.getElementById('sm-ask-row');
+    const restartBtn = document.getElementById('sm-restart');
+    const countEl = document.getElementById('sm-count');
+    const count2El = document.getElementById('sm-count2');
+    const stateEl = document.getElementById('sm-state');
+    const brain = document.getElementById('sm-brain');
+    const askNode = document.getElementById('sm-ask');
+    const pipeline = feed ? document.querySelector('.sm__pipeline') : null;
+    if (!feed || !reportBtn) return;
+
+    const TEAM = JSON.parse(teamJson);
+    const QUERIES = JSON.parse(queriesJson);
+    const TASKS = JSON.parse(tasksJson);
+    const qById = {};
+    QUERIES.forEach(function (q) { qById[q.id] = q; });
+
+    let busy = false;
+    let dispatched = false;
+    let recallShown = false;
+    let memCount = 0;
+    const timers = [];
+    const askedQ = {};
+    const memEls = {}; // emp id -> memory element (for highlight on recall)
+
+    function t(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearTimers() { timers.forEach(clearTimeout); timers.length = 0; }
+    function scrollDown() { feed.scrollTop = feed.scrollHeight; }
+
+    const consoleEl = feed.closest('.sm__app');
+    function activateCap(id) {
+      if (!consoleEl) return;
+      const cap = consoleEl.querySelector('.sm__cap[data-cap="' + id + '"]');
+      if (cap) cap.classList.add('is-active');
+    }
+    function addDivider(text) {
+      if (empty) empty.style.display = 'none';
+      const d = document.createElement('div');
+      d.className = 'sm__div';
+      d.textContent = text;
+      feed.appendChild(d);
+      scrollDown();
+    }
+
+    function setCount(n) {
+      const txt = labels.countPrefix + n + labels.countSuffix;
+      if (countEl) { countEl.textContent = txt; countEl.classList.add('is-in'); }
+      if (count2El) count2El.textContent = txt;
+    }
+
+    function setSources(ids, on) {
+      if (!pipeline) return;
+      ids.forEach(function (id) {
+        const n = pipeline.querySelector('.pl__node[data-emp="' + id + '"]');
+        if (n) n.classList.toggle('is-active', on);
+      });
+    }
+    function flow(dir, on) {
+      if (!pipeline) return;
+      const l = pipeline.querySelector('.pl__link[data-link="' + dir + '"]');
+      if (l) l.classList.toggle('is-flowing', on);
+    }
+
+    function addMemory(member) {
+      if (empty) empty.style.display = 'none';
+      const row = document.createElement('div');
+      row.className = 'sm__mem';
+      row.innerHTML =
+        '<span class="sm__mem-icon"></span>' +
+        '<div class="sm__mem-body"><span class="sm__mem-who"></span>' +
+        '<span class="sm__mem-text"></span></div>';
+      row.querySelector('.sm__mem-icon').textContent = member.icon;
+      row.querySelector('.sm__mem-who').textContent = member.name;
+      row.querySelector('.sm__mem-text').textContent = member.report;
+      feed.appendChild(row);
+      memEls[member.id] = row;
+      t(function () { row.classList.add('is-in'); }, 20);
+      scrollDown();
+    }
+
+    /* ---------- phase 1: ingest ---------- */
+    function runReports() {
+      if (busy) return;
+      busy = true;
+      reportBtn.disabled = true;
+      reportBtn.textContent = labels.reporting;
+      activateCap('record');
+      addDivider(labels.divRecord);
+      if (stateEl) stateEl.textContent = labels.ingest;
+      if (brain) brain.classList.add('is-working');
+      flow('in', true);
+
+      let i = 0;
+      function next() {
+        if (i >= TEAM.length) {
+          flow('in', false);
+          if (brain) brain.classList.remove('is-working');
+          if (stateEl) stateEl.textContent = labels.idle;
+          setSources(TEAM.map(function (m) { return m.id; }), false);
+          // unlock AI dispatch + recall
+          reportBtn.hidden = true;
+          if (dispatchBtn) dispatchBtn.hidden = false;
+          if (askRow) askRow.hidden = false;
+          if (restartBtn) restartBtn.hidden = false;
+          busy = false;
+          return;
+        }
+        const member = TEAM[i];
+        setSources(TEAM.map(function (m) { return m.id; }), false);
+        setSources([member.id], true);
+        addMemory(member);
+        memCount += 1;
+        setCount(memCount);
+        i += 1;
+        t(next, 900);
+      }
+      next();
+    }
+
+    /* ---------- phase 2: AI dispatches work back to the team ---------- */
+    function addTask(tk) {
+      if (empty) empty.style.display = 'none';
+      const row = document.createElement('div');
+      row.className = 'sm__task';
+      row.innerHTML =
+        '<div class="sm__task-head"><span class="sm__task-from">🧠 ' + labels.taskTo + '</span>' +
+        '<span class="sm__task-to"></span></div>' +
+        '<div class="sm__task-text"></div>' +
+        '<div class="sm__task-why"><span class="sm__task-why-tag"></span><span class="sm__task-why-text"></span></div>';
+      row.querySelector('.sm__task-to').textContent = tk.icon + ' ' + tk.toName;
+      row.querySelector('.sm__task-text').textContent = tk.text;
+      row.querySelector('.sm__task-why-tag').textContent = labels.taskWhy + labels.whySep;
+      row.querySelector('.sm__task-why-text').textContent = tk.why;
+      feed.appendChild(row);
+      t(function () { row.classList.add('is-in'); }, 20);
+      scrollDown();
+    }
+
+    function dispatch() {
+      if (busy || dispatched) return;
+      busy = true;
+      dispatched = true;
+      dispatchBtn.disabled = true;
+      dispatchBtn.textContent = labels.dispatching;
+      activateCap('assign');
+      addDivider(labels.divAssign);
+      if (stateEl) stateEl.textContent = labels.dispatch;
+      if (brain) brain.classList.add('is-working');
+      const inLink = pipeline ? pipeline.querySelector('.pl__link[data-link="in"]') : null;
+      if (inLink) inLink.classList.add('is-dispatch', 'is-flowing'); // arrows now flow brain → team
+
+      let i = 0;
+      function next() {
+        if (i >= TASKS.length) {
+          if (inLink) inLink.classList.remove('is-dispatch', 'is-flowing');
+          if (brain) brain.classList.remove('is-working');
+          if (stateEl) stateEl.textContent = labels.done;
+          setSources(TEAM.map(function (m) { return m.id; }), false);
+          dispatchBtn.hidden = true;
+          busy = false;
+          return;
+        }
+        const tk = TASKS[i];
+        setSources(TEAM.map(function (m) { return m.id; }), false);
+        setSources([tk.to], true);
+        if (pipeline) {
+          const n = pipeline.querySelector('.pl__node[data-emp="' + tk.to + '"]');
+          if (n) n.classList.add('has-task');
+        }
+        addTask(tk);
+        i += 1;
+        t(next, 1050);
+      }
+      next();
+    }
+
+    /* ---------- phase 3: recall ---------- */
+    function typeInto(el, text, done) {
+      let i = 0;
+      el.textContent = '';
+      (function step() {
+        i += 2;
+        el.textContent = text.slice(0, i);
+        scrollDown();
+        if (i < text.length) t(step, 16);
+        else { el.textContent = text; if (done) done(); }
+      })();
+    }
+
+    function ask(id) {
+      const item = qById[id];
+      if (!item || busy || askedQ[id]) return;
+      busy = true;
+      askedQ[id] = true;
+      if (!recallShown) { recallShown = true; activateCap('recall'); addDivider(labels.divRecall); }
+      const chip = askRow.querySelector('[data-qid="' + id + '"]');
+      if (chip) chip.classList.add('is-asked');
+
+      // user question bubble
+      const qRow = document.createElement('div');
+      qRow.className = 'sm__q';
+      qRow.innerHTML = '<span class="sm__q-who">' + labels.you + '</span><span class="sm__q-text"></span>';
+      qRow.querySelector('.sm__q-text').textContent = item.q;
+      feed.appendChild(qRow);
+      scrollDown();
+
+      // highlight the memories it draws from
+      (item.sources || []).forEach(function (sid) {
+        if (memEls[sid]) memEls[sid].classList.add('is-cited');
+      });
+      setSources(item.sources || [], true);
+      if (brain) brain.classList.add('is-working');
+      if (stateEl) stateEl.textContent = labels.recall;
+      flow('out', true);
+      if (askNode) askNode.classList.add('is-active');
+
+      t(function () {
+        const aRow = document.createElement('div');
+        aRow.className = 'sm__a';
+        aRow.innerHTML =
+          '<span class="sm__a-icon">🧠</span>' +
+          '<div class="sm__a-body"><span class="sm__a-text"></span>' +
+          '<span class="sm__a-src"></span></div>';
+        feed.appendChild(aRow);
+        const textEl = aRow.querySelector('.sm__a-text');
+        const srcEl = aRow.querySelector('.sm__a-src');
+        typeInto(textEl, item.a, function () {
+          srcEl.innerHTML = '<span class="sm__a-src-tag">▸ ' + labels.source + '</span>';
+          const doc = document.createElement('span');
+          doc.className = 'sm__a-src-doc';
+          doc.textContent = item.src;
+          srcEl.appendChild(doc);
+          t(function () { srcEl.classList.add('is-in'); }, 30);
+          // settle pipeline
+          flow('out', false);
+          if (brain) brain.classList.remove('is-working');
+          if (stateEl) stateEl.textContent = labels.done;
+          if (askNode) askNode.classList.remove('is-active');
+          setSources(item.sources || [], false);
+          (item.sources || []).forEach(function (sid) {
+            if (memEls[sid]) t(function () { memEls[sid].classList.remove('is-cited'); }, 1200);
+          });
+          busy = false;
+          scrollDown();
+        });
+      }, 800);
+    }
+
+    reportBtn.addEventListener('click', runReports);
+    if (dispatchBtn) dispatchBtn.addEventListener('click', dispatch);
+    if (askRow) askRow.addEventListener('click', function (e) {
+      const btn = e.target.closest('.sm__chip');
+      if (btn) ask(btn.getAttribute('data-qid'));
+    });
+
+    if (restartBtn) restartBtn.addEventListener('click', function () {
+      clearTimers();
+      busy = false; memCount = 0; dispatched = false; recallShown = false;
+      if (consoleEl) consoleEl.querySelectorAll('.sm__cap.is-active').forEach(function (c) { c.classList.remove('is-active'); });
+      for (const k in askedQ) delete askedQ[k];
+      for (const k in memEls) delete memEls[k];
+      feed.innerHTML = '';
+      if (empty) { feed.appendChild(empty); empty.style.display = ''; }
+      if (countEl) { countEl.textContent = ''; countEl.classList.remove('is-in'); }
+      if (count2El) count2El.textContent = labels.countPrefix + 0 + labels.countSuffix;
+      reportBtn.hidden = false; reportBtn.disabled = false; reportBtn.textContent = labels.reportBtn;
+      if (dispatchBtn) { dispatchBtn.hidden = true; dispatchBtn.disabled = false; dispatchBtn.textContent = labels.dispatchBtn; }
+      if (askRow) { askRow.hidden = true; askRow.querySelectorAll('.sm__chip').forEach(function (c) { c.classList.remove('is-asked'); }); }
+      restartBtn.hidden = true;
+      if (stateEl) stateEl.textContent = labels.idle;
+      flow('in', false); flow('out', false);
+      if (pipeline) {
+        pipeline.querySelectorAll('.pl__node.has-task').forEach(function (n) { n.classList.remove('has-task'); });
+        pipeline.querySelectorAll('.pl__link').forEach(function (l) { l.classList.remove('is-dispatch'); });
+      }
+      if (brain) brain.classList.remove('is-working');
+    });
+  }
+
+  initSuperMemory();
+  document.addEventListener('astro:after-swap', initSuperMemory);
+</script>
+
+<style>
+  .sm { padding-block: var(--space-7) var(--space-9); }
+  .sm__back {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--fs-body-sm);
+    color: var(--text-tertiary); margin-bottom: var(--space-4);
+  }
+  .sm__back:hover { color: var(--brand-primary); }
+
+  .sm__stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+
+  /* ===== shared pipeline visual (mirrors knowledge-assistant) ===== */
+  .sm__pipeline { border-radius: var(--radius-lg); padding: var(--space-5); }
+  .pl { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); height: 100%; }
+  .pl__coltag {
+    font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: var(--space-1);
+  }
+  .pl__sources { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); width: 100%; }
+  .pl__node {
+    position: relative;
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .pl__node-icon { font-size: 1.5rem; line-height: 1; }
+  .pl__node-label { font-size: var(--fs-body-sm); color: var(--text-secondary); white-space: nowrap; }
+  .pl__node.is-active {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow);
+    transform: translateY(-1px); animation: pl-pulse 1.1s ease-in-out infinite;
+  }
+  .pl__node.is-active .pl__node-label { color: var(--text-primary); }
+  /* a task was assigned to this person by the AI */
+  .pl__node.has-task::after {
+    content: '📌';
+    position: absolute; top: -0.6rem; right: -0.4rem;
+    font-size: 0.95rem; line-height: 1;
+    filter: drop-shadow(0 0 4px var(--brand-glow));
+  }
+
+  /* reverse flow — AI dispatching tasks back up to the team */
+  .pl__link.is-dispatch::after { opacity: 0; }
+  .pl__link.is-dispatch i { transform: rotate(225deg); }
+  .pl__link.is-dispatch.is-flowing i { animation: pl-flow-up 1s ease-in-out infinite; }
+
+  .pl__link { position: relative; width: 1.6rem; height: 3.6rem; }
+  .pl__link::before {
+    content: ''; position: absolute; top: 0; bottom: 0.7rem; left: 50%; width: 2px; margin-left: -1px;
+    border-radius: 1px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--brand-primary) 28%, transparent), color-mix(in srgb, var(--brand-secondary) 28%, transparent));
+    transition: filter var(--dur-normal) var(--ease-out);
+  }
+  .pl__link::after {
+    content: ''; position: absolute; bottom: 0.1rem; left: 50%; margin-left: -0.42rem;
+    width: 0.85rem; height: 0.85rem;
+    border-right: 2px solid color-mix(in srgb, var(--brand-secondary) 40%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--brand-secondary) 40%, transparent);
+    transform: rotate(45deg);
+    transition: border-color var(--dur-normal) var(--ease-out), filter var(--dur-normal) var(--ease-out);
+  }
+  .pl__link i {
+    position: absolute; left: 50%; top: 0; width: 0.8rem; height: 0.8rem; margin-left: -0.4rem;
+    border-right: 2px solid var(--brand-primary); border-bottom: 2px solid var(--brand-primary);
+    transform: rotate(45deg); opacity: 0;
+  }
+  .pl__link i:nth-child(2) { border-color: var(--brand-accent); }
+  .pl__link i:nth-child(3) { border-color: var(--brand-secondary); }
+  .pl__link.is-flowing::before { filter: drop-shadow(0 0 8px var(--brand-glow)); }
+  .pl__link.is-flowing::after { border-color: var(--brand-secondary); filter: drop-shadow(0 0 6px var(--brand-glow)); }
+  .pl__link.is-flowing i { animation: pl-flow 1s ease-in-out infinite; filter: drop-shadow(0 0 5px var(--brand-glow)); }
+  .pl__link.is-flowing i:nth-child(2) { animation-delay: 0.33s; }
+  .pl__link.is-flowing i:nth-child(3) { animation-delay: 0.66s; }
+
+  .pl__brain {
+    display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    padding: var(--space-3) var(--space-5); border-radius: var(--radius-lg);
+    background: var(--bg-elevated); border: 1px solid var(--border-strong); width: 100%;
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__brain-icon { font-size: 2.4rem; line-height: 1; }
+  .pl__brain-name { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .pl__brain-state {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .pl__brain-core {
+    display: inline-flex; align-items: center; gap: 0.35rem; margin: 0.35rem 0 0.1rem;
+    padding: 0.28rem 0.75rem; font-family: var(--font-mono); font-size: var(--fs-micro);
+    font-weight: var(--fw-semibold); letter-spacing: 0.04em; color: var(--text-primary);
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--brand-secondary) 45%, transparent);
+    background: color-mix(in srgb, var(--brand-secondary) 9%, transparent);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__brain-core-spark { color: var(--brand-primary); }
+  .pl__brain-core-note { color: var(--text-tertiary); font-weight: var(--fw-regular); }
+  .pl__brain.is-working { border-color: var(--brand-primary); box-shadow: var(--shadow-glow); animation: pl-pulse 1s ease-in-out infinite; }
+  .pl__brain.is-working .pl__brain-state { color: var(--brand-primary); }
+  .pl__brain.is-working .pl__brain-icon { animation: pl-spin 1.4s linear infinite; }
+  .pl__brain.is-working .pl__brain-core { border-color: var(--brand-secondary); box-shadow: 0 0 12px -3px var(--brand-glow); }
+  .pl__brain.is-working .pl__brain-core-spark { animation: pl-spin 1.4s linear infinite; display: inline-block; }
+
+  .pl__hits {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary);
+    height: 0; opacity: 0; transition: opacity var(--dur-normal) var(--ease-out);
+  }
+  .pl__hits.is-in { height: auto; opacity: 1; }
+
+  .pl__you {
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__you-icon { font-size: 1.5rem; line-height: 1; }
+  .pl__you-label { font-size: var(--fs-body-sm); color: var(--text-secondary); }
+  .pl__you.is-active { border-color: var(--brand-primary); box-shadow: var(--shadow-glow); }
+  .pl__you.is-active .pl__you-label { color: var(--text-primary); }
+
+  /* ===== Console (right) ===== */
+  .sm__app { border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  .sm__appbar {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  }
+  .sm__appbar-left { display: flex; align-items: center; gap: var(--space-2); }
+  .sm__dot { width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--brand-primary); box-shadow: 0 0 8px var(--brand-primary); }
+  .sm__appname { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .sm__count { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary); }
+
+  /* capabilities strip — what the company brain can do */
+  .sm__caps { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-hairline); }
+  .sm__caps-label {
+    display: block; font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: var(--space-2);
+  }
+  .sm__caps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+  .sm__cap {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline); background: var(--bg-base);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .sm__cap.is-active { border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow); }
+  .sm__cap-icon { font-size: 1.2rem; line-height: 1; }
+  .sm__cap-name { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+  .sm__cap.is-active .sm__cap-name { color: var(--brand-primary); }
+  .sm__cap-desc { font-size: var(--fs-micro); color: var(--text-tertiary); line-height: 1.3; }
+
+  .sm__feed {
+    flex: 1; min-height: 22rem; max-height: 44rem; overflow-y: auto;
+    padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3);
+  }
+  /* phase divider inside the feed */
+  .sm__div {
+    display: flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand-primary);
+    margin-top: var(--space-2);
+  }
+  .sm__div::after { content: ''; flex: 1; height: 1px; background: var(--border-hairline); }
+  .sm__div:first-child { margin-top: 0; }
+  .sm__empty { color: var(--text-tertiary); font-size: var(--fs-body-sm); line-height: 1.6; margin: 0; }
+
+  /* memory item */
+  .sm__mem {
+    display: flex; gap: var(--space-3); padding: var(--space-3);
+    border-radius: var(--radius-md); background: var(--bg-base); border: 1px solid var(--border-hairline);
+    opacity: 0; transform: translateY(6px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out), border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .sm__mem.is-in { opacity: 1; transform: none; }
+  .sm__mem.is-cited { border-color: var(--brand-primary); box-shadow: var(--shadow-glow); }
+  .sm__mem-icon { font-size: 1.6rem; line-height: 1.4; }
+  .sm__mem-body { display: flex; flex-direction: column; gap: 0.2rem; }
+  .sm__mem-who { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.05em; }
+  .sm__mem-text { font-size: var(--fs-body-sm); color: var(--text-secondary); line-height: 1.5; }
+
+  /* query + answer */
+  .sm__q { align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem; max-width: 90%; }
+  .sm__q-who { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary); }
+  .sm__q-text {
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--brand-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
+    font-size: var(--fs-body); color: var(--text-primary);
+  }
+  .sm__a { display: flex; gap: var(--space-2); max-width: 92%; }
+  .sm__a-icon { font-size: 1.6rem; line-height: 1.2; }
+  .sm__a-body {
+    padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    font-size: var(--fs-body); line-height: 1.55; color: var(--text-primary);
+  }
+  .sm__a-src { display: none; align-items: center; gap: var(--space-2); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px dashed var(--border-hairline); }
+  .sm__a-src.is-in { display: flex; }
+  .sm__a-src-tag { font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand-primary); }
+  .sm__a-src-doc {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    padding: 0.2rem 0.7rem; border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, transparent);
+  }
+
+  /* AI-dispatched task card */
+  .sm__task {
+    display: flex; flex-direction: column; gap: 0.35rem;
+    padding: var(--space-3); border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--brand-secondary) 30%, transparent);
+    border-left: 3px solid var(--brand-secondary);
+    background: color-mix(in srgb, var(--brand-secondary) 7%, transparent);
+    opacity: 0; transform: translateY(6px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .sm__task.is-in { opacity: 1; transform: none; }
+  .sm__task-head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .sm__task-from {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-secondary);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .sm__task-to { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .sm__task-text { font-size: var(--fs-body); color: var(--text-primary); line-height: 1.5; }
+  .sm__task-why { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .sm__task-why-tag { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary); white-space: nowrap; }
+  .sm__task-why-text { font-size: var(--fs-body-sm); color: var(--text-secondary); line-height: 1.5; }
+
+  /* controls */
+  .sm__controls { padding: var(--space-4); border-top: 1px solid var(--border-hairline); background: var(--bg-elevated); }
+  .sm__report { width: 100%; }
+  .sm__dispatch { width: 100%; margin-bottom: var(--space-4); }
+  .sm__ask-label {
+    display: block; font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: var(--space-3);
+  }
+  .sm__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .sm__chip {
+    font-family: var(--font-sans); font-size: var(--fs-body-sm); color: var(--text-primary);
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline); cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .sm__chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); transform: translateY(-1px); }
+  .sm__chip.is-asked { opacity: 0.4; pointer-events: none; text-decoration: line-through; }
+
+  .sm__appfoot {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-hairline);
+  }
+  .sm__disclaimer { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-muted); }
+  .sm__restart { font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary); background: none; border: none; cursor: pointer; }
+  .sm__restart:hover { color: var(--brand-primary); }
+
+  /* explainer */
+  .sm__explain { max-width: 64rem; margin-top: var(--space-7); }
+  .sm__explain-title { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: -0.02em; color: var(--text-primary); margin: var(--space-2) 0 var(--space-4); }
+  .sm__points { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .sm__points li { position: relative; padding-left: var(--space-5); color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.55; }
+  .sm__points li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold); }
+  .sm__try {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6); padding: var(--space-5); border-radius: var(--radius-md);
+    background: var(--bg-glass); border: 1px solid var(--border-hairline);
+  }
+  .sm__try p { margin: 0; font-size: var(--fs-body-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  @keyframes pl-flow { 0% { top: -0.3rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { top: 2.5rem; opacity: 0; } }
+  @keyframes pl-flow-up { 0% { top: 2.5rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { top: -0.3rem; opacity: 0; } }
+  @keyframes pl-pulse { 0%, 100% { box-shadow: 0 0 0 1px var(--brand-primary), 0 0 12px -2px var(--brand-glow); } 50% { box-shadow: 0 0 0 1px var(--brand-primary), 0 0 22px 2px var(--brand-glow); } }
+  @keyframes pl-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+  @media (max-width: 919px) {
+    .sm__stage { grid-template-columns: 1fr; }
+    .pl { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: var(--space-3); }
+    .pl__coltag { width: 100%; text-align: center; }
+    .pl__sources { width: auto; }
+    .pl__link { width: 3.6rem; height: 1.6rem; }
+    .pl__link::before {
+      top: 50%; bottom: auto; left: 0; right: 0.7rem; width: auto; height: 2px; margin-left: 0; margin-top: -1px;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--brand-primary) 28%, transparent), color-mix(in srgb, var(--brand-secondary) 28%, transparent));
+    }
+    .pl__link::after { top: 50%; bottom: auto; left: auto; right: 0.1rem; margin-left: 0; margin-top: -0.42rem; transform: rotate(-45deg); }
+    .pl__link i { top: 50%; left: 0; margin-left: 0; margin-top: -0.4rem; transform: rotate(-45deg); }
+    .pl__link.is-flowing i { animation: pl-flow-h 1s ease-in-out infinite; }
+    .pl__link.is-dispatch i { transform: rotate(135deg); }
+    .pl__link.is-dispatch.is-flowing i { animation: pl-flow-h-rev 1s ease-in-out infinite; }
+    .pl__brain { width: auto; }
+  }
+  @keyframes pl-flow-h { 0% { left: -0.3rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { left: 2.6rem; opacity: 0; } }
+  @keyframes pl-flow-h-rev { 0% { left: 2.6rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { left: -0.3rem; opacity: 0; } }
+
+  @media (max-width: 560px) {
+    .sm__caps-row { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sm__mem, .pl__node.is-active, .pl__brain.is-working, .pl__brain.is-working .pl__brain-icon, .pl__brain.is-working .pl__brain-core-spark, .pl__link.is-flowing i { animation: none; }
+  }
+</style>

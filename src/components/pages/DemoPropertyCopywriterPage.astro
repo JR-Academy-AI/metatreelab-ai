@@ -1,0 +1,906 @@
+---
+/**
+ * DemoPropertyCopywriterPage — "AI Listing Copywriter" demo.
+ *
+ * Two panels, front-end-only mock (no backend, no real LLM):
+ *  - LEFT  : a property card. The user switches among sample properties (chips) and a
+ *            tone toggle (Professional / Warm).
+ *  - RIGHT : the output area. Click "Generate" → a brief "Writing…" state, then 4 channel
+ *            blocks are revealed in sequence, each typed out character-by-character:
+ *            formal listing, RED (小红书) post, WeChat-moments blurb, selling-points list.
+ *            Switching tone re-generates in a visibly different voice.
+ *
+ * Lets an AI-naive real-estate agent *see* "AI writes all my marketing in seconds".
+ * See marketing/strategy/conversion-strategy.md (gitignored).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+const copy = zh
+  ? {
+      sectionLabel: '/ DEMO — AI 地产文案生成',
+      title: '选一套房、选个语气，一键生成全渠道营销文案。',
+      subtitle:
+        '挂牌描述、小红书帖、朋友圈短文、卖点清单——AI 几秒钟全写好。切换「专业 / 热情」语气，文案的口吻立刻不一样。选套房，点「一键生成」试试。',
+      appName: 'Metatree · AI 地产文案',
+      toneLabel: '语气',
+      toneProfessional: '专业',
+      toneWarm: '热情',
+      propLabel: '选择房源 ▾',
+      specBeds: '卧室',
+      specBaths: '浴室',
+      specCar: '车位',
+      specLand: '占地',
+      specPrice: '价格指引',
+      specSuburb: '区域',
+      generateBtn: '✨ 一键生成',
+      regenerate: '↺ 重新生成',
+      writing: 'AI 撰写中…',
+      copyBtn: '复制',
+      copied: '已复制',
+      emptyHint: '选好房源和语气，点「一键生成」，看 AI 几秒钟写出四套营销文案。',
+      channels: {
+        listing: { icon: '📄', label: '挂牌文案' },
+        red: { icon: '📕', label: '小红书帖' },
+        wechat: { icon: '💬', label: '微信朋友圈' },
+        points: { icon: '✅', label: '卖点清单' },
+      },
+      disclaimer: '演示用模拟数据 · 真实部署会根据你的真实房源信息生成',
+      explainLabel: '/ 这能帮你省下什么',
+      explainTitle: '一套房源，几秒钟出全渠道文案——不用再对着空白文档发愁',
+      explainPoints: [
+        '挂牌、小红书、朋友圈、卖点一次生成，不用一个渠道一个渠道地重写',
+        '语气一键切换——给投资客要专业，给自住客要热情，口吻随时换',
+        '每条都能直接复制使用，发布前你再润色，比从零写快 10 倍',
+        '团队里谁都能用，不依赖某个「会写文案」的人',
+      ],
+      ctaTryYours: '想让它按你真实的房源库批量出文案？',
+      ctaBtn: '聊聊怎么接入',
+      backToHub: '← 回到所有 Demo',
+    }
+  : {
+      sectionLabel: '/ DEMO — AI Listing Copywriter',
+      title: 'Pick a property, pick a tone — generate all your marketing copy in one click.',
+      subtitle:
+        'Listing description, a RED (小红书) post, a WeChat-moments blurb, a selling-points list — written by AI in seconds. Switch between Professional and Warm and the voice changes instantly. Pick a property and hit Generate.',
+      appName: 'Metatree · AI Listing Copy',
+      toneLabel: 'Tone',
+      toneProfessional: 'Professional',
+      toneWarm: 'Warm',
+      propLabel: 'Choose a property ▾',
+      specBeds: 'Beds',
+      specBaths: 'Baths',
+      specCar: 'Car',
+      specLand: 'Land',
+      specPrice: 'Price guide',
+      specSuburb: 'Suburb',
+      generateBtn: '✨ Generate',
+      regenerate: '↺ Regenerate',
+      writing: 'Writing…',
+      copyBtn: 'Copy',
+      copied: 'Copied',
+      emptyHint: 'Pick a property and a tone, hit Generate, and watch AI write four pieces of marketing copy in seconds.',
+      channels: {
+        listing: { icon: '📄', label: 'Listing' },
+        red: { icon: '📕', label: 'RED post' },
+        wechat: { icon: '💬', label: 'WeChat moments' },
+        points: { icon: '✅', label: 'Selling points' },
+      },
+      disclaimer: 'Demo with sample data · a real deployment generates from your own listings',
+      explainLabel: '/ What this saves you',
+      explainTitle: 'One property, every channel, in seconds — no more staring at a blank doc',
+      explainPoints: [
+        'Listing, RED, WeChat and selling points all at once — no rewriting per channel',
+        'Switch tone in one click — professional for investors, warm for home-buyers',
+        'Every block is copy-paste ready; polish before posting, 10× faster than from scratch',
+        'Anyone on the team can use it — no reliance on the one person who "can write"',
+      ],
+      ctaTryYours: 'Want it to batch-write copy from your real listing database?',
+      ctaBtn: 'Talk to us about it',
+      backToHub: '← Back to all demos',
+    };
+
+// Sample properties with bilingual specs + canned copy per tone × channel.
+const propsRaw = [
+  {
+    id: 'coastal',
+    emoji: '🏖️',
+    gradient: 'linear-gradient(135deg, #0a2a3a, #00637a 60%, #00b4d8)',
+    name: { en: 'Coastal 3-Bed House', zh: '滨海三房别墅' },
+    chip: { en: 'Coastal 3-bed', zh: '滨海三房别墅' },
+    suburb: { en: 'Brighton, VIC', zh: '墨尔本 Brighton' },
+    beds: '3', baths: '2', car: '2',
+    land: { en: '540 m²', zh: '540 m²' },
+    price: { en: '$1.65M – $1.78M', zh: '$1.65M – $1.78M' },
+    copy: {
+      professional: {
+        listing: {
+          en: 'A north-facing 3-bedroom residence on a 540 m² coastal block in Brighton, moments from the beach. Open-plan living, a renovated kitchen and a private rear yard make this a sound family or investment opportunity in a tightly held pocket.',
+          zh: '坐落于 Brighton 滨海地段、占地 540 m² 的朝北三房住宅，步行可达海滩。开放式起居、翻新厨房与私密后院，是这一稀缺板块中稳健的自住或投资之选。',
+        },
+        red: {
+          en: '📍Brighton 海边三房 | 540㎡ 朝北地块\n开放式格局，翻新厨房，离沙滩走路就到。自住投资都合适，这种板块很少放盘👀\n#墨尔本买房 #Brighton #海景房 #学区好房',
+          zh: '📍Brighton 海边三房｜540㎡ 朝北地块\n开放式格局＋翻新厨房，离沙滩走路就到🌊 自住投资都合适，这种板块放盘很少👀\n#墨尔本买房 #Brighton #海景房 #置业',
+        },
+        wechat: {
+          en: 'Brighton 海边 3 房，540㎡ 朝北地块，步行到沙滩。开放格局＋翻新厨房，稀缺板块，预算 $1.65M 起，看房私信。',
+          zh: 'Brighton 海边 3 房，540㎡ 朝北地块，步行到沙滩🌊 开放格局＋翻新厨房，板块稀缺，预算 $1.65M 起，约看房私信我。',
+        },
+        points: {
+          en: ['540 m² north-facing coastal block', 'Walk to Brighton beach', 'Renovated open-plan kitchen', 'Tightly held investment pocket', 'Private landscaped rear yard'],
+          zh: ['540 m² 朝北滨海地块', '步行可达 Brighton 海滩', '翻新开放式厨房', '稀缺保值板块', '私密景观后院'],
+        },
+      },
+      warm: {
+        listing: {
+          en: 'Wake up to sea air in this sunny 3-bedroom home, just a short stroll from Brighton beach. With a warm open-plan living space, a kitchen made for weekend breakfasts and a garden the kids will love, this is a place to actually live — not just an address.',
+          zh: '在满是海风的清晨醒来——这套阳光三房距 Brighton 海滩只需几步。温馨的开放式起居、为周末早餐而生的厨房，还有孩子会爱上的花园，这里是真正可以"生活"的家，而不只是一个地址。',
+        },
+        red: {
+          en: '住在海边是什么体验🌊\nBrighton 三房，早上推开门就是海风，厨房采光超好，周末在花园喝咖啡看孩子跑来跑去☕\n真的会让人想立刻搬进来～\n#墨尔本生活 #海边的家 #Brighton #理想生活',
+          zh: '住在海边是什么体验🌊\nBrighton 三房，早上推开门就是海风，厨房采光超好，周末在花园喝咖啡看孩子跑来跑去☕ 真的会让人想立刻搬进来～\n#墨尔本生活 #海边的家 #Brighton #理想生活',
+        },
+        wechat: {
+          en: '想住在海边吗？🌊 Brighton 阳光三房，推门就是海风，厨房采光超棒，花园特别适合一家人。这种家不常有，想看的私信我～',
+          zh: '想住在海边吗？🌊 Brighton 阳光三房，推门就是海风，厨房采光超棒，花园特别适合一家人💛 这种家不常有，想看的私信我～',
+        },
+        points: {
+          en: ['Sea air & sunshine every morning', 'Short stroll to the beach', 'Cozy kitchen for weekend brunches', 'Garden the whole family will love', 'A home you feel the moment you walk in'],
+          zh: ['每天清晨的海风与阳光', '步行就到海滩', '适合周末早午餐的温馨厨房', '全家都会爱的花园', '一进门就有家的感觉'],
+        },
+      },
+    },
+  },
+  {
+    id: 'school',
+    emoji: '🏫',
+    gradient: 'linear-gradient(135deg, #0a2f24, #00795c 60%, #00e5a0)',
+    name: { en: 'School-Zone 2-Bed Apartment', zh: '学区两房公寓' },
+    chip: { en: 'School-zone 2-bed', zh: '学区两房公寓' },
+    suburb: { en: 'Box Hill, VIC', zh: '墨尔本 Box Hill' },
+    beds: '2', baths: '1', car: '1',
+    land: { en: '88 m² internal', zh: '88 m² 套内' },
+    price: { en: '$620K – $660K', zh: '$620K – $660K' },
+    copy: {
+      professional: {
+        listing: {
+          en: 'A well-appointed 2-bedroom apartment within the sought-after Box Hill school zone, walking distance to the station and shopping centre. Low-maintenance and tenant-ready, it suits both first-home buyers and investors targeting strong rental demand.',
+          zh: '位于热门 Box Hill 学区内的精装两房公寓，步行可达火车站与购物中心。易打理、可即租，适合首次置业者，也适合看重强劲租赁需求的投资客。',
+        },
+        red: {
+          en: '📍Box Hill 学区两房 | 走路到地铁\n精装可拎包入住，楼下就是购物中心，学区＋交通双buff。首房自住、投资收租都很稳👌\n#墨尔本学区房 #BoxHill #投资房 #首次置业',
+          zh: '📍Box Hill 学区两房｜走路到地铁\n精装拎包入住，楼下就是购物中心，学区＋交通双 buff。首房自住、投资收租都很稳👌\n#墨尔本学区房 #BoxHill #投资房 #首次置业',
+        },
+        wechat: {
+          en: 'Box Hill 学区两房，走路到地铁和购物中心，精装可即住可出租。学区＋交通稳，预算 $62 万起，约看私信。',
+          zh: 'Box Hill 学区两房，走路到地铁和购物中心，精装可即住可出租。学区＋交通稳，预算 $62 万起，约看私信我。',
+        },
+        points: {
+          en: ['Inside the Box Hill school zone', 'Walk to station & shopping centre', 'Move-in or tenant-ready', 'Strong, steady rental demand', 'Low-maintenance for busy owners'],
+          zh: ['位于 Box Hill 学区内', '步行到地铁与购物中心', '可即住或即租', '租赁需求稳定强劲', '省心易打理'],
+        },
+      },
+      warm: {
+        listing: {
+          en: 'A bright, easy-care 2-bedroom apartment where school runs become a short walk and weekends are spent at the shops downstairs. Perfect for a young family putting down roots, or a first home you can settle into without a single thing to fix.',
+          zh: '明亮、好打理的两房公寓——上下学只需步行几分钟，周末就在楼下逛街吃饭。无论是想安家落户的小家庭，还是想直接入住、不用动一砖一瓦的首套房，都刚刚好。',
+        },
+        red: {
+          en: '给孩子一个好学区💕\nBox Hill 两房，上学走几分钟就到，楼下吃喝玩乐全都有，下班回家超方便。小家庭第一套房真的很适合～\n#墨尔本安家 #学区房 #BoxHill #首套房',
+          zh: '给孩子一个好学区💕\nBox Hill 两房，上学走几分钟就到，楼下吃喝玩乐全都有，下班回家超方便🏡 小家庭第一套房真的很适合～\n#墨尔本安家 #学区房 #BoxHill #首套房',
+        },
+        wechat: {
+          en: '想给孩子好学区又怕麻烦？💕 Box Hill 两房，走路上学，楼下就是商圈，拎包就能住。小家庭安家首选，想看的私信我～',
+          zh: '想给孩子好学区又怕麻烦？💕 Box Hill 两房，走路上学，楼下就是商圈，拎包就能住🏡 小家庭安家首选，想看的私信我～',
+        },
+        points: {
+          en: ['School just a short walk away', 'Shops & cafés right downstairs', 'Bright and genuinely easy to care for', 'Nothing to fix — just move in', 'A warm first home for a young family'],
+          zh: ['上学只需步行几分钟', '楼下就是吃喝玩乐', '明亮且真的好打理', '不用动工，拎包入住', '小家庭温馨的第一个家'],
+        },
+      },
+    },
+  },
+  {
+    id: 'cbd',
+    emoji: '🏙️',
+    gradient: 'linear-gradient(135deg, #1a1030, #4b2a8a 55%, #00b4d8)',
+    name: { en: 'CBD Studio Apartment', zh: 'CBD 单间公寓' },
+    chip: { en: 'CBD studio', zh: 'CBD 单间公寓' },
+    suburb: { en: 'Melbourne CBD', zh: '墨尔本市中心' },
+    beds: '1', baths: '1', car: '0',
+    land: { en: '42 m² internal', zh: '42 m² 套内' },
+    price: { en: '$380K – $410K', zh: '$380K – $410K' },
+    copy: {
+      professional: {
+        listing: {
+          en: 'A high-floor CBD studio with city skyline views, steps from trams, universities and Melbourne Central. Fully furnished and consistently tenanted, it presents a turnkey investment with strong yield in Melbourne’s core rental market.',
+          zh: '位于高楼层、坐拥城市天际线景观的 CBD 单间公寓，紧邻电车、大学与 Melbourne Central。全套家具、长期满租，是墨尔本核心租赁市场中收益稳健的"即买即收"投资标的。',
+        },
+        red: {
+          en: '📍墨尔本 CBD 高层单间 | 城景房\n楼下电车，走路到大学和商场，全套家具长期满租。投资党的现金流好房，省心收租型👌\n#墨尔本投资房 #CBD #公寓投资 #收益房',
+          zh: '📍墨尔本 CBD 高层单间｜城景房\n楼下电车，走路到大学和商场，全套家具长期满租。投资党的现金流好房，省心收租型👌\n#墨尔本投资房 #CBD #公寓投资 #收益房',
+        },
+        wechat: {
+          en: 'CBD 高层单间，城景房，楼下电车走路到大学商场，全套家具长期满租。现金流稳，预算 $38 万起，投资私信。',
+          zh: 'CBD 高层单间，城景房，楼下电车、走路到大学商场，全套家具长期满租。现金流稳，预算 $38 万起，投资私信我。',
+        },
+        points: {
+          en: ['High-floor city skyline views', 'Steps from trams & universities', 'Fully furnished, turnkey', 'Consistently tenanted', 'Strong yield in the CBD core'],
+          zh: ['高楼层城市天际线景观', '紧邻电车与大学', '全套家具，即买即收', '长期满租', 'CBD 核心高收益'],
+        },
+      },
+      warm: {
+        listing: {
+          en: 'Imagine the city at your doorstep — trams, cafés and uni all a short walk away, and the skyline lighting up your window each night. This furnished high-floor studio is the easy, vibrant city base you’ve been picturing.',
+          zh: '想象一下城市就在你脚下——电车、咖啡馆、大学都近在咫尺，每晚天际线点亮你的窗。这套高楼层带家具单间，正是你一直憧憬的、轻松又热闹的城市据点。',
+        },
+        red: {
+          en: '一个人住在 CBD 是什么感觉🌆\n高层单间，晚上一开窗就是城市夜景，楼下电车，走两步全是咖啡馆，自带家具直接入住～太自由了\n#墨尔本生活 #CBD公寓 #一个人住 #城市夜景',
+          zh: '一个人住在 CBD 是什么感觉🌆\n高层单间，晚上一开窗就是城市夜景，楼下电车，走两步全是咖啡馆，自带家具直接入住～太自由啦✨\n#墨尔本生活 #CBD公寓 #一个人住 #城市夜景',
+        },
+        wechat: {
+          en: '想住进城市中心吗？🌆 CBD 高层单间，开窗就是夜景，楼下电车咖啡馆，带家具拎包入住。一个人住超自由，想看的私信我～',
+          zh: '想住进城市中心吗？🌆 CBD 高层单间，开窗就是夜景，楼下电车咖啡馆，带家具拎包入住✨ 一个人住超自由，想看的私信我～',
+        },
+        points: {
+          en: ['Skyline lighting up your window', 'Trams & cafés a short walk away', 'Furnished — just bring your bag', 'Walk to uni and the city', 'An easy, vibrant city base'],
+          zh: ['天际线点亮你的窗', '电车与咖啡馆近在咫尺', '带家具，拎包就住', '步行到大学与市中心', '轻松热闹的城市据点'],
+        },
+      },
+    },
+  },
+];
+
+type ChannelId = 'listing' | 'red' | 'wechat' | 'points';
+const channelOrder: ChannelId[] = ['listing', 'red', 'wechat', 'points'];
+
+const properties = propsRaw.map((p) => ({
+  id: p.id,
+  emoji: p.emoji,
+  gradient: p.gradient,
+  name: p.name[locale],
+  chip: p.chip[locale],
+  suburb: p.suburb[locale],
+  beds: p.beds,
+  baths: p.baths,
+  car: p.car,
+  land: p.land[locale],
+  price: p.price[locale],
+  copy: {
+    professional: {
+      listing: p.copy.professional.listing[locale],
+      red: p.copy.professional.red[locale],
+      wechat: p.copy.professional.wechat[locale],
+      points: p.copy.professional.points[locale],
+    },
+    warm: {
+      listing: p.copy.warm.listing[locale],
+      red: p.copy.warm.red[locale],
+      wechat: p.copy.warm.wechat[locale],
+      points: p.copy.warm.points[locale],
+    },
+  },
+}));
+
+const propertiesJson = JSON.stringify(properties);
+const channelsMeta = channelOrder.map((id) => ({ id, icon: copy.channels[id].icon, label: copy.channels[id].label }));
+
+const contactHref = localizedHref('/contact/', locale);
+const hubHref = localizedHref('/demo/', locale);
+
+const description = zh
+  ? '在线体验 AI 地产文案生成：选房源、选语气，一键生成挂牌描述、小红书帖、朋友圈短文和卖点清单。模拟演示。'
+  : 'Try an AI listing copywriter: pick a property and tone to generate a listing, a RED post, a WeChat blurb and selling points in one click. Simulated demo.';
+---
+
+<BaseLayout title={zh ? 'Demo · AI 地产文案生成' : 'Demo · AI Listing Copywriter'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="pc">
+    <div class="pc__inner container-x">
+      <a href={hubHref} class="pc__back">{copy.backToHub}</a>
+
+      <div class="pc__stage">
+        <!-- LEFT: property card + controls -->
+        <aside class="pc__left card-glass">
+          <span class="pc__panel-tag">{copy.propLabel}</span>
+          <div class="pc__chips" id="pc-prop-chips">
+            {properties.map((p, i) => (
+              <button class={`pc__chip${i === 0 ? ' is-on' : ''}`} type="button" data-prop={p.id}>{p.chip}</button>
+            ))}
+          </div>
+
+          <div class="pc__card" id="pc-card">
+            <div class="pc__photo" id="pc-photo" style={`background:${properties[0].gradient}`}>
+              <span class="pc__photo-emoji" id="pc-photo-emoji">{properties[0].emoji}</span>
+              <span class="pc__photo-tag">PHOTO</span>
+            </div>
+            <h3 class="pc__card-name" id="pc-card-name">{properties[0].name}</h3>
+            <p class="pc__card-suburb" id="pc-card-suburb">📍 {properties[0].suburb}</p>
+            <div class="pc__specs" id="pc-specs">
+              <div class="pc__spec"><span class="pc__spec-k">{copy.specBeds}</span><span class="pc__spec-v" data-spec="beds">{properties[0].beds}</span></div>
+              <div class="pc__spec"><span class="pc__spec-k">{copy.specBaths}</span><span class="pc__spec-v" data-spec="baths">{properties[0].baths}</span></div>
+              <div class="pc__spec"><span class="pc__spec-k">{copy.specCar}</span><span class="pc__spec-v" data-spec="car">{properties[0].car}</span></div>
+              <div class="pc__spec"><span class="pc__spec-k">{copy.specLand}</span><span class="pc__spec-v" data-spec="land">{properties[0].land}</span></div>
+              <div class="pc__spec pc__spec--wide"><span class="pc__spec-k">{copy.specPrice}</span><span class="pc__spec-v" data-spec="price">{properties[0].price}</span></div>
+            </div>
+          </div>
+
+          <div class="pc__tone">
+            <span class="pc__tone-label">{copy.toneLabel}</span>
+            <div class="pc__tone-toggle" id="pc-tone">
+              <button class="pc__tone-btn is-on" type="button" data-tone="professional">{copy.toneProfessional}</button>
+              <button class="pc__tone-btn" type="button" data-tone="warm">{copy.toneWarm}</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT: output -->
+        <div class="pc__app card-glass">
+          <header class="pc__appbar">
+            <div class="pc__appbar-left">
+              <span class="pc__dot" aria-hidden="true"></span>
+              <span class="pc__appname">{copy.appName}</span>
+            </div>
+            <button class="btn-primary pc__gen" id="pc-gen" type="button">{copy.generateBtn}</button>
+          </header>
+
+          <div class="pc__out" id="pc-out" aria-live="polite">
+            <p class="pc__empty" id="pc-empty">{copy.emptyHint}</p>
+
+            <div class="pc__writing" id="pc-writing" hidden>
+              <span class="pc__writing-spark">✦</span>
+              <span class="pc__writing-text">{copy.writing}</span>
+              <span class="pc__dots"><i></i><i></i><i></i></span>
+            </div>
+
+            <div class="pc__blocks" id="pc-blocks"></div>
+          </div>
+
+          <footer class="pc__appfoot">
+            <span class="pc__disclaimer">⚠︎ {copy.disclaimer}</span>
+            <button class="pc__regen" id="pc-regen" type="button" hidden>{copy.regenerate}</button>
+          </footer>
+        </div>
+      </div>
+
+      <!-- Explainer -->
+      <div class="pc__explain">
+        <span class="section-label">{copy.explainLabel}</span>
+        <h2 class="pc__explain-title">{copy.explainTitle}</h2>
+        <ul class="pc__points">
+          {copy.explainPoints.map((p) => <li>{p}</li>)}
+        </ul>
+        <div class="pc__try">
+          <p>{copy.ctaTryYours}</p>
+          <a href={contactHref} class="btn-primary">{copy.ctaBtn} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="03" />
+</BaseLayout>
+
+<script is:inline define:vars={{
+  propertiesJson,
+  channelsMeta,
+  labels: {
+    writing: copy.writing,
+    generateBtn: copy.generateBtn,
+    copyBtn: copy.copyBtn,
+    copied: copy.copied,
+  },
+}}>
+  function initPropertyCopywriter() {
+    var stage = document.querySelector('.pc__stage');
+    if (!stage || stage.getAttribute('data-init') === '1') return;
+    stage.setAttribute('data-init', '1');
+
+    var propChips = document.getElementById('pc-prop-chips');
+    var toneToggle = document.getElementById('pc-tone');
+    var genBtn = document.getElementById('pc-gen');
+    var regenBtn = document.getElementById('pc-regen');
+    var out = document.getElementById('pc-out');
+    var empty = document.getElementById('pc-empty');
+    var writing = document.getElementById('pc-writing');
+    var blocks = document.getElementById('pc-blocks');
+    var photo = document.getElementById('pc-photo');
+    var photoEmoji = document.getElementById('pc-photo-emoji');
+    var cardName = document.getElementById('pc-card-name');
+    var cardSuburb = document.getElementById('pc-card-suburb');
+    var specs = document.getElementById('pc-specs');
+    if (!genBtn || !out || !blocks) return;
+
+    var PROPS = JSON.parse(propertiesJson);
+    var byId = {};
+    PROPS.forEach(function (p) { byId[p.id] = p; });
+
+    var CHANNELS = channelsMeta;
+    var currentProp = PROPS[0].id;
+    var currentTone = 'professional';
+    var busy = false;
+    var timers = [];
+
+    function t(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearTimers() { timers.forEach(clearTimeout); timers.length = 0; }
+
+    function setSpec(name, val) {
+      var el = specs ? specs.querySelector('[data-spec="' + name + '"]') : null;
+      if (el) el.textContent = val;
+    }
+
+    function applyProperty(id) {
+      var p = byId[id];
+      if (!p) return;
+      if (photo) photo.style.background = p.gradient;
+      if (photoEmoji) photoEmoji.textContent = p.emoji;
+      if (cardName) cardName.textContent = p.name;
+      if (cardSuburb) cardSuburb.textContent = '📍 ' + p.suburb;
+      setSpec('beds', p.beds);
+      setSpec('baths', p.baths);
+      setSpec('car', p.car);
+      setSpec('land', p.land);
+      setSpec('price', p.price);
+    }
+
+    function resetOutput() {
+      clearTimers();
+      busy = false;
+      blocks.innerHTML = '';
+      if (writing) writing.hidden = true;
+      if (empty) empty.hidden = false;
+      if (regenBtn) regenBtn.hidden = true;
+      if (genBtn) { genBtn.disabled = false; genBtn.textContent = labels.generateBtn; }
+    }
+
+    function typeInto(el, text, done) {
+      var i = 0;
+      el.textContent = '';
+      function step() {
+        i += 2;
+        el.textContent = text.slice(0, i);
+        if (i < text.length) { t(step, 12); }
+        else { el.textContent = text; if (done) done(); }
+      }
+      step();
+    }
+
+    function buildBlock(meta) {
+      var block = document.createElement('div');
+      block.className = 'pc__block';
+      block.setAttribute('data-channel', meta.id);
+
+      var head = document.createElement('div');
+      head.className = 'pc__block-head';
+      var label = document.createElement('span');
+      label.className = 'pc__block-label';
+      label.textContent = meta.icon + ' ' + meta.label;
+      var copyBtn = document.createElement('button');
+      copyBtn.className = 'pc__copy';
+      copyBtn.type = 'button';
+      copyBtn.textContent = '⧉ ' + labels.copyBtn;
+      head.appendChild(label);
+      head.appendChild(copyBtn);
+      block.appendChild(head);
+
+      var body = document.createElement('div');
+      body.className = 'pc__block-body';
+      block.appendChild(body);
+
+      blocks.appendChild(block);
+      t(function () { block.classList.add('is-in'); }, 20);
+      return { block: block, body: body, copyBtn: copyBtn };
+    }
+
+    function wireCopy(copyBtn, getText) {
+      copyBtn.addEventListener('click', function () {
+        var text = getText();
+        function flash() {
+          copyBtn.textContent = '✓ ' + labels.copied;
+          copyBtn.classList.add('is-copied');
+          t(function () {
+            copyBtn.textContent = '⧉ ' + labels.copyBtn;
+            copyBtn.classList.remove('is-copied');
+          }, 1400);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(flash, flash);
+        } else {
+          flash();
+        }
+      });
+    }
+
+    function renderPoints(body, items) {
+      var ul = document.createElement('ul');
+      ul.className = 'pc__sell';
+      body.appendChild(ul);
+      var i = 0;
+      function next() {
+        if (i >= items.length) { return; }
+        var li = document.createElement('li');
+        li.textContent = items[i];
+        ul.appendChild(li);
+        t(function () { li.classList.add('is-in'); }, 20);
+        i += 1;
+        t(next, 220);
+      }
+      next();
+    }
+
+    function generate() {
+      if (busy) return;
+      busy = true;
+      clearTimers();
+      blocks.innerHTML = '';
+      if (empty) empty.hidden = true;
+      if (regenBtn) regenBtn.hidden = true;
+      if (genBtn) { genBtn.disabled = true; genBtn.textContent = labels.writing; }
+      if (writing) writing.hidden = false;
+
+      var p = byId[currentProp];
+      var voice = p.copy[currentTone];
+
+      t(function () {
+        if (writing) writing.hidden = true;
+        var idx = 0;
+
+        function runBlock() {
+          if (idx >= CHANNELS.length) {
+            busy = false;
+            if (genBtn) { genBtn.disabled = false; genBtn.textContent = labels.regenerate; }
+            if (regenBtn) regenBtn.hidden = true;
+            return;
+          }
+          var meta = CHANNELS[idx];
+          var parts = buildBlock(meta);
+
+          if (meta.id === 'points') {
+            wireCopy(parts.copyBtn, function () { return voice.points.join('\n'); });
+            renderPoints(parts.body, voice.points);
+            idx += 1;
+            t(runBlock, 220 * voice.points.length + 320);
+          } else {
+            var text = voice[meta.id];
+            wireCopy(parts.copyBtn, function () { return text; });
+            var pre = document.createElement('div');
+            pre.className = 'pc__block-text';
+            parts.body.appendChild(pre);
+            typeInto(pre, text, function () {
+              idx += 1;
+              t(runBlock, 280);
+            });
+          }
+        }
+        runBlock();
+      }, 900);
+    }
+
+    // Show the finished example immediately (no typing) — visitors land on a result.
+    function renderInstant() {
+      clearTimers();
+      busy = false;
+      blocks.innerHTML = '';
+      if (empty) empty.hidden = true;
+      if (writing) writing.hidden = true;
+      var p = byId[currentProp];
+      var voice = p.copy[currentTone];
+      CHANNELS.forEach(function (meta) {
+        var parts = buildBlock(meta);
+        parts.block.classList.add('is-in');
+        if (meta.id === 'points') {
+          wireCopy(parts.copyBtn, function () { return voice.points.join('\n'); });
+          var ul = document.createElement('ul');
+          ul.className = 'pc__sell';
+          voice.points.forEach(function (it) {
+            var li = document.createElement('li');
+            li.textContent = it;
+            li.classList.add('is-in');
+            ul.appendChild(li);
+          });
+          parts.body.appendChild(ul);
+        } else {
+          var text = voice[meta.id];
+          wireCopy(parts.copyBtn, function () { return text; });
+          var pre = document.createElement('div');
+          pre.className = 'pc__block-text';
+          pre.textContent = text;
+          parts.body.appendChild(pre);
+        }
+      });
+      if (regenBtn) regenBtn.hidden = true;
+      if (genBtn) { genBtn.disabled = false; genBtn.textContent = labels.regenerate; }
+    }
+
+    if (propChips) {
+      propChips.addEventListener('click', function (e) {
+        var btn = e.target.closest('.pc__chip');
+        if (!btn || busy) return;
+        var id = btn.getAttribute('data-prop');
+        if (id === currentProp) return;
+        currentProp = id;
+        propChips.querySelectorAll('.pc__chip').forEach(function (c) { c.classList.remove('is-on'); });
+        btn.classList.add('is-on');
+        applyProperty(id);
+        renderInstant();
+      });
+    }
+
+    if (toneToggle) {
+      toneToggle.addEventListener('click', function (e) {
+        var btn = e.target.closest('.pc__tone-btn');
+        if (!btn || busy) return;
+        var tone = btn.getAttribute('data-tone');
+        if (tone === currentTone) return;
+        currentTone = tone;
+        toneToggle.querySelectorAll('.pc__tone-btn').forEach(function (c) { c.classList.remove('is-on'); });
+        btn.classList.add('is-on');
+        // switch the example to the new voice immediately (no gating click)
+        renderInstant();
+      });
+    }
+
+    genBtn.addEventListener('click', generate);
+    if (regenBtn) regenBtn.addEventListener('click', generate);
+
+    // Land on the designed example, fully rendered — not an empty panel + button.
+    applyProperty(currentProp);
+    renderInstant();
+  }
+
+  initPropertyCopywriter();
+  document.addEventListener('astro:after-swap', initPropertyCopywriter);
+</script>
+
+<style>
+  .pc { padding-block: var(--space-7) var(--space-9); }
+
+  .pc__back {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--fs-body-sm);
+    color: var(--text-tertiary); margin-bottom: var(--space-4);
+  }
+  .pc__back:hover { color: var(--brand-primary); }
+
+  .pc__stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+
+  /* ===== LEFT: property card + controls ===== */
+  .pc__left {
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .pc__panel-tag {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary);
+  }
+  .pc__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .pc__chip {
+    font-family: var(--font-sans); font-size: var(--fs-body-sm); color: var(--text-primary);
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
+  }
+  .pc__chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); transform: translateY(-1px); }
+  .pc__chip.is-on {
+    border-color: var(--brand-primary); color: var(--brand-primary);
+    background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  }
+
+  .pc__card {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline);
+    background: var(--bg-base);
+    padding: var(--space-3);
+    display: flex; flex-direction: column; gap: var(--space-2);
+  }
+  .pc__photo {
+    position: relative;
+    height: 8.5rem;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    transition: background var(--dur-normal) var(--ease-out);
+  }
+  .pc__photo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.12), transparent 60%);
+    pointer-events: none;
+  }
+  .pc__photo-emoji { font-size: 3.4rem; line-height: 1; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.35)); }
+  .pc__photo-tag {
+    position: absolute; top: 0.5rem; right: 0.6rem;
+    font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.8);
+    background: rgba(0,0,0,0.35); border-radius: var(--radius-sm);
+    padding: 0.1rem 0.45rem;
+  }
+  .pc__card-name {
+    font-size: var(--fs-body-lg); font-weight: var(--fw-bold);
+    color: var(--text-primary); margin: 0;
+  }
+  .pc__card-suburb { margin: 0; font-size: var(--fs-body-sm); color: var(--text-secondary); }
+
+  .pc__specs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);
+    margin-top: var(--space-1);
+  }
+  .pc__spec {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-hairline);
+  }
+  .pc__spec--wide { grid-column: 1 / -1; }
+  .pc__spec-k {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary);
+  }
+  .pc__spec-v { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  .pc__tone { display: flex; flex-direction: column; gap: var(--space-2); }
+  .pc__tone-label {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary);
+  }
+  .pc__tone-toggle {
+    display: inline-flex; padding: 0.25rem; gap: 0.25rem;
+    border-radius: var(--radius-pill); border: 1px solid var(--border-hairline);
+    background: var(--bg-base); width: fit-content;
+  }
+  .pc__tone-btn {
+    font-family: var(--font-sans); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill);
+    background: none; border: none; cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .pc__tone-btn:hover { color: var(--text-primary); }
+  .pc__tone-btn.is-on {
+    color: var(--bg-base);
+    background: var(--brand-gradient);
+    font-weight: var(--fw-semibold);
+  }
+
+  /* ===== RIGHT: output app ===== */
+  .pc__app { border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  .pc__appbar {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  }
+  .pc__appbar-left { display: flex; align-items: center; gap: var(--space-2); }
+  .pc__dot { width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--brand-primary); box-shadow: 0 0 8px var(--brand-primary); }
+  .pc__appname { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .pc__gen { white-space: nowrap; }
+
+  .pc__out {
+    flex: 1; min-height: 22rem; max-height: 46rem; overflow-y: auto;
+    padding: var(--space-4);
+    display: flex; flex-direction: column; gap: var(--space-3);
+  }
+  .pc__empty { color: var(--text-tertiary); font-size: var(--fs-body-sm); line-height: 1.6; margin: 0; }
+
+  .pc__writing {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--brand-primary);
+  }
+  .pc__writing-spark { display: inline-block; animation: pc-spin 1.4s linear infinite; }
+  .pc__dots i {
+    display: inline-block; width: 0.4rem; height: 0.4rem; margin-left: 0.2rem;
+    border-radius: 50%; background: var(--brand-primary);
+    animation: pc-blink 1.2s infinite ease-in-out;
+  }
+  .pc__dots i:nth-child(2) { animation-delay: 0.2s; }
+  .pc__dots i:nth-child(3) { animation-delay: 0.4s; }
+
+  .pc__blocks { display: flex; flex-direction: column; gap: var(--space-3); }
+  .pc__block {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline);
+    background: var(--bg-base);
+    overflow: hidden;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .pc__block.is-in { opacity: 1; transform: none; }
+  .pc__block[data-channel="red"] { border-left: 3px solid #ff4d6d; }
+  .pc__block[data-channel="wechat"] { border-left: 3px solid #07c160; }
+  .pc__block[data-channel="listing"] { border-left: 3px solid var(--brand-secondary); }
+  .pc__block[data-channel="points"] { border-left: 3px solid var(--brand-primary); }
+
+  .pc__block-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border-hairline);
+    background: var(--bg-elevated);
+  }
+  .pc__block-label { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+  .pc__copy {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary);
+    background: none; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm);
+    padding: 0.2rem 0.55rem; cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .pc__copy:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
+  .pc__copy.is-copied { border-color: var(--brand-primary); color: var(--brand-primary); }
+
+  .pc__block-body { padding: var(--space-3); }
+  .pc__block-text {
+    font-size: var(--fs-body); line-height: 1.6; color: var(--text-primary);
+    white-space: pre-wrap;
+  }
+
+  .pc__sell { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .pc__sell li {
+    position: relative; padding-left: var(--space-5);
+    font-size: var(--fs-body); line-height: 1.5; color: var(--text-secondary);
+    opacity: 0; transform: translateX(-4px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .pc__sell li.is-in { opacity: 1; transform: none; }
+  .pc__sell li::before {
+    content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold);
+  }
+
+  .pc__appfoot {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-hairline);
+  }
+  .pc__disclaimer { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-muted); }
+  .pc__regen { font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary); background: none; border: none; cursor: pointer; }
+  .pc__regen:hover { color: var(--brand-primary); }
+
+  /* ===== Explainer ===== */
+  .pc__explain { max-width: 64rem; margin-top: var(--space-7); }
+  .pc__explain-title {
+    font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: -0.02em;
+    color: var(--text-primary); margin: var(--space-2) 0 var(--space-4);
+  }
+  .pc__points { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .pc__points li {
+    position: relative; padding-left: var(--space-5);
+    color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.55;
+  }
+  .pc__points li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold); }
+  .pc__try {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6); padding: var(--space-5);
+    border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-hairline);
+  }
+  .pc__try p { margin: 0; font-size: var(--fs-body-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  /* ===== Keyframes ===== */
+  @keyframes pc-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  @keyframes pc-blink { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 899px) {
+    .pc__stage { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 767px) {
+    .pc__appbar { flex-wrap: wrap; }
+    .pc__gen { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pc__block, .pc__sell li, .pc__writing-spark, .pc__dots i { animation: none; transition: none; }
+    .pc__block, .pc__sell li { opacity: 1; transform: none; }
+  }
+</style>

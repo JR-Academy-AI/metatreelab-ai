@@ -1,0 +1,382 @@
+---
+/**
+ * DemoPropertyBrochurePage — "Auto Pitch Deck" demo.
+ *
+ * The preview is a REAL embedded deck (iframe), not a CSS mock: pick a project and
+ * the live, real Metatree-made deck loads inline in a 16:9 frame. A short "AI is
+ * generating…" shimmer plays before it reveals. Front-end-only; the decks are real
+ * artefacts, the "generation" is a scripted flourish. Fake PDF/PPT export buttons.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+type Bi = { en: string; zh: string };
+
+const copy = zh
+  ? {
+      sectionLabel: '/ DEMO — 投资路演 Deck 一键生成',
+      title: '选个项目，AI 几秒出一套投资级 Deck——下面就是真实成品，直接看。',
+      subtitle:
+        '下面内嵌的就是我们真实交付、并已上线的 LandIQ 投资路演 Deck 和楼书——可以直接翻、还能下载 PDF，不是截图、不是假页。换个项目就换一套。真实部署会读你自己的项目资料、套你的品牌，几秒出片。',
+      pickLabel: '选一个真实项目',
+      generating: 'AI 生成中…',
+      regenerate: '↻ 重新生成',
+      realBadge: '● 真实成品 · 可翻页',
+      previewName: 'Pitch Deck · 实时预览',
+      openNew: '↗ 新窗口打开',
+      dlPdf: '⬇ 下载 PDF',
+      dlPpt: '⬇ 导出 PPT',
+      fakeNote: '导出为演示按钮；上方预览是真实在线 Deck',
+      disclaimer: '预览为真实项目 Deck · 真实部署会用你自己的项目资料与品牌模板生成',
+      explainLabel: '/ 这套系统帮你省什么',
+      explainTitle: '把「做一套投资路演 Deck」从一整周压缩到几秒钟',
+      explainPoints: [
+        '项目要点填一次，封面 / 痛点 / 方案 / 成果 / 联系页自动排成册',
+        '统一套你的品牌色、字体、Logo——每页都像精修过的投资级路演',
+        '一份内容同时出 PDF 和 PPT，发投资人、做路演、对接渠道都现成',
+        '改个数字或卖点，整套 Deck 秒级重排，不用再手翻 PPT',
+      ],
+      ctaTryYours: '想让它读你的项目、套你的品牌出 Deck？',
+      ctaBtn: '聊聊怎么用上',
+      backToHub: '← 回到所有 Demo',
+    }
+  : {
+      sectionLabel: '/ DEMO — Auto Pitch Deck',
+      title: 'Pick a project, AI builds an investor-grade deck in seconds — here’s the real thing.',
+      subtitle:
+        'Embedded below is the real, live LandIQ investor pitch deck & brochure we delivered — flip through it, download the PDF. Not a screenshot, not a mock. Switch projects to switch. A real deployment reads your own files, applies your brand, and builds it in seconds.',
+      pickLabel: 'Pick a real project',
+      generating: 'AI generating…',
+      regenerate: '↻ Regenerate',
+      realBadge: '● Real deck · flip through it',
+      previewName: 'Pitch Deck · Live Preview',
+      openNew: '↗ Open in new tab',
+      dlPdf: '⬇ Download PDF',
+      dlPpt: '⬇ Export PPT',
+      fakeNote: 'Export buttons are for demo; the preview above is a real live deck',
+      disclaimer: 'Preview is a real project deck · a real deployment builds it from your own files & brand',
+      explainLabel: '/ What this saves you',
+      explainTitle: 'Turns “build an investor deck” from a week into a few seconds',
+      explainPoints: [
+        'Drop the project in once — cover, problem, solution, traction & contact lay themselves out',
+        'Your brand colours, fonts and logo applied automatically — every slide looks investor-grade',
+        'One set of content, exported as both PDF and PPT — ready to send or pitch live',
+        'Change a number or a selling point and the whole deck re-lays out in seconds',
+      ],
+      ctaTryYours: 'Want it to read your project and build a deck in your brand?',
+      ctaBtn: 'Talk to us',
+      backToHub: '← Back to all demos',
+    };
+
+// Real, embeddable decks we actually delivered & shipped live.
+// url = embedded in the iframe; pdf = the real downloadable file.
+const decks: { id: string; chip: Bi; sub: Bi; url: string; pdf: string }[] = [
+  {
+    id: 'landiq-pitch',
+    chip: { en: 'LandIQ — investor pitch deck', zh: 'LandIQ — 投资路演 Deck' },
+    sub: { en: 'AI property feasibility platform · real PDF', zh: 'AI 房产可行性平台 · 真实 PDF' },
+    url: 'https://landgear.github.io/landiq-brand/LandIQ-Pitch-Deck.pdf',
+    pdf: 'https://landgear.github.io/landiq-brand/LandIQ-Pitch-Deck.pdf',
+  },
+  {
+    id: 'landiq-brochure',
+    chip: { en: 'LandIQ — investor brochure', zh: 'LandIQ — 项目楼书 Brochure' },
+    sub: { en: 'One-page investor brochure · real PDF', zh: '投资人楼书一页纸 · 真实 PDF' },
+    url: 'https://landgear.github.io/landiq-brand/LandIQ-Brochure.pdf',
+    pdf: 'https://landgear.github.io/landiq-brand/LandIQ-Brochure.pdf',
+  },
+  {
+    id: 'aisa',
+    chip: { en: 'AISA — admissions deck', zh: 'AISA — 招生路演 Deck' },
+    sub: { en: 'Adelaide schools alliance', zh: '阿德莱德学校联盟招生' },
+    url: '/aisa-pitch/aisa-pitch.html',
+    pdf: '',
+  },
+];
+
+const decksLocalized = decks.map((d) => ({ id: d.id, chip: d.chip[locale], sub: d.sub[locale], url: d.url, pdf: d.pdf }));
+const decksJson = JSON.stringify(decksLocalized);
+const first = decksLocalized[0];
+
+const contactHref = localizedHref('/contact/', locale);
+const hubHref = localizedHref('/demo/', locale);
+
+const description = zh
+  ? '在线体验 AI 投资路演 Deck：直接内嵌我们真实交付的 LandIQ 投资路演 Deck 与楼书 PDF（可翻页、可下载），外加 AISA 招生路演。真实部署用你自己的项目资料几秒出片。模拟演示。'
+  : 'Try the AI pitch-deck demo: the real LandIQ investor pitch deck & brochure (PDF) embed below — flip through and download — plus the AISA admissions deck. A real deployment builds it from your own files in seconds.';
+---
+
+<BaseLayout title={zh ? 'Demo · 投资路演 Deck 一键生成' : 'Demo · Auto Pitch Deck'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="pb">
+    <div class="pb__inner container-x">
+      <a href={hubHref} class="pb__back">{copy.backToHub}</a>
+
+      <!-- Controls bar -->
+      <div class="pb__bar card-glass">
+        <div class="pb__pick">
+          <span class="pb__pick-label">{copy.pickLabel}</span>
+          <div class="pb__chips" id="pb-chips">
+            {decksLocalized.map((d, i) => (
+              <button class={`pb__chip${i === 0 ? ' is-on' : ''}`} type="button" data-deck={d.id}>
+                <span class="pb__chip-name">{d.chip}</span>
+                <span class="pb__chip-sub">{d.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div class="pb__actions">
+          <button class="btn-primary pb__gen" id="pb-gen" type="button">{copy.regenerate}</button>
+          <button class="btn-ghost pb__export" id="pb-pdf" type="button">{copy.dlPdf}</button>
+          <button class="btn-ghost pb__export" id="pb-ppt" type="button">{copy.dlPpt}</button>
+        </div>
+      </div>
+
+      <!-- Real embedded deck preview -->
+      <div class="pb__preview card-glass">
+        <header class="pb__preview-head">
+          <span class="pb__preview-left">
+            <span class="pb__dot" aria-hidden="true"></span>
+            <span class="pb__preview-name">{copy.previewName}</span>
+            <span class="pb__real">{copy.realBadge}</span>
+          </span>
+          <a class="pb__open" id="pb-open" href={first.url} target="_blank" rel="noopener">{copy.openNew}</a>
+        </header>
+
+        <div class="pb__frame">
+          <div class="pb__gen-overlay" id="pb-overlay" hidden>
+            <span class="pb__gen-spark">✦</span>
+            <span class="pb__gen-text">{copy.generating}</span>
+            <span class="pb__dots"><i></i><i></i><i></i></span>
+          </div>
+          <iframe
+            id="pb-iframe"
+            class="pb__iframe"
+            src={first.url}
+            title={copy.previewName}
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
+
+        <footer class="pb__preview-foot">
+          <span class="pb__fake-note">⚠︎ {copy.fakeNote}</span>
+          <span class="pb__disclaimer">{copy.disclaimer}</span>
+        </footer>
+      </div>
+
+      <!-- Explainer -->
+      <div class="pb__explain">
+        <span class="section-label">{copy.explainLabel}</span>
+        <h2 class="pb__explain-title">{copy.explainTitle}</h2>
+        <ul class="pb__points">
+          {copy.explainPoints.map((p) => <li>{p}</li>)}
+        </ul>
+        <div class="pb__try">
+          <p>{copy.ctaTryYours}</p>
+          <a href={contactHref} class="btn-primary">{copy.ctaBtn} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="03" />
+</BaseLayout>
+
+<script is:inline define:vars={{ decksJson }}>
+  function initPitchDeck() {
+    var bar = document.getElementById('pb-chips');
+    if (!bar || bar.getAttribute('data-init') === '1') return;
+    bar.setAttribute('data-init', '1');
+
+    var DECKS = JSON.parse(decksJson);
+    var byId = {};
+    DECKS.forEach(function (d) { byId[d.id] = d; });
+
+    var iframe = document.getElementById('pb-iframe');
+    var overlay = document.getElementById('pb-overlay');
+    var openLink = document.getElementById('pb-open');
+    var genBtn = document.getElementById('pb-gen');
+    var pdfBtn = document.getElementById('pb-pdf');
+    var pptBtn = document.getElementById('pb-ppt');
+    var currentId = DECKS[0].id;
+    var busy = false;
+    var timers = [];
+
+    function t(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearTimers() { timers.forEach(clearTimeout); timers.length = 0; }
+
+    // Play a short "AI generating" shimmer, then (re)load the real deck.
+    function showDeck(id) {
+      var d = byId[id];
+      if (!d) return;
+      currentId = id;
+      if (openLink) openLink.setAttribute('href', d.url);
+      busy = true;
+      if (overlay) overlay.hidden = false;
+      if (iframe) iframe.setAttribute('src', 'about:blank');
+      clearTimers();
+      t(function () {
+        if (iframe) iframe.setAttribute('src', d.url);
+        if (overlay) overlay.hidden = true;
+        busy = false;
+      }, 1300);
+    }
+
+    bar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.pb__chip');
+      if (!btn || busy) return;
+      var id = btn.getAttribute('data-deck');
+      if (id === currentId) return;
+      bar.querySelectorAll('.pb__chip').forEach(function (c) { c.classList.remove('is-on'); });
+      btn.classList.add('is-on');
+      showDeck(id);
+    });
+
+    if (genBtn) genBtn.addEventListener('click', function () {
+      if (busy) return;
+      showDeck(currentId);
+    });
+
+    // Real PDF download — opens the actual file for the current deck (falls back to the embed url).
+    if (pdfBtn) pdfBtn.addEventListener('click', function () {
+      if (busy) return;
+      var d = byId[currentId];
+      var href = d && d.pdf ? d.pdf : (d ? d.url : '');
+      if (href) window.open(href, '_blank', 'noopener');
+    });
+    // PPT export is a demo flourish (we ship PDF, not PPT).
+    if (pptBtn) pptBtn.addEventListener('click', function () {
+      if (busy) return;
+      var orig = pptBtn.textContent;
+      pptBtn.disabled = true;
+      pptBtn.textContent = '✓ ' + (document.documentElement.lang === 'zh' ? '演示按钮' : 'Demo only');
+      setTimeout(function () { pptBtn.disabled = false; pptBtn.textContent = orig; }, 1600);
+    });
+
+    // Lands on the real deck already loaded (no gating click).
+  }
+
+  initPitchDeck();
+  document.addEventListener('astro:after-swap', initPitchDeck);
+</script>
+
+<style>
+  .pb { padding-block: var(--space-7) var(--space-9); }
+  .pb__back {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--fs-body-sm);
+    color: var(--text-tertiary); margin-bottom: var(--space-4);
+  }
+  .pb__back:hover { color: var(--brand-primary); }
+
+  /* ===== Controls bar ===== */
+  .pb__bar {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    flex-wrap: wrap; gap: var(--space-4);
+    border-radius: var(--radius-lg); padding: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .pb__pick { display: flex; flex-direction: column; gap: var(--space-2); }
+  .pb__pick-label {
+    font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary);
+  }
+  .pb__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .pb__chip {
+    display: flex; flex-direction: column; gap: 0.1rem; text-align: left;
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    cursor: pointer; transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .pb__chip:hover { border-color: var(--brand-primary); }
+  .pb__chip.is-on { border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow); }
+  .pb__chip-name { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+  .pb__chip.is-on .pb__chip-name { color: var(--brand-primary); }
+  .pb__chip-sub { font-size: var(--fs-micro); color: var(--text-tertiary); }
+
+  .pb__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+  .pb__gen { font-size: var(--fs-body-sm); }
+  .pb__export { font-size: var(--fs-body-sm); }
+
+  /* ===== Real embedded deck preview ===== */
+  .pb__preview { border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  .pb__preview-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-hairline);
+    background: var(--bg-elevated);
+  }
+  .pb__preview-left { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .pb__dot { width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--brand-primary); box-shadow: 0 0 8px var(--brand-primary); }
+  .pb__preview-name { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .pb__real {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary);
+    padding: 0.15rem 0.6rem; border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 35%, transparent);
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+  }
+  .pb__open { font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary); }
+  .pb__open:hover { color: var(--brand-primary); }
+
+  .pb__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--bg-base);
+  }
+  .pb__iframe { width: 100%; height: 100%; border: 0; display: block; background: #000; }
+
+  .pb__gen-overlay {
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+    background: color-mix(in srgb, var(--bg-base) 90%, transparent);
+    backdrop-filter: blur(4px);
+    font-family: var(--font-mono); font-size: var(--fs-body); color: var(--brand-primary);
+  }
+  .pb__gen-spark { font-size: 1.4rem; animation: pb-spin 1.4s linear infinite; }
+  .pb__dots i {
+    display: inline-block; width: 0.4rem; height: 0.4rem; margin-left: 0.25rem;
+    border-radius: 50%; background: var(--brand-primary); animation: pb-blink 1.2s infinite ease-in-out;
+  }
+  .pb__dots i:nth-child(2) { animation-delay: 0.2s; }
+  .pb__dots i:nth-child(3) { animation-delay: 0.4s; }
+
+  .pb__preview-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap;
+    padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-hairline);
+  }
+  .pb__fake-note, .pb__disclaimer { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-muted); }
+
+  /* ===== Explainer ===== */
+  .pb__explain { max-width: 64rem; margin-top: var(--space-7); }
+  .pb__explain-title { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: -0.02em; color: var(--text-primary); margin: var(--space-2) 0 var(--space-4); }
+  .pb__points { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .pb__points li { position: relative; padding-left: var(--space-5); color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.55; }
+  .pb__points li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold); }
+  .pb__try {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6); padding: var(--space-5); border-radius: var(--radius-md);
+    background: var(--bg-glass); border: 1px solid var(--border-hairline);
+  }
+  .pb__try p { margin: 0; font-size: var(--fs-body-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  @keyframes pb-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  @keyframes pb-blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  @media (max-width: 767px) {
+    .pb__bar { flex-direction: column; align-items: stretch; }
+    .pb__actions { justify-content: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pb__gen-spark, .pb__dots i { animation: none; }
+  }
+</style>

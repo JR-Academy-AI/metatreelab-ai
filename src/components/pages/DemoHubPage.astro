@@ -1,0 +1,321 @@
+---
+/**
+ * DemoHubPage — "Live Demos" hub.
+ *
+ * The conversion thesis (see marketing/strategy/conversion-strategy.md, gitignored):
+ * most prospects have NEVER operated AI and can't picture the result. So instead of
+ * explaining, we let them click a realistic, scripted mock system and *see* it.
+ * Every demo here is a front-end-only mock with canned data — no backend, no real LLM.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+const copy = zh
+  ? {
+      sectionLabel: '/ LIVE DEMOS — 在线体验',
+      title: '别光听我们讲。点一下，看看 AI 长什么样。',
+      subtitle:
+        '大多数老板没亲手用过 AI，很难想象用了之后是什么样。所以我们把几套真实场景做成了可点击的演示——全是模拟数据，点几下，你脑子里就有画面了。',
+      hint: '以下均为演示用模拟数据，点击卡片即可体验或预览。',
+      live: '可体验',
+      soon: '即将上线',
+      tryNow: '立即体验',
+      preview: '查看预览',
+      footerNote:
+        '想在你自己的数据上看一遍真实效果？我们可以拿你一份真实文件（合同 / 工单 / 客诉记录），跑给你看。',
+    }
+  : {
+      sectionLabel: '/ LIVE DEMOS',
+      title: "Don't take our word for it. Click and see what AI looks like.",
+      subtitle:
+        "Most owners have never actually used AI, so it's hard to picture the result. We built a few real scenarios as clickable demos — all with sample data. Click around, and the picture forms itself.",
+      hint: 'All demos use sample data. Click any card to try it or preview it.',
+      live: 'Try it',
+      soon: 'Coming soon',
+      tryNow: 'Try it now',
+      preview: 'Preview',
+      footerNote:
+        'Want to see it run on your own data? Give us one real file (a contract, a work order, a support thread) and we’ll run it for you.',
+    };
+
+type Demo = {
+  slug: string | null;
+  status: 'live' | 'soon';
+  icon: string;
+  track: string;
+  title: { en: string; zh: string };
+  desc: { en: string; zh: string };
+  preview: string[]; // mini ascii-ish lines for the card mockup
+};
+
+const demos: Demo[] = [
+  {
+    slug: 'knowledge-assistant',
+    status: 'live',
+    icon: '🧠',
+    track: 'Digital Employee · OpenClaw 🦞',
+    title: { en: 'AI Knowledge Assistant', zh: 'AI 数字员工 · 知识助手' },
+    desc: {
+      en: 'Ask a question in plain language — get an answer grounded in your company’s own documents, with the source cited.',
+      zh: '用大白话提问，AI 用你公司自己的文档作答，并标出引用来源。员工再也不用翻手册、问同事。',
+    },
+    preview: ['You: 退货政策是几天？', '🦞 根据《售后手册》§2.1，自签收起', '   14 天内可退…  ▸ 来源'],
+  },
+  {
+    slug: 'document-extraction',
+    status: 'live',
+    icon: '📄',
+    track: 'AI Build · RAG',
+    title: { en: 'AI Document Extraction', zh: 'AI 文档提取' },
+    desc: {
+      en: 'Drop in an invoice or contract — watch AI pull out every field into a clean, structured table.',
+      zh: '丢进一张发票或合同，AI 逐字段高亮抽取成结构化表格。会计、律所、采购的重复劳动一键完成。',
+    },
+    preview: ['📄 invoice.pdf → 解析中…', '✓ 供应商  ✓ 金额 $4,820', '✓ GST $438  ✓ 到期 30 Jun'],
+  },
+  {
+    slug: 'property-copywriter',
+    status: 'live',
+    icon: '🏠',
+    track: 'Property Marketing',
+    title: { en: 'AI Listing Copywriter', zh: 'AI 地产文案生成' },
+    desc: {
+      en: 'Pick a property — generate listing copy, social posts and selling points in one click, in any tone.',
+      zh: '选一套房源，一键生成挂牌文案、小红书 / 朋友圈帖子和卖点清单，语气可切换。',
+    },
+    preview: ['🏠 滨海 3 房 → 一键生成', '📝 挂牌文案 ✓  📱 小红书 ✓', '✦ 卖点：学区 / 海景 / 精装'],
+  },
+  {
+    slug: 'property-brochure',
+    status: 'live',
+    icon: '📊',
+    track: 'Property Marketing',
+    title: { en: 'Auto Brochure / Deck', zh: '地产楼书 / PPT 一键生成' },
+    desc: {
+      en: 'Turn a property’s data into a polished PDF brochure or pitch deck — branded, in seconds.',
+      zh: '把房源数据一键变成带品牌的 PDF 楼书或提案 PPT，几秒出片，告别美工排版。',
+    },
+    preview: ['📊 房源数据 → 出片', '📑 PDF 楼书 ✓', '🖥 提案 PPT ✓  品牌模板'],
+  },
+  {
+    slug: 'super-memory',
+    status: 'live',
+    icon: '🕸️',
+    track: 'Digital Employee · Enterprise Memory',
+    title: { en: 'AI Super-Memory System', zh: 'AI 超级记忆系统' },
+    desc: {
+      en: 'Every employee reports to the AI; it becomes the company’s living brain — searchable, never forgets.',
+      zh: '全员日报 / 进展都汇报给 AI，AI 沉淀成一个永不遗忘、可随时追问的「企业大脑」。架构流程演示。',
+    },
+    preview: ['员工A ─┐', '员工B ─┼─▶ 🧠 企业大脑', '员工C ─┘   （可追问 / 永不忘）'],
+  },
+  {
+    slug: 'agency-memory',
+    status: 'live',
+    icon: '🏢',
+    track: 'Property Marketing · Digital Employee',
+    title: { en: 'Real-Estate Agency Memory', zh: '房产中介记忆系统' },
+    desc: {
+      en: 'Each property is a project — fill its design.md + records, AI auto-writes every channel and assigns the follow-ups. Replicable.',
+      zh: '每套房一个 project：填 design.md + 记录，AI 自动出全渠道文案并派跟进。整套文件结构可复制开新房。',
+    },
+    preview: ['📁 蔚蓝湾/  design.md + 记录', '   └─▶ 🧠 LLM', '挂牌·小红书·楼书·派跟进 ✓'],
+  },
+];
+
+const description = zh
+  ? 'Metatree Lab 在线 AI 体验 Demo：数字员工知识助手、文档提取、地产文案与楼书生成、企业超级记忆系统。点击即玩，模拟数据。'
+  : 'Metatree Lab live AI demos: digital-employee knowledge assistant, document extraction, property copywriting & brochure generation, enterprise super-memory. Click to try, sample data.';
+---
+
+<BaseLayout title={zh ? '在线 AI 体验 Demo' : 'Live AI Demos'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="demos">
+    <div class="demos__inner container-x">
+      <p class="demos__hint">{copy.hint}</p>
+
+      <div class="demos__grid">
+        {demos.map((demo) => {
+          const isLive = demo.status === 'live';
+          const href = demo.slug ? localizedHref(`/demo/${demo.slug}/`, locale) : null;
+          const Card = href ? 'a' : 'div';
+          return (
+            <Card
+              class:list={['demo-card', 'card-glass', isLive && 'demo-card--live']}
+              {...(href ? { href } : {})}
+            >
+              <div class="demo-card__top">
+                <span class="demo-card__icon">{demo.icon}</span>
+                <span class:list={['demo-card__badge', isLive ? 'is-live' : 'is-soon']}>
+                  {isLive ? `▸ ${copy.live}` : copy.soon}
+                </span>
+              </div>
+
+              <p class="demo-card__track section-label">{demo.track}</p>
+              <h2 class="demo-card__title">{demo.title[locale]}</h2>
+              <p class="demo-card__desc">{demo.desc[locale]}</p>
+
+              <div class="demo-card__preview" aria-hidden="true">
+                {demo.preview.map((line) => <span>{line}</span>)}
+              </div>
+
+              <span class:list={['demo-card__cta', isLive ? 'btn-primary' : 'btn-ghost']}>
+                {isLive ? copy.tryNow : copy.preview} →
+              </span>
+            </Card>
+          );
+        })}
+      </div>
+
+      <p class="demos__footnote">{copy.footerNote}</p>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="02" />
+</BaseLayout>
+
+<style>
+  .demos {
+    padding-block: var(--space-8) var(--space-9);
+  }
+
+  .demos__hint {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-6);
+  }
+
+  .demos__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .demo-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition:
+      transform var(--dur-normal) var(--ease-out),
+      border-color var(--dur-normal) var(--ease-out),
+      box-shadow var(--dur-normal) var(--ease-out);
+  }
+
+  a.demo-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .demo-card--live {
+    border-color: color-mix(in srgb, var(--brand-primary) 35%, transparent);
+  }
+
+  a.demo-card--live:hover {
+    box-shadow: var(--shadow-glow);
+    border-color: var(--brand-primary);
+  }
+
+  .demo-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .demo-card__icon {
+    font-size: 2.8rem;
+    line-height: 1;
+  }
+
+  .demo-card__badge {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-hairline);
+  }
+
+  .demo-card__badge.is-live {
+    color: var(--brand-primary);
+    border-color: color-mix(in srgb, var(--brand-primary) 40%, transparent);
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+  }
+
+  .demo-card__badge.is-soon {
+    color: var(--text-tertiary);
+  }
+
+  .demo-card__track {
+    margin: 0;
+  }
+
+  .demo-card__title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .demo-card__desc {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .demo-card__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    color: var(--text-tertiary);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    border: 1px solid var(--border-hairline);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .demo-card__preview span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .demo-card__cta {
+    align-self: flex-start;
+    margin-top: var(--space-2);
+  }
+
+  .demos__footnote {
+    margin-top: var(--space-7);
+    padding: var(--space-4) var(--space-5);
+    border-left: 2px solid var(--brand-primary);
+    background: var(--bg-glass);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    max-width: 60rem;
+  }
+
+  @media (max-width: 767px) {
+    .demos__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

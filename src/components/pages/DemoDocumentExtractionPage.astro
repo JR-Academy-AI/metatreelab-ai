@@ -1,0 +1,705 @@
+---
+/**
+ * DemoDocumentExtractionPage — "AI Document Extraction" demo.
+ *
+ * Two synced panels, front-end-only mock (no backend, no LLM):
+ *  - LEFT  : a styled mock business document (invoice / contract / receipt) the
+ *            user switches between via chips. Every extractable value carries a
+ *            [data-field] span so the script can highlight it.
+ *  - RIGHT : the extraction result. Starts empty with an "Extract" button. On click
+ *            it shows a brief "Scanning…" state, then appends extracted fields one by
+ *            one — each row: label, value, ✓ and a confidence %. As each row lands,
+ *            the matching [data-field] in the doc briefly highlights.
+ *
+ * Lets an AI-naive buyer *see* "AI reads my paperwork" turn into clean structured data.
+ * Shares the brand-gradient design language with the other /demo pages.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+const copy = zh
+  ? {
+      sectionLabel: '/ DEMO — AI 文档提取',
+      title: '丢一张单据进去，看 AI 把上面每个字段读成干净的表格。',
+      subtitle:
+        '左边是一张「扫描件」——发票、合同或收据，随你切换；右边点一下「AI 提取」，看它把供应商、金额、日期、条款一个个挑出来，每个都带置信度。',
+      docLabel: '示例文档',
+      resultLabel: '提取结果',
+      hint: '点下方「AI 提取」，AI 会逐字段读取左边这份文档。',
+      extractBtn: '✦ AI 提取',
+      scanning: '扫描中…',
+      reextract: '↺ 重新提取',
+      fieldsLabel: '字段',
+      valueLabel: '提取值',
+      confLabel: '置信度',
+      summary: (n: number, avg: number) => `${n} 个字段 · 平均置信度 ${avg}%`,
+      disclaimer: '演示用模拟数据 · 真实部署会读你自己的文件',
+      explainLabel: '/ 这能帮你做什么',
+      explainTitle: '不用再手动录入单据——AI 把纸面信息变成可用的数据',
+      explainPoints: [
+        '发票、合同、收据一拍即录，省掉人工敲键盘的几小时',
+        '每个字段都带置信度，低于阈值的会标出来让人复核，错不了',
+        '直接对接你的财务 / ERP / CRM 系统，提取完自动入账',
+        '一天几百张也不累、不漏、不会半夜眼花看错金额',
+      ],
+      ctaTryYours: '想看它读你自己的发票和合同？',
+      ctaBtn: '聊聊怎么接入',
+      backToHub: '← 回到所有 Demo',
+    }
+  : {
+      sectionLabel: '/ DEMO — AI Document Extraction',
+      title: 'Drop in a document — watch AI read every field into a clean table.',
+      subtitle:
+        'On the left, a “scanned” document — invoice, contract or receipt, your pick. On the right, hit “Extract” and watch AI pull out supplier, amounts, dates and terms one by one, each with a confidence score.',
+      docLabel: 'Sample document',
+      resultLabel: 'Extraction result',
+      hint: 'Click “Extract” below — the AI reads this document field by field.',
+      extractBtn: '✦ Extract',
+      scanning: 'Scanning…',
+      reextract: '↺ Re-extract',
+      fieldsLabel: 'Field',
+      valueLabel: 'Value',
+      confLabel: 'Confidence',
+      summary: (n: number, avg: number) => `${n} fields · ${avg}% avg confidence`,
+      disclaimer: 'Demo with sample data · a real deployment reads your own files',
+      explainLabel: '/ What this does for you',
+      explainTitle: 'No more typing documents in by hand — AI turns paper into usable data',
+      explainPoints: [
+        'Invoices, contracts and receipts captured in seconds — hours of keying gone',
+        'Every field carries a confidence score; low ones get flagged for a human check',
+        'Pipes straight into your finance / ERP / CRM — extracted and filed automatically',
+        'Hundreds a day with no fatigue, no missed lines, no 2am misread totals',
+      ],
+      ctaTryYours: 'Want to see it read your own invoices and contracts?',
+      ctaBtn: 'Talk to us about it',
+      backToHub: '← Back to all demos',
+    };
+
+// ----- Sample documents -----
+// Each doc: id, chip label, a doc-type tag, and the canned field set the AI "extracts".
+// Each extracted field has a `field` key matching a [data-field] span in the rendered doc.
+type Bi = { en: string; zh: string };
+interface DocField {
+  field: string;
+  label: Bi;
+  value: Bi;
+  conf: number;
+}
+interface SampleDoc {
+  id: string;
+  chip: Bi;
+  type: Bi;
+  fields: DocField[];
+}
+
+const docs: SampleDoc[] = [
+  {
+    id: 'invoice',
+    chip: { en: '🧾 Invoice', zh: '🧾 发票' },
+    type: { en: 'Tax Invoice', zh: '税务发票' },
+    fields: [
+      { field: 'supplier', label: { en: 'Supplier', zh: '供应商' }, value: { en: 'Harbour Timber Co. Pty Ltd', zh: 'Harbour Timber Co. Pty Ltd' }, conf: 99 },
+      { field: 'abn', label: { en: 'ABN', zh: 'ABN' }, value: { en: '41 824 753 556', zh: '41 824 753 556' }, conf: 98 },
+      { field: 'invoiceNo', label: { en: 'Invoice No.', zh: '发票号' }, value: { en: 'INV-2026-0417', zh: 'INV-2026-0417' }, conf: 99 },
+      { field: 'date', label: { en: 'Issue date', zh: '开票日期' }, value: { en: '14 Jun 2026', zh: '2026-06-14' }, conf: 97 },
+      { field: 'subtotal', label: { en: 'Subtotal', zh: '小计' }, value: { en: '$3,180.00', zh: '$3,180.00' }, conf: 98 },
+      { field: 'gst', label: { en: 'GST (10%)', zh: 'GST（10%）' }, value: { en: '$318.00', zh: '$318.00' }, conf: 96 },
+      { field: 'total', label: { en: 'Total due', zh: '应付总额' }, value: { en: '$3,498.00', zh: '$3,498.00' }, conf: 99 },
+      { field: 'due', label: { en: 'Due date', zh: '付款截止' }, value: { en: '28 Jun 2026', zh: '2026-06-28' }, conf: 95 },
+    ],
+  },
+  {
+    id: 'contract',
+    chip: { en: '📄 Contract', zh: '📄 合同' },
+    type: { en: 'Service Agreement', zh: '服务协议' },
+    fields: [
+      { field: 'parties', label: { en: 'Parties', zh: '签约方' }, value: { en: 'Metatree Lab ⟷ Vista Realty', zh: 'Metatree Lab ⟷ Vista Realty' }, conf: 98 },
+      { field: 'effective', label: { en: 'Effective date', zh: '生效日期' }, value: { en: '1 Jul 2026', zh: '2026-07-01' }, conf: 97 },
+      { field: 'term', label: { en: 'Term', zh: '合同期限' }, value: { en: '12 months', zh: '12 个月' }, conf: 96 },
+      { field: 'value', label: { en: 'Contract value', zh: '合同金额' }, value: { en: '$48,000 / year', zh: '$48,000 / 年' }, conf: 98 },
+      { field: 'notice', label: { en: 'Notice period', zh: '通知期' }, value: { en: '30 days', zh: '30 天' }, conf: 94 },
+      { field: 'law', label: { en: 'Governing law', zh: '适用法律' }, value: { en: 'Victoria, Australia', zh: '澳大利亚维多利亚州' }, conf: 97 },
+    ],
+  },
+  {
+    id: 'receipt',
+    chip: { en: '🧾 Receipt', zh: '🧾 收据' },
+    type: { en: 'Payment Receipt', zh: '付款收据' },
+    fields: [
+      { field: 'merchant', label: { en: 'Merchant', zh: '商家' }, value: { en: 'Brewline Café', zh: 'Brewline Café' }, conf: 99 },
+      { field: 'date', label: { en: 'Date & time', zh: '日期时间' }, value: { en: '16 Jun 2026 · 09:42', zh: '2026-06-16 · 09:42' }, conf: 97 },
+      { field: 'items', label: { en: 'Items', zh: '商品数' }, value: { en: '3 items', zh: '3 件' }, conf: 96 },
+      { field: 'total', label: { en: 'Total paid', zh: '支付总额' }, value: { en: '$24.80', zh: '$24.80' }, conf: 99 },
+      { field: 'payment', label: { en: 'Payment method', zh: '支付方式' }, value: { en: 'Visa ···· 4021', zh: 'Visa ···· 4021' }, conf: 95 },
+    ],
+  },
+];
+
+// Localized + flattened for the inline script.
+const docsLocalized = docs.map((d) => ({
+  id: d.id,
+  type: d.type[locale],
+  fields: d.fields.map((f) => ({
+    field: f.field,
+    label: f.label[locale],
+    value: f.value[locale],
+    conf: f.conf,
+  })),
+}));
+const docsJson = JSON.stringify(docsLocalized);
+
+const contactHref = localizedHref('/contact/', locale);
+const hubHref = localizedHref('/demo/', locale);
+
+const description = zh
+  ? '在线体验 AI 文档提取：挑一张发票/合同/收据，AI 把每个字段逐条读成带置信度的结构化表格。模拟演示。'
+  : 'Try AI document extraction: pick an invoice/contract/receipt and watch AI read every field into a structured table with confidence scores. Simulated demo.';
+---
+
+<BaseLayout title={zh ? 'Demo · AI 文档提取' : 'Demo · AI Document Extraction'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="dx">
+    <div class="dx__inner container-x">
+      <a href={hubHref} class="dx__back">{copy.backToHub}</a>
+
+      <!-- doc switcher -->
+      <div class="dx__switch" id="dx-switch" role="tablist">
+        {docs.map((d, i) => (
+          <button class:list={['dx__tab', { 'is-on': i === 0 }]} type="button" data-doc={d.id} role="tab">
+            {d.chip[locale]}
+          </button>
+        ))}
+      </div>
+
+      <div class="dx__stage">
+        <!-- LEFT: mock document preview -->
+        <div class="dx__doc card-glass">
+          <header class="dx__doc-bar">
+            <span class="dx__doc-label">{copy.docLabel}</span>
+            <span class="dx__doc-type" id="dx-doc-type">{docs[0].type[locale]}</span>
+          </header>
+
+          <div class="dx__paper-wrap">
+            <!-- INVOICE -->
+            <article class="dx__paper" data-paper="invoice">
+              <div class="dx__paper-head">
+                <div>
+                  <div class="dx__brand"><span class="dx__brand-mark">▰</span> <span data-field="supplier">Harbour Timber Co. Pty Ltd</span></div>
+                  <div class="dx__brand-sub">ABN <span data-field="abn">41 824 753 556</span></div>
+                </div>
+                <div class="dx__paper-title">{zh ? '税务发票' : 'TAX INVOICE'}</div>
+              </div>
+              <div class="dx__meta">
+                <div><span class="dx__k">{zh ? '发票号' : 'Invoice No.'}</span><span class="dx__v" data-field="invoiceNo">INV-2026-0417</span></div>
+                <div><span class="dx__k">{zh ? '开票日期' : 'Issue date'}</span><span class="dx__v" data-field="date">14 Jun 2026</span></div>
+                <div><span class="dx__k">{zh ? '付款截止' : 'Due date'}</span><span class="dx__v" data-field="due">28 Jun 2026</span></div>
+              </div>
+              <table class="dx__lines">
+                <thead>
+                  <tr><th>{zh ? '项目' : 'Item'}</th><th>{zh ? '数量' : 'Qty'}</th><th>{zh ? '金额' : 'Amount'}</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>{zh ? '橡木板材 90×45' : 'Oak boards 90×45'}</td><td>40</td><td>$2,400.00</td></tr>
+                  <tr><td>{zh ? '松木立柱' : 'Pine posts'}</td><td>26</td><td>$780.00</td></tr>
+                </tbody>
+              </table>
+              <div class="dx__totals">
+                <div><span class="dx__k">{zh ? '小计' : 'Subtotal'}</span><span class="dx__v" data-field="subtotal">$3,180.00</span></div>
+                <div><span class="dx__k">{zh ? 'GST（10%）' : 'GST (10%)'}</span><span class="dx__v" data-field="gst">$318.00</span></div>
+                <div class="dx__grand"><span class="dx__k">{zh ? '应付总额' : 'Total due'}</span><span class="dx__v" data-field="total">$3,498.00</span></div>
+              </div>
+            </article>
+
+            <!-- CONTRACT -->
+            <article class="dx__paper" data-paper="contract" hidden>
+              <div class="dx__paper-head">
+                <div class="dx__paper-title">{zh ? '服务协议' : 'SERVICE AGREEMENT'}</div>
+              </div>
+              <p class="dx__clause">
+                {zh ? '本协议由 ' : 'This Agreement is made between '}
+                <span data-field="parties">Metatree Lab ⟷ Vista Realty</span>
+                {zh ? ' 双方于下述生效日期签订。' : ' as of the effective date below.'}
+              </p>
+              <div class="dx__meta dx__meta--col">
+                <div><span class="dx__k">{zh ? '生效日期' : 'Effective date'}</span><span class="dx__v" data-field="effective">1 Jul 2026</span></div>
+                <div><span class="dx__k">{zh ? '合同期限' : 'Term'}</span><span class="dx__v" data-field="term">12 months</span></div>
+                <div><span class="dx__k">{zh ? '合同金额' : 'Contract value'}</span><span class="dx__v" data-field="value">$48,000 / year</span></div>
+                <div><span class="dx__k">{zh ? '通知期' : 'Notice period'}</span><span class="dx__v" data-field="notice">30 days</span></div>
+              </div>
+              <p class="dx__clause">
+                <strong>{zh ? '§9 适用法律。' : '§9 Governing law.'}</strong>
+                {zh ? ' 本协议受 ' : ' This Agreement is governed by the laws of '}
+                <span data-field="law">Victoria, Australia</span>
+                {zh ? ' 法律管辖。' : '.'}
+              </p>
+              <div class="dx__sign">
+                <div class="dx__sign-line">_______________</div>
+                <div class="dx__sign-line">_______________</div>
+              </div>
+            </article>
+
+            <!-- RECEIPT -->
+            <article class="dx__paper dx__paper--receipt" data-paper="receipt" hidden>
+              <div class="dx__rcpt-head">
+                <div class="dx__rcpt-name" data-field="merchant">Brewline Café</div>
+                <div class="dx__rcpt-sub" data-field="date">16 Jun 2026 · 09:42</div>
+              </div>
+              <div class="dx__rcpt-rule"></div>
+              <div class="dx__rcpt-lines">
+                <div><span>{zh ? '拿铁 ×2' : 'Latte ×2'}</span><span>$11.00</span></div>
+                <div><span>{zh ? '牛角包' : 'Croissant'}</span><span>$6.80</span></div>
+                <div><span>{zh ? '橙汁' : 'Orange juice'}</span><span>$7.00</span></div>
+              </div>
+              <div class="dx__rcpt-rule"></div>
+              <div class="dx__rcpt-foot">
+                <div><span>{zh ? '商品数' : 'Items'}</span><span data-field="items">3 items</span></div>
+                <div class="dx__rcpt-total"><span>{zh ? '支付总额' : 'TOTAL'}</span><span data-field="total">$24.80</span></div>
+                <div><span>{zh ? '支付方式' : 'Paid by'}</span><span data-field="payment">Visa ···· 4021</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- RIGHT: extraction result -->
+        <div class="dx__panel card-glass">
+          <header class="dx__panel-bar">
+            <div class="dx__panel-left">
+              <span class="dx__dot" aria-hidden="true"></span>
+              <span class="dx__panel-name">{copy.resultLabel}</span>
+            </div>
+            <span class="dx__summary" id="dx-summary"></span>
+          </header>
+
+          <div class="dx__out" id="dx-out" aria-live="polite">
+            <p class="dx__hint" id="dx-hint">{copy.hint}</p>
+            <div class="dx__cols" id="dx-cols" hidden>
+              <span>{copy.fieldsLabel}</span>
+              <span>{copy.valueLabel}</span>
+              <span>{copy.confLabel}</span>
+            </div>
+            <div class="dx__rows" id="dx-rows"></div>
+          </div>
+
+          <div class="dx__controls">
+            <button class="btn-primary dx__extract" id="dx-extract" type="button">{copy.extractBtn}</button>
+            <button class="dx__reextract" id="dx-reextract" type="button" hidden>{copy.reextract}</button>
+          </div>
+
+          <footer class="dx__panel-foot">
+            <span class="dx__disclaimer">⚠︎ {copy.disclaimer}</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- Explainer -->
+      <div class="dx__explain">
+        <span class="section-label">{copy.explainLabel}</span>
+        <h2 class="dx__explain-title">{copy.explainTitle}</h2>
+        <ul class="dx__points">
+          {copy.explainPoints.map((p) => <li>{p}</li>)}
+        </ul>
+        <div class="dx__try">
+          <p>{copy.ctaTryYours}</p>
+          <a href={contactHref} class="btn-primary">{copy.ctaBtn} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="03" />
+</BaseLayout>
+
+<script is:inline define:vars={{
+  docsJson,
+  labels: {
+    scanning: copy.scanning,
+    extractBtn: copy.extractBtn,
+    summaryPrefixZh: zh,
+  },
+}}>
+  function initDocumentExtraction() {
+    const stage = document.querySelector('.dx__stage');
+    const switchEl = document.getElementById('dx-switch');
+    const docTypeEl = document.getElementById('dx-doc-type');
+    const extractBtn = document.getElementById('dx-extract');
+    const reextractBtn = document.getElementById('dx-reextract');
+    const rowsEl = document.getElementById('dx-rows');
+    const colsEl = document.getElementById('dx-cols');
+    const hintEl = document.getElementById('dx-hint');
+    const summaryEl = document.getElementById('dx-summary');
+    const paperWrap = stage ? stage.querySelector('.dx__paper-wrap') : null;
+    if (!stage || !extractBtn || !rowsEl || extractBtn.dataset.bound) return;
+    extractBtn.dataset.bound = '1';
+
+    const DOCS = JSON.parse(docsJson);
+    const byId = {};
+    DOCS.forEach(function (d) { byId[d.id] = d; });
+
+    let current = DOCS[0].id;
+    let busy = false;
+    let done = false;
+    const timers = [];
+
+    function t(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearTimers() { timers.forEach(clearTimeout); timers.length = 0; }
+
+    function clearHighlights() {
+      if (!paperWrap) return;
+      paperWrap.querySelectorAll('[data-field].is-hit').forEach(function (el) {
+        el.classList.remove('is-hit');
+      });
+    }
+
+    function resetResult() {
+      clearTimers();
+      clearHighlights();
+      busy = false;
+      done = false;
+      rowsEl.innerHTML = '';
+      if (colsEl) colsEl.hidden = true;
+      if (hintEl) hintEl.hidden = false;
+      if (summaryEl) summaryEl.textContent = '';
+      extractBtn.hidden = false;
+      extractBtn.disabled = false;
+      extractBtn.textContent = labels.extractBtn;
+      extractBtn.classList.remove('is-scanning');
+      if (reextractBtn) reextractBtn.hidden = true;
+    }
+
+    function showPaper(id) {
+      if (!paperWrap) return;
+      paperWrap.querySelectorAll('.dx__paper').forEach(function (p) {
+        p.hidden = p.getAttribute('data-paper') !== id;
+      });
+    }
+
+    function selectDoc(id) {
+      if (!byId[id]) return;
+      current = id;
+      showPaper(id);
+      if (docTypeEl) docTypeEl.textContent = byId[id].type;
+      if (switchEl) {
+        switchEl.querySelectorAll('.dx__tab').forEach(function (b) {
+          b.classList.toggle('is-on', b.getAttribute('data-doc') === id);
+        });
+      }
+      resetResult();
+    }
+
+    function highlightField(name) {
+      if (!paperWrap) return;
+      const el = paperWrap.querySelector('[data-field="' + name + '"]');
+      if (!el) return;
+      el.classList.add('is-hit');
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      t(function () { el.classList.remove('is-hit'); }, 1400);
+    }
+
+    function addRow(f) {
+      const row = document.createElement('div');
+      row.className = 'dx__row';
+      const conf = f.conf;
+      const confClass = conf >= 97 ? 'is-high' : conf >= 90 ? 'is-mid' : 'is-low';
+      row.innerHTML =
+        '<span class="dx__field"><span class="dx__check">✓</span><span class="dx__field-label"></span></span>' +
+        '<span class="dx__value"></span>' +
+        '<span class="dx__conf ' + confClass + '"></span>';
+      row.querySelector('.dx__field-label').textContent = f.label;
+      row.querySelector('.dx__value').textContent = f.value;
+      row.querySelector('.dx__conf').textContent = conf + '%';
+      rowsEl.appendChild(row);
+      t(function () { row.classList.add('is-in'); }, 20);
+    }
+
+    function setSummary(fields) {
+      if (!summaryEl) return;
+      let sum = 0;
+      fields.forEach(function (f) { sum += f.conf; });
+      const avg = Math.round(sum / fields.length);
+      const n = fields.length;
+      summaryEl.textContent = labels.summaryPrefixZh
+        ? (n + ' 个字段 · 平均置信度 ' + avg + '%')
+        : (n + ' fields · ' + avg + '% avg confidence');
+    }
+
+    function extract() {
+      if (busy || done) return;
+      busy = true;
+      const doc = byId[current];
+      if (hintEl) hintEl.hidden = true;
+      extractBtn.disabled = true;
+      extractBtn.classList.add('is-scanning');
+      extractBtn.textContent = labels.scanning;
+
+      // brief scan, then reveal fields one by one
+      t(function () {
+        if (colsEl) colsEl.hidden = false;
+        let i = 0;
+        function next() {
+          if (i >= doc.fields.length) {
+            busy = false;
+            done = true;
+            extractBtn.hidden = true;
+            extractBtn.classList.remove('is-scanning');
+            if (reextractBtn) reextractBtn.hidden = false;
+            setSummary(doc.fields);
+            return;
+          }
+          const f = doc.fields[i];
+          addRow(f);
+          highlightField(f.field);
+          i += 1;
+          t(next, 280);
+        }
+        next();
+      }, 700);
+    }
+
+    if (switchEl) {
+      switchEl.addEventListener('click', function (e) {
+        const btn = e.target.closest('.dx__tab');
+        if (!btn) return;
+        const id = btn.getAttribute('data-doc');
+        if (id === current && !done && !busy) return;
+        selectDoc(id);
+      });
+    }
+
+    extractBtn.addEventListener('click', extract);
+    if (reextractBtn) {
+      reextractBtn.addEventListener('click', function () { resetResult(); });
+    }
+  }
+
+  initDocumentExtraction();
+  document.addEventListener('astro:after-swap', initDocumentExtraction);
+</script>
+
+<style>
+  .dx { padding-block: var(--space-7) var(--space-9); }
+
+  .dx__back {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--fs-body-sm);
+    color: var(--text-tertiary); margin-bottom: var(--space-4);
+  }
+  .dx__back:hover { color: var(--brand-primary); }
+
+  /* ===== doc switcher ===== */
+  .dx__switch { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+  .dx__tab {
+    font-family: var(--font-sans); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline); cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .dx__tab:hover { border-color: var(--brand-primary); color: var(--brand-primary); transform: translateY(-1px); }
+  .dx__tab.is-on {
+    color: var(--text-primary);
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow);
+  }
+
+  /* ===== stage ===== */
+  .dx__stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+
+  /* ===== LEFT: mock document ===== */
+  .dx__doc { border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  .dx__doc-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  }
+  .dx__doc-label {
+    font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-tertiary);
+  }
+  .dx__doc-type {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary);
+    padding: 0.2rem 0.7rem; border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, transparent);
+  }
+  .dx__paper-wrap { padding: var(--space-4); overflow-y: auto; max-height: 46rem; }
+
+  /* the "scanned" sheet */
+  .dx__paper {
+    background: #f6f5f0; color: #1a1a1a;
+    border-radius: var(--radius-sm);
+    padding: var(--space-5);
+    box-shadow: 0 6px 24px -8px rgba(0, 0, 0, 0.6);
+    font-size: 1.3rem; line-height: 1.5;
+  }
+  .dx__paper-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .dx__brand { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+  .dx__brand-mark { color: #00a37a; }
+  .dx__brand-sub { font-size: 1.15rem; color: #555; margin-top: 0.2rem; }
+  .dx__paper-title { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.04em; color: #00a37a; white-space: nowrap; }
+
+  .dx__meta { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-5); margin-bottom: var(--space-4); }
+  .dx__meta--col { flex-direction: column; gap: var(--space-2); }
+  .dx__meta > div { display: flex; flex-direction: column; gap: 0.1rem; }
+  .dx__k { font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.04em; color: #777; }
+  .dx__v { font-weight: 600; color: #1a1a1a; }
+
+  .dx__lines { width: 100%; border-collapse: collapse; margin-bottom: var(--space-4); }
+  .dx__lines th {
+    text-align: left; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.04em;
+    color: #777; border-bottom: 1px solid #d8d6cf; padding: 0.4rem 0;
+  }
+  .dx__lines th:nth-child(2), .dx__lines td:nth-child(2) { text-align: center; }
+  .dx__lines th:last-child, .dx__lines td:last-child { text-align: right; }
+  .dx__lines td { padding: 0.5rem 0; border-bottom: 1px solid #ebe9e2; }
+
+  .dx__totals { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
+  .dx__totals > div { display: flex; gap: var(--space-3); justify-content: flex-end; min-width: 16rem; }
+  .dx__totals .dx__k { color: #555; }
+  .dx__totals .dx__v { min-width: 8rem; text-align: right; }
+  .dx__grand { border-top: 2px solid #1a1a1a; padding-top: 0.5rem; margin-top: 0.3rem; font-size: 1.5rem; }
+  .dx__grand .dx__v { font-weight: 700; }
+
+  .dx__clause { margin: 0 0 var(--space-3); color: #2a2a2a; }
+  .dx__sign { display: flex; gap: var(--space-6); margin-top: var(--space-5); }
+  .dx__sign-line { font-family: var(--font-mono); color: #999; }
+
+  /* receipt — narrower mono "thermal" look */
+  .dx__paper--receipt { max-width: 30rem; margin: 0 auto; font-family: var(--font-mono); font-size: 1.25rem; }
+  .dx__rcpt-head { text-align: center; }
+  .dx__rcpt-name { font-size: 1.7rem; font-weight: 700; }
+  .dx__rcpt-sub { color: #666; margin-top: 0.2rem; }
+  .dx__rcpt-rule { border-top: 1px dashed #aaa; margin: var(--space-3) 0; }
+  .dx__rcpt-lines > div, .dx__rcpt-foot > div { display: flex; justify-content: space-between; padding: 0.25rem 0; }
+  .dx__rcpt-total { font-weight: 700; font-size: 1.5rem; }
+
+  /* the highlight pulse when a field is extracted */
+  [data-field] {
+    border-radius: 0.3rem;
+    transition: background-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out), color var(--dur-normal) var(--ease-out);
+    padding: 0 0.15rem;
+  }
+  [data-field].is-hit {
+    background: #00e5a0;
+    color: #062c22;
+    box-shadow: 0 0 0 3px rgba(0, 229, 160, 0.35);
+    animation: dx-hit 1.4s var(--ease-out);
+  }
+
+  /* ===== RIGHT: result panel ===== */
+  .dx__panel { border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  .dx__panel-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  }
+  .dx__panel-left { display: flex; align-items: center; gap: var(--space-2); }
+  .dx__dot { width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--brand-primary); box-shadow: 0 0 8px var(--brand-primary); }
+  .dx__panel-name { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .dx__summary { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary); }
+
+  .dx__out { flex: 1; min-height: 22rem; max-height: 46rem; overflow-y: auto; padding: var(--space-4); }
+  .dx__hint { color: var(--text-tertiary); font-size: var(--fs-body-sm); line-height: 1.6; margin: 0; }
+
+  .dx__cols, .dx__row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 1fr) minmax(8rem, 1.3fr) auto;
+    gap: var(--space-3); align-items: center;
+  }
+  .dx__cols {
+    font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-tertiary);
+    padding-bottom: var(--space-2); margin-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  .dx__cols span:last-child, .dx__conf { text-align: right; justify-self: end; }
+  .dx__rows { display: flex; flex-direction: column; gap: var(--space-1); }
+
+  .dx__row {
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-hairline);
+    opacity: 0; transform: translateY(6px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .dx__row.is-in { opacity: 1; transform: none; }
+  .dx__field { display: flex; align-items: center; gap: var(--space-2); }
+  .dx__check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.6rem; height: 1.6rem; flex-shrink: 0;
+    border-radius: 50%; background: var(--brand-primary); color: #062c22;
+    font-size: 1.05rem; font-weight: 700;
+  }
+  .dx__field-label { font-size: var(--fs-body-sm); color: var(--text-tertiary); }
+  .dx__value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-medium); word-break: break-word; }
+  .dx__conf {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold);
+    padding: 0.15rem 0.6rem; border-radius: var(--radius-pill); white-space: nowrap;
+  }
+  .dx__conf.is-high { color: var(--brand-primary); background: color-mix(in srgb, var(--brand-primary) 12%, transparent); }
+  .dx__conf.is-mid { color: var(--brand-secondary); background: color-mix(in srgb, var(--brand-secondary) 12%, transparent); }
+  .dx__conf.is-low { color: #f0b429; background: rgba(240, 180, 41, 0.12); }
+
+  /* ===== controls ===== */
+  .dx__controls { padding: var(--space-4); border-top: 1px solid var(--border-hairline); background: var(--bg-elevated); display: flex; align-items: center; gap: var(--space-3); }
+  .dx__extract { width: 100%; }
+  .dx__extract.is-scanning { opacity: 0.85; }
+  .dx__reextract {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    background: none; border: none; cursor: pointer;
+  }
+  .dx__reextract:hover { color: var(--brand-primary); }
+
+  .dx__panel-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-hairline);
+  }
+  .dx__disclaimer { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-muted); }
+
+  /* ===== explainer ===== */
+  .dx__explain { max-width: 64rem; margin-top: var(--space-7); }
+  .dx__explain-title { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: -0.02em; color: var(--text-primary); margin: var(--space-2) 0 var(--space-4); }
+  .dx__points { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .dx__points li { position: relative; padding-left: var(--space-5); color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.55; }
+  .dx__points li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold); }
+  .dx__try {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6); padding: var(--space-5); border-radius: var(--radius-md);
+    background: var(--bg-glass); border: 1px solid var(--border-hairline);
+  }
+  .dx__try p { margin: 0; font-size: var(--fs-body-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  @keyframes dx-hit {
+    0% { box-shadow: 0 0 0 0 rgba(0, 229, 160, 0.6); }
+    40% { box-shadow: 0 0 0 5px rgba(0, 229, 160, 0.35); }
+    100% { box-shadow: 0 0 0 3px rgba(0, 229, 160, 0); }
+  }
+
+  /* ===== responsive ===== */
+  @media (max-width: 919px) {
+    .dx__stage { grid-template-columns: 1fr; }
+    .dx__paper-wrap { max-height: 38rem; }
+  }
+  @media (max-width: 600px) {
+    .dx__paper { padding: var(--space-4); font-size: 1.2rem; }
+    .dx__paper-head { flex-direction: column; gap: var(--space-2); }
+    .dx__cols, .dx__row { grid-template-columns: minmax(6rem, 1fr) minmax(6rem, 1.2fr) auto; gap: var(--space-2); }
+    .dx__totals > div { min-width: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dx__row, [data-field].is-hit { animation: none; transition: none; }
+    [data-field].is-hit { box-shadow: 0 0 0 2px rgba(0, 229, 160, 0.5); }
+  }
+</style>

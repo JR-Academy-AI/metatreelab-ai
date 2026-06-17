@@ -1,0 +1,1119 @@
+---
+/**
+ * DemoAgencyMemoryPage — "Agency Project Memory" demo (productized real-estate workflow).
+ *
+ * Front-end-only mock (no backend, no real LLM). Visualizes the product modeled under
+ * /agency/: each property = a project/ with INPUT (design.md + classified records/) and
+ * OUTPUT (AI-written generated/). A real-estate agency owner picks a property and
+ * instantly SEES the file structure on the left and the AI-generated all-channel content
+ * + assigned follow-ups on the right.
+ *
+ *  - Project selector (chips): switching swaps everything.
+ *  - LEFT  : the project's INPUT shown as a file tree — design.md brief + records/ groups.
+ *  - RIGHT : the AI generated/ OUTPUT as labelled cards — listing / RED / WeChat /
+ *            brochure / AI follow-ups. Rendered in full BY DEFAULT (renderInstant).
+ *  - Pipeline motif (design.md + records → 🧠 LLM → generated) reuses the super-memory
+ *    pl__ gradient-arrow + brain visual.
+ *  - "Regenerate" replays the generation animation (records light → brain works → outputs).
+ *
+ * azure-bay-villa uses the REAL content from /agency/projects/azure-bay-villa/.
+ * See marketing/strategy/conversion-strategy.md (gitignored).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../ui/PageHero.astro';
+import CtaFooter from '../shared/CtaFooter.astro';
+import { localizedHref, type Locale } from '../../config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+
+type Bi = { en: string; zh: string };
+
+const copy = zh
+  ? {
+      sectionLabel: '/ DEMO — 中介省心营销大脑',
+      title: '一套房的全部营销，AI 几秒帮你写完——还提醒你别漏跟进客户。',
+      subtitle:
+        '左边把这套房的卖点和客户动态填一次，右边 AI 立刻帮你写好挂牌、小红书、朋友圈、楼书，还排好该先打给谁。过去请文案加美工要一两天、几百刀，现在几秒搞定、几乎不花钱。',
+      pipeInput: '房源卖点 + 客户记录',
+      pipeBrain: 'AI',
+      pipeLlm: 'AI 营销大脑',
+      pipeLlmNote: '24h 帮你干活',
+      pipeOutput: 'AI 帮你写好的',
+      pipeIdle: '待命',
+      pipeWorking: '写作中',
+      pipeDone: '已写好',
+      caps: [
+        { id: 'classify', icon: '🗂️', label: '帮你记客户', desc: '谁来看过、谁想买、出多少，自动记好' },
+        { id: 'generate', icon: '✍️', label: '帮你写文案', desc: '挂牌 / 小红书 / 朋友圈 / 楼书，一次全出' },
+        { id: 'assign', icon: '📌', label: '提醒你跟进', desc: '该先打给谁、为什么，不漏单' },
+      ],
+      capsLabel: '这套系统帮你做三件事',
+      inputTag: '你只需填这两块',
+      designLabel: '这套房的卖点设定',
+      recordsLabel: '客户动态（带看 · 询盘 · 出价）',
+      briefPos: '定位',
+      briefBuyer: '目标买家',
+      briefSell: '卖点（前 3）',
+      briefTone: '语气',
+      outputTitle: 'AI 帮你写好的',
+      outputTag: '挂牌 / 小红书 / 朋友圈 / 楼书，全自动',
+      regenerate: '↻ 重新生成',
+      regenerating: 'AI 写作中…',
+      assignedTo: '先打给',
+      cloneNote: '开新房不用从头来——套用上一套的设定，几秒生成一整套新内容。一年几十套房，省下的文案、美工和漏掉的客户，就是一大笔钱。',
+      disclaimer: '演示用模拟数据 · 真实部署接入你的房源库 / 带看记录 / 微信',
+      explainLabel: '/ 这套东西帮你省什么',
+      explainTitle: '少请一个文案、不漏一个客户——一套房的营销，几秒钟搞定',
+      explainPoints: [
+        '一套房 5 个渠道的文案，过去请人写要一两天，现在 AI 几秒全出',
+        '不用再额外请文案、美工——这笔钱直接省下来',
+        '客户带看、出价自动记好，中介离职也带不走，客户不流失',
+        'AI 提醒该先跟进谁，临门一脚不漏单，等于多成交几套',
+      ],
+      ctaTryYours: '想用在你公司的房源和客户上？',
+      ctaBtn: '聊聊怎么用上',
+      backToHub: '← 回到所有 Demo',
+    }
+  : {
+      sectionLabel: '/ DEMO — The Agency’s Marketing Brain',
+      title: 'All the marketing for a listing, written by AI in seconds — and it reminds you who to chase.',
+      subtitle:
+        'Fill in this property’s selling points and client activity once on the left; on the right the AI instantly writes the listing, RED post, WeChat and brochure, and lines up who to call first. What used to take a copywriter and a designer a day or two and hundreds of dollars now takes seconds — for next to nothing.',
+      pipeInput: 'Selling points + client notes',
+      pipeBrain: 'AI',
+      pipeLlm: 'Marketing brain',
+      pipeLlmNote: 'works 24/7',
+      pipeOutput: 'Written for you',
+      pipeIdle: 'Idle',
+      pipeWorking: 'Writing',
+      pipeDone: 'Done',
+      caps: [
+        { id: 'classify', icon: '🗂️', label: 'Remembers clients', desc: 'Who viewed, who’s keen, what they offered — logged' },
+        { id: 'generate', icon: '✍️', label: 'Writes your copy', desc: 'Listing / RED / WeChat / brochure, all at once' },
+        { id: 'assign', icon: '📌', label: 'Reminds you to chase', desc: 'Who to call first, and why — no lost deals' },
+      ],
+      capsLabel: 'Three things this does for you',
+      inputTag: 'You just fill these two',
+      designLabel: 'This property’s selling points',
+      recordsLabel: 'Client activity (viewings · enquiries · offers)',
+      briefPos: 'Positioning',
+      briefBuyer: 'Target buyer',
+      briefSell: 'Selling points (top 3)',
+      briefTone: 'Tone',
+      outputTitle: 'Written for you by AI',
+      outputTag: 'Listing / RED / WeChat / brochure — automatic',
+      regenerate: '↻ Regenerate',
+      regenerating: 'AI writing…',
+      assignedTo: 'Call',
+      cloneNote: 'New listing? No starting over — reuse the last one’s setup and get a full new set of content in seconds. Over dozens of listings a year, the copywriting, design and missed clients you save add up fast.',
+      disclaimer: 'Demo with sample data · a real deployment connects your listings / viewing notes / WeChat',
+      explainLabel: '/ What this saves you',
+      explainTitle: 'One fewer copywriter, not one lost client — a listing’s marketing done in seconds',
+      explainPoints: [
+        'Copy for 5 channels that took a person a day or two — AI does it in seconds',
+        'No need to hire a copywriter or designer — that cost goes away',
+        'Viewings and offers are logged automatically — clients stay even when an agent leaves',
+        'AI reminds you who to chase first, so you don’t lose deals at the finish line',
+      ],
+      ctaTryYours: 'Want this on your own listings and clients?',
+      ctaBtn: 'Talk to us',
+      backToHub: '← Back to all demos',
+    };
+
+// ---- record group + output channel metadata (labels are bilingual) ----
+const recordGroups: { id: string; icon: string; label: Bi }[] = [
+  { id: 'inspections', icon: '👀', label: { en: 'Viewings', zh: '带看' } },
+  { id: 'enquiries', icon: '📨', label: { en: 'Enquiries', zh: '询盘买家' } },
+  { id: 'vendor', icon: '🤝', label: { en: 'Vendor', zh: '业主' } },
+  { id: 'offers', icon: '💰', label: { en: 'Offers', zh: '出价' } },
+];
+
+const channelMeta: { id: string; icon: string; label: Bi }[] = [
+  { id: 'listing', icon: '📄', label: { en: 'Listing copy', zh: '挂牌文案' } },
+  { id: 'xhs', icon: '📕', label: { en: 'RED post', zh: '小红书' } },
+  { id: 'wechat', icon: '💬', label: { en: 'WeChat moments', zh: '朋友圈' } },
+  { id: 'brochure', icon: '📘', label: { en: 'Brochure', zh: '楼书' } },
+];
+
+// ---- the 3 projects ----
+type RecordLine = { text: Bi; tags: string[] };
+type FollowUp = { to: Bi; level: 'hot' | 'normal'; text: Bi; why: Bi };
+
+type Project = {
+  id: string;
+  chip: Bi;
+  status: Bi;
+  brief: { positioning: Bi; buyer: Bi; sell: Bi[]; tone: Bi };
+  records: { inspections: RecordLine[]; enquiries: RecordLine[]; vendor: RecordLine[]; offers: RecordLine[] };
+  generated: { listing: Bi; xhs: Bi; wechat: Bi; brochure: Bi };
+  followUps: FollowUp[];
+};
+
+const projects: Project[] = [
+  {
+    id: 'azure-bay-villa',
+    chip: { en: 'Azure Bay Villa · 蔚蓝湾别墅', zh: '蔚蓝湾别墅' },
+    status: { en: 'Under offer', zh: '在售 · 已有 offer' },
+    brief: {
+      positioning: { en: 'Brighton waterfront villa · 3-bed + study · price guide $1.65M–$1.78M', zh: 'Brighton 一线海景独栋 · 3 房+书房 · 指导价 $1.65M–$1.78M' },
+      buyer: { en: 'Upgrading local families + overseas Chinese (live-in & invest)', zh: '自住升级本地家庭 + 海外华人投资自住兼顾' },
+      sell: [
+        { en: 'Waterfront views + full daylight (south-facing glass)', zh: '一线海景 + 全屋大采光（南向落地窗）' },
+        { en: 'Top school zone + walk to beach & tram', zh: '名校学区 + 步行可达海滩与电车' },
+        { en: 'Renovated open kitchen, move-in ready', zh: '翻新开放式厨房 + 精装即买即住' },
+      ],
+      tone: { en: 'Professional & steady; RED post = warm & enthusiastic', zh: '专业稳健；小红书用热情种草' },
+    },
+    records: {
+      inspections: [
+        { text: { en: '06-16 Mr. Wang (upgrading local family), loved the south light & sea view, asked about the school zone; verbal offer same day', zh: '06-16 王先生（自住升级本地家庭），很喜欢南向采光和海景，问学区划分；带看后当天口头出价' }, tags: ['热门买家', '学区疑虑'] },
+        { text: { en: '06-15 weekend OFI: 8 groups; 2 want a second viewing, 1 thought the price too high', zh: '06-15 周末 OFI 共 8 组到场，2 组留资要二次看房，1 组嫌价格偏高' }, tags: ['二次看房', '价格异议'] },
+      ],
+      enquiries: [
+        { text: { en: 'WeChat enquiry Ms. Li (invest+live), budget $1.6M, values sea view & value retention, hot; wants the brochure', zh: '微信询盘 李小姐（投资自住），预算 $1.6M，最看重海景与保值，热度高，要发楼书' }, tags: ['热门买家', '待回访'] },
+        { text: { en: 'Web form Mr. Tan (overseas Chinese), asks about school zone & upkeep, wants EN/ZH materials', zh: '网站表单 Mr. Tan（海外华人），关心学区与维护成本，要中英文资料' }, tags: ['待回访'] },
+      ],
+      vendor: [
+        { text: { en: 'Vendor Mr. Chen wants $1.7M, will move to $1.65M; changing house, prefers to settle within two weeks', zh: '业主陈先生期望 $1.7M，可谈到 $1.65M；因换房较急，倾向两周内成交' }, tags: ['急售', '价格底线'] },
+      ],
+      offers: [
+        { text: { en: '06-16 Mr. Wang verbal offer $1.62M, wants an answer by Thursday; $30K below the $1.65M floor', zh: '06-16 王先生口头出价 $1.62M，周四前要答复；离业主底线 $1.65M 差 $30K' }, tags: ['待回访', '临门一脚'] },
+      ],
+    },
+    generated: {
+      listing: {
+        en: 'Waterfront detached villa in tightly held Brighton. 3 beds + study, 2.5 baths, double garage, 420㎡ land. South-facing glass floods the home with light; the renovated open kitchen is move-in ready. Top school zone, walk to beach and tram — an upgrade home that holds its value. Price guide $1.65M–$1.78M; genuine sale, private inspection by appointment.',
+        zh: '一线海景独栋别墅，坐拥 Brighton 稀缺地段。3 房 + 书房、2.5 卫、双车位，占地 420㎡。南向落地窗带来全屋通透采光，翻新开放式厨房精装即买即住。名校学区、步行可达海滩与电车——自住升级与长期保值兼得。指导价 $1.65M–$1.78M，诚意出售，预约私享带看。',
+      },
+      xhs: {
+        en: '📍Brighton waterfront villa｜open the window, there’s the sea🌊\n\n3 beds + study, big south-facing light, renovated open kitchen, move-in ready✨\nTop school zone + walk to beach & tram — upgraders are seriously tempted～\nTightly held, value-holding pick, IYKYK👀\n\n#MelbourneProperty #Brighton #SeaView #SchoolZone #Villa',
+        zh: '📍Brighton 一线海景别墅｜推开窗就是海🌊\n\n3 房 + 书房，南向大采光，翻新开放厨房，精装即买即住✨\n名校学区 + 走路到海滩和电车，自住升级党狠狠心动～\n稀缺地段，保值首选，懂的都懂👀\n\n#墨尔本买房 #Brighton #海景房 #学区房 #别墅',
+      },
+      wechat: {
+        en: 'Brighton waterfront villa🌊 3 beds + study, big south light, renovated & move-in ready. Top school zone, walk to the beach. Price guide from $1.65M, already has an offer — DM to inspect.',
+        zh: 'Brighton 一线海景别墅🌊 3 房+书房，南向大采光，翻新精装即买即住。名校学区，走路到海滩。指导价 $1.65M 起，已有客户出价，诚意私信约看。',
+      },
+      brochure: {
+        en: '1. Cover — Azure Bay Villa · waterfront · Brighton; guide $1.65M–$1.78M\n2. Layout — 3 beds + study / 2.5 baths / 2 car; 420㎡ land, 240㎡ internal; south-light diagram\n3. Selling points — waterfront｜top school zone｜renovated, move-in ready\n4. Surroundings — walk to beach & tram; top school zone; established lifestyle\n5. Price & contact — guide range · agent Lin · private inspection (EN/ZH materials available)',
+        zh: '1. 封面 — 蔚蓝湾别墅 · 一线海景 · Brighton；指导价 $1.65M–$1.78M\n2. 户型布局 — 3 房 + 书房 / 2.5 卫 / 2 车位；占地 420㎡，室内 240㎡；南向采光示意\n3. 核心卖点 — 一线海景｜名校学区｜翻新精装即买即住\n4. 周边配套 — 步行可达海滩、电车；名校学区；生活成熟\n5. 价格与联系 — 指导价区间 · 中介 Lin · 预约私享带看（中英文资料可提供）',
+      },
+    },
+    followUps: [
+      {
+        to: { en: 'Agent Lin', zh: '中介 Lin' }, level: 'hot',
+        text: { en: 'Reply to Mr. Wang’s $1.62M offer before Thursday, push toward $1.65M (vendor floor)', zh: '周四前回复王先生 $1.62M 出价，争取加到 $1.65M（业主底线）' },
+        why: { en: 'Verbal offer today after inspection, only $30K below the vendor floor; vendor is in a hurry — closeable', zh: '王先生今日带看后口头出价，离业主底线仅差 $30K，业主急售可促成' },
+      },
+      {
+        to: { en: 'Agent Lin', zh: '中介 Lin' }, level: 'normal',
+        text: { en: 'Send Ms. Li the brochure and follow up — budget $1.6M, hot, values sea view & value', zh: '给微信询盘李小姐发楼书并回访，她预算 $1.6M、热度高、最看重海景保值' },
+        why: { en: 'enquiries flagged #hot-buyer #to-follow-up; easy to lose if not chased', zh: 'enquiries 标记 #热门买家 #待回访，未跟进易流失' },
+      },
+      {
+        to: { en: 'Agent Lin', zh: '中介 Lin' }, level: 'normal',
+        text: { en: 'Send Mr. Tan EN/ZH materials addressing school zone & upkeep concerns', zh: '给 Mr. Tan 发中英文资料，回应学区与维护成本疑虑' },
+        why: { en: 'Overseas Chinese buyer, enquiries flagged #to-follow-up, concerns are clear', zh: '海外华人买家，enquiries 标记 #待回访，关注点明确' },
+      },
+      {
+        to: { en: 'Admin', zh: '行政' }, level: 'normal',
+        text: { en: 'Book second viewings for the 2 OFI groups and prep the school-zone documents', zh: '约 OFI 两组二次看房，并把学区划分文件备好' },
+        why: { en: 'inspections have 2 groups #second-viewing and 1 #school-zone-question', zh: 'inspections 有 2 组 #二次看房、1 组 #学区疑虑' },
+      },
+    ],
+  },
+  {
+    id: 'school-zone-apartment',
+    chip: { en: 'School-Zone 2-Bed · 学区两房公寓', zh: '学区两房公寓' },
+    status: { en: 'For sale', zh: '在售' },
+    brief: {
+      positioning: { en: 'Box Hill school-zone 2-bed apartment · 88㎡ · price guide $620K–$660K', zh: 'Box Hill 学区两房公寓 · 套内 88㎡ · 指导价 $620K–$660K' },
+      buyer: { en: 'First-home young families + investors after steady rent', zh: '首次置业的小家庭 + 看重稳定租金的投资客' },
+      sell: [
+        { en: 'Inside the Box Hill school zone', zh: '位于 Box Hill 学区内' },
+        { en: 'Walk to station & shopping centre', zh: '步行到火车站与购物中心' },
+        { en: 'Renovated, move-in or tenant-ready', zh: '精装，可即住可即租' },
+      ],
+      tone: { en: 'Reassuring & practical; RED post = warm for young families', zh: '稳妥实用；小红书面向小家庭热情' },
+    },
+    records: {
+      inspections: [
+        { text: { en: '06-14 weekend OFI: 6 groups, 2 first-home families asked about school catchment & body-corp fees', zh: '06-14 周末 OFI 共 6 组，2 组首房家庭问学区划分与物业费' }, tags: ['学区疑虑', '物业费'] },
+        { text: { en: '06-13 investor couple measured the second bedroom, asked about rental yield', zh: '06-13 一对投资客量了次卧，问租金回报率' }, tags: ['投资客', '租金回报'] },
+      ],
+      enquiries: [
+        { text: { en: 'WeChat enquiry Ms. Zhou (first home), budget $640K, wants a primary-school catchment letter', zh: '微信询盘 周小姐（首次置业），预算 $640K，要小学学区证明' }, tags: ['热门买家', '待回访'] },
+        { text: { en: 'Web form Mr. Huang (investor), asks current rent & vacancy, wants the strata report', zh: '网站表单 黄先生（投资客），问目前租金与空置率，要物业报告' }, tags: ['投资客', '待回访'] },
+      ],
+      vendor: [
+        { text: { en: 'Vendor Ms. Lin wants $660K, will accept $640K; relocating for work, flexible on settlement', zh: '业主林女士期望 $660K，可接受 $640K；因工作搬迁，交割时间灵活' }, tags: ['可议价', '交割灵活'] },
+      ],
+      offers: [
+        { text: { en: '06-14 investor couple verbal interest around $625K, waiting on the strata report', zh: '06-14 投资客口头意向 $625K 左右，等物业报告再定' }, tags: ['待回访', '观望'] },
+      ],
+    },
+    generated: {
+      listing: {
+        en: 'A well-appointed 2-bedroom apartment inside the sought-after Box Hill school zone, walking distance to the station and shopping centre. Renovated and tenant-ready, low-maintenance — suiting both first-home buyers and investors targeting strong rental demand. Price guide $620K–$660K; flexible settlement, inspect by appointment.',
+        zh: '位于热门 Box Hill 学区内的精装两房公寓，步行可达火车站与购物中心。翻新可即租、易打理——适合首次置业者，也适合看重强劲租赁需求的投资客。指导价 $620K–$660K，交割时间灵活，预约看房。',
+      },
+      xhs: {
+        en: '📍Box Hill school-zone 2-bed｜walk to the station\n\nRenovated, move-in ready, shopping centre downstairs — school zone + transport double buff. Steady for a first home or for rent👌\n\n#MelbourneSchoolZone #BoxHill #InvestmentProperty #FirstHome',
+        zh: '📍Box Hill 学区两房｜走路到地铁\n\n精装拎包入住，楼下就是购物中心，学区＋交通双 buff。首房自住、投资收租都很稳👌\n\n#墨尔本学区房 #BoxHill #投资房 #首次置业',
+      },
+      wechat: {
+        en: 'Box Hill school-zone 2-bed, walk to station & shopping centre, renovated — live in or rent out. School zone + transport, guide from $620K, DM to inspect.',
+        zh: 'Box Hill 学区两房，走路到地铁和购物中心，精装可即住可出租。学区＋交通稳，指导价 $620K 起，约看私信我。',
+      },
+      brochure: {
+        en: '1. Cover — School-Zone 2-Bed · Box Hill; guide $620K–$660K\n2. Layout — 2 beds / 1 bath / 1 car; 88㎡ internal\n3. Selling points — inside school zone｜walk to station｜renovated, tenant-ready\n4. Surroundings — station & shopping centre on foot; school zone; established area\n5. Price & contact — guide range · agent · flexible settlement · strata report available',
+        zh: '1. 封面 — 学区两房公寓 · Box Hill；指导价 $620K–$660K\n2. 户型布局 — 2 房 / 1 卫 / 1 车位；套内 88㎡\n3. 核心卖点 — 位于学区内｜步行到地铁｜精装可即租\n4. 周边配套 — 步行到地铁与购物中心；学区；生活成熟\n5. 价格与联系 — 指导价区间 · 中介 · 交割灵活 · 物业报告可提供',
+      },
+    },
+    followUps: [
+      {
+        to: { en: 'Agent', zh: '中介' }, level: 'hot',
+        text: { en: 'Send Ms. Zhou the catchment letter and follow up — budget $640K, within vendor’s acceptable range', zh: '给周小姐发学区证明并回访——预算 $640K，已落在业主可接受区间' },
+        why: { en: 'Hot first-home buyer; budget meets the vendor’s $640K floor — closeable', zh: '热门首房买家，预算正好达业主 $640K 底线，可促成' },
+      },
+      {
+        to: { en: 'Agent', zh: '中介' }, level: 'normal',
+        text: { en: 'Send Mr. Huang the strata report with current rent & vacancy figures', zh: '给黄先生发物业报告，附目前租金与空置率数据' },
+        why: { en: 'Investor verbal interest at ~$625K is waiting on the strata report', zh: '投资客 ~$625K 口头意向正等物业报告再定' },
+      },
+      {
+        to: { en: 'Admin', zh: '行政' }, level: 'normal',
+        text: { en: 'Prep the school-catchment letter and body-corp fee sheet for OFI families', zh: '为 OFI 家庭备好学区证明与物业费清单' },
+        why: { en: 'inspections show 2 groups #school-zone-question #body-corp-fee', zh: 'inspections 有 2 组 #学区疑虑 #物业费' },
+      },
+    ],
+  },
+  {
+    id: 'cbd-studio',
+    chip: { en: 'CBD Studio · CBD 单间公寓', zh: 'CBD 单间公寓' },
+    status: { en: 'For sale', zh: '在售' },
+    brief: {
+      positioning: { en: 'High-floor Melbourne CBD studio · 42㎡ · price guide $380K–$410K', zh: '墨尔本 CBD 高层单间 · 套内 42㎡ · 指导价 $380K–$410K' },
+      buyer: { en: 'Yield-focused investors + first-time city buyers', zh: '看重现金流的投资客 + 首次进城置业者' },
+      sell: [
+        { en: 'High-floor city skyline views', zh: '高楼层城市天际线景观' },
+        { en: 'Steps from trams & universities', zh: '紧邻电车与大学' },
+        { en: 'Fully furnished, consistently tenanted', zh: '全套家具，长期满租' },
+      ],
+      tone: { en: 'Yield-led for investors; RED post = free city-life vibe', zh: '投资看现金流；小红书走城市自由生活感' },
+    },
+    records: {
+      inspections: [
+        { text: { en: '06-15 investor (overseas) inspected by video, asked for the current lease & yield', zh: '06-15 投资客（海外）视频看房，要现有租约与回报率' }, tags: ['投资客', '回报率'] },
+        { text: { en: '06-12 young buyer liked the skyline view, asked about owner-occupier loan options', zh: '06-12 年轻买家喜欢天际线景观，问自住贷款方案' }, tags: ['自住客', '贷款疑问'] },
+      ],
+      enquiries: [
+        { text: { en: 'WeChat enquiry Mr. Guo (investor), wants net yield after fees, hot', zh: '微信询盘 郭先生（投资客），要扣费后净回报，热度高' }, tags: ['热门买家', '待回访'] },
+        { text: { en: 'Web form Ms. Sun (first city home), asks about furniture inclusion & strata', zh: '网站表单 孙小姐（首次进城），问家具是否含、物业费多少' }, tags: ['待回访'] },
+      ],
+      vendor: [
+        { text: { en: 'Vendor Mr. Zhao wants $410K, will take $390K; overseas, wants a quick clean sale', zh: '业主赵先生期望 $410K，可接受 $390K；人在海外，想快速干净成交' }, tags: ['急售', '可议价'] },
+      ],
+      offers: [
+        { text: { en: '06-15 investor verbal offer $385K subject to seeing the lease; below the $390K floor by $5K', zh: '06-15 投资客口头出价 $385K，需看租约后确认；离 $390K 底线差 $5K' }, tags: ['待回访', '临门一脚'] },
+      ],
+    },
+    generated: {
+      listing: {
+        en: 'A high-floor CBD studio with city skyline views, steps from trams, universities and Melbourne Central. Fully furnished and consistently tenanted — a turnkey investment with strong yield in Melbourne’s core rental market. Price guide $380K–$410K; quick, clean sale, inspect by appointment.',
+        zh: '位于高楼层、坐拥城市天际线景观的 CBD 单间公寓，紧邻电车、大学与 Melbourne Central。全套家具、长期满租——是墨尔本核心租赁市场中收益稳健的「即买即收」投资标的。指导价 $380K–$410K，快速干净成交，预约看房。',
+      },
+      xhs: {
+        en: '📍Melbourne CBD high-floor studio｜city-view home\n\nTram downstairs, walk to uni & malls, fully furnished & long-term tenanted. A cash-flow pick for investors, hands-off rent👌\n\n#MelbourneInvestment #CBD #ApartmentInvesting #YieldProperty',
+        zh: '📍墨尔本 CBD 高层单间｜城景房\n\n楼下电车，走路到大学和商场，全套家具长期满租。投资党的现金流好房，省心收租型👌\n\n#墨尔本投资房 #CBD #公寓投资 #收益房',
+      },
+      wechat: {
+        en: 'CBD high-floor studio, city views, tram downstairs, walk to uni & malls, fully furnished & long-term tenanted. Steady cash flow, guide from $380K, DM for investment.',
+        zh: 'CBD 高层单间，城景房，楼下电车、走路到大学商场，全套家具长期满租。现金流稳，指导价 $380K 起，投资私信我。',
+      },
+      brochure: {
+        en: '1. Cover — CBD Studio · city skyline · Melbourne CBD; guide $380K–$410K\n2. Layout — 1 bed / 1 bath; 42㎡ internal; high-floor city view\n3. Selling points — skyline views｜steps from trams & uni｜furnished & tenanted\n4. Surroundings — trams, universities, Melbourne Central on foot\n5. Price & contact — guide range · agent · quick settlement · current lease available',
+        zh: '1. 封面 — CBD 单间 · 城市天际线 · 墨尔本 CBD；指导价 $380K–$410K\n2. 户型布局 — 1 房 / 1 卫；套内 42㎡；高楼层城景\n3. 核心卖点 — 天际线景观｜紧邻电车与大学｜带家具且满租\n4. 周边配套 — 电车、大学、Melbourne Central 步行可达\n5. 价格与联系 — 指导价区间 · 中介 · 快速交割 · 现有租约可提供',
+      },
+    },
+    followUps: [
+      {
+        to: { en: 'Agent', zh: '中介' }, level: 'hot',
+        text: { en: 'Send the current lease to the $385K offerer and push to $390K (vendor floor)', zh: '把现有租约发给 $385K 出价方，争取加到 $390K（业主底线）' },
+        why: { en: 'Verbal offer only $5K below the floor, subject to lease; vendor wants a quick sale', zh: '口头出价离底线仅差 $5K，看完租约即可定；业主想快速成交' },
+      },
+      {
+        to: { en: 'Agent', zh: '中介' }, level: 'normal',
+        text: { en: 'Send Mr. Guo the net-yield breakdown after strata & fees', zh: '给郭先生发扣除物业费后的净回报测算' },
+        why: { en: 'Hot investor enquiry asked specifically for net yield', zh: '热门投资询盘明确要扣费后净回报' },
+      },
+      {
+        to: { en: 'Admin', zh: '行政' }, level: 'normal',
+        text: { en: 'Prep the furniture-inclusion list & strata sheet for Ms. Sun', zh: '为孙小姐备好家具清单与物业费说明' },
+        why: { en: 'enquiries: first city buyer asked about furniture & strata', zh: 'enquiries：首次进城买家问家具与物业费' },
+      },
+    ],
+  },
+];
+
+// ---- localize to plain strings for the inline script ----
+const projectsLocalized = projects.map((p) => ({
+  id: p.id,
+  chip: p.chip[locale],
+  status: p.status[locale],
+  brief: {
+    positioning: p.brief.positioning[locale],
+    buyer: p.brief.buyer[locale],
+    sell: p.brief.sell.map((s) => s[locale]),
+    tone: p.brief.tone[locale],
+  },
+  records: {
+    inspections: p.records.inspections.map((r) => ({ text: r.text[locale], tags: r.tags })),
+    enquiries: p.records.enquiries.map((r) => ({ text: r.text[locale], tags: r.tags })),
+    vendor: p.records.vendor.map((r) => ({ text: r.text[locale], tags: r.tags })),
+    offers: p.records.offers.map((r) => ({ text: r.text[locale], tags: r.tags })),
+  },
+  generated: {
+    listing: p.generated.listing[locale],
+    xhs: p.generated.xhs[locale],
+    wechat: p.generated.wechat[locale],
+    brochure: p.generated.brochure[locale],
+  },
+  followUps: p.followUps.map((f) => ({ to: f.to[locale], level: f.level, text: f.text[locale], why: f.why[locale] })),
+}));
+
+const recordGroupsLocalized = recordGroups.map((g) => ({ id: g.id, icon: g.icon, label: g.label[locale] }));
+const channelMetaLocalized = channelMeta.map((c) => ({ id: c.id, icon: c.icon, label: c.label[locale] }));
+
+const projectsJson = JSON.stringify(projectsLocalized);
+const recordGroupsJson = JSON.stringify(recordGroupsLocalized);
+const channelMetaJson = JSON.stringify(channelMetaLocalized);
+
+const first = projectsLocalized[0];
+const contactHref = localizedHref('/contact/', locale);
+const hubHref = localizedHref('/demo/', locale);
+
+const description = zh
+  ? '中介省心营销大脑：把一套房的卖点和客户动态填一次，AI 几秒帮你写好挂牌、小红书、朋友圈、楼书，还提醒你该先跟进谁。省下文案美工费。模拟演示。'
+  : 'The agency’s marketing brain: fill a listing’s selling points and client activity once, and AI writes the listing, RED, WeChat and brochure in seconds — and reminds you who to chase. Saves the copywriter & designer cost. Simulated demo.';
+---
+
+<BaseLayout title={zh ? 'Demo · 中介营销大脑' : 'Demo · Agency Marketing Brain'} description={description} locale={locale}>
+  <PageHero sectionLabel={copy.sectionLabel} title={copy.title} subtitle={copy.subtitle} />
+
+  <section class="am">
+    <div class="am__inner container-x">
+      <a href={hubHref} class="am__back">{copy.backToHub}</a>
+
+      <!-- Project selector -->
+      <div class="am__projects" id="am-projects" role="tablist" aria-label="projects">
+        {projectsLocalized.map((p, i) => (
+          <button class={`am__proj${i === 0 ? ' is-on' : ''}`} type="button" data-proj={p.id} role="tab" aria-selected={i === 0 ? 'true' : 'false'}>
+            <span class="am__proj-icon">🏠</span>
+            <span class="am__proj-name">{p.chip}</span>
+            <span class="am__proj-status">{p.status}</span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Pipeline motif: design.md + records → 🧠 LLM → generated -->
+      <div class="am__pipe card-glass" aria-hidden="true">
+        <div class="pl">
+          <div class="pl__you" id="am-pin">
+            <span class="pl__you-icon">📥</span>
+            <span class="pl__you-label">{copy.pipeInput}</span>
+          </div>
+          <div class="pl__link pl__link--h" data-link="in"><i></i><i></i><i></i></div>
+          <div class="pl__brain" id="am-brain">
+            <span class="pl__brain-icon">🧠</span>
+            <span class="pl__brain-name">{copy.pipeBrain}</span>
+            <span class="pl__brain-core"><span class="pl__brain-core-spark">✦</span>{copy.pipeLlm}<span class="pl__brain-core-note">{copy.pipeLlmNote}</span></span>
+            <span class="pl__brain-state" id="am-state">{copy.pipeIdle}</span>
+          </div>
+          <div class="pl__link pl__link--h" data-link="out"><i></i><i></i><i></i></div>
+          <div class="pl__you" id="am-pout">
+            <span class="pl__you-icon">📤</span>
+            <span class="pl__you-label">{copy.pipeOutput}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Capability strip -->
+      <div class="am__caps card-glass">
+        <span class="am__caps-label">{copy.capsLabel}</span>
+        <div class="am__caps-row">
+          {copy.caps.map((c) => (
+            <div class="am__cap" data-cap={c.id}>
+              <span class="am__cap-icon">{c.icon}</span>
+              <span class="am__cap-name">{c.label}</span>
+              <span class="am__cap-desc">{c.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 50/50 stage -->
+      <div class="am__stage">
+        <!-- LEFT: INPUT — file tree -->
+        <aside class="am__left card-glass">
+          <header class="am__panel-head">
+            <span class="am__tree-root">🏠 <span id="am-tree-root">{first.chip}</span></span>
+            <span class="am__panel-tag">{copy.inputTag}</span>
+          </header>
+
+          <div class="am__file">
+            <div class="am__file-label">📝 {copy.designLabel}</div>
+            <div class="am__brief" id="am-brief">
+              <div class="am__brief-row"><span class="am__brief-k">{copy.briefPos}</span><span class="am__brief-v" data-brief="positioning">{first.brief.positioning}</span></div>
+              <div class="am__brief-row"><span class="am__brief-k">{copy.briefBuyer}</span><span class="am__brief-v" data-brief="buyer">{first.brief.buyer}</span></div>
+              <div class="am__brief-row"><span class="am__brief-k">{copy.briefSell}</span>
+                <ol class="am__sell" data-brief="sell">
+                  {first.brief.sell.map((s) => <li>{s}</li>)}
+                </ol>
+              </div>
+              <div class="am__brief-row"><span class="am__brief-k">{copy.briefTone}</span><span class="am__brief-v" data-brief="tone">{first.brief.tone}</span></div>
+            </div>
+          </div>
+
+          <div class="am__file">
+            <div class="am__file-label">📇 {copy.recordsLabel}</div>
+            <div class="am__records" id="am-records"></div>
+          </div>
+        </aside>
+
+        <!-- RIGHT: OUTPUT — generated -->
+        <div class="am__right card-glass">
+          <header class="am__panel-head">
+            <span class="am__tree-root">✨ {copy.outputTitle}</span>
+            <span class="am__panel-tag">{copy.outputTag}</span>
+            <button class="am__regen" id="am-regen" type="button">{copy.regenerate}</button>
+          </header>
+
+          <div class="am__writing" id="am-writing" hidden>
+            <span class="am__writing-spark">✦</span>
+            <span class="am__writing-text">{copy.regenerating}</span>
+            <span class="am__dots"><i></i><i></i><i></i></span>
+          </div>
+
+          <div class="am__out" id="am-out" aria-live="polite"></div>
+
+          <footer class="am__appfoot">
+            <span class="am__disclaimer">⚠︎ {copy.disclaimer}</span>
+          </footer>
+        </div>
+      </div>
+
+      <!-- Clone note -->
+      <p class="am__clone">📋 {copy.cloneNote}</p>
+
+      <!-- Explainer -->
+      <div class="am__explain">
+        <span class="section-label">{copy.explainLabel}</span>
+        <h2 class="am__explain-title">{copy.explainTitle}</h2>
+        <ul class="am__points">
+          {copy.explainPoints.map((p) => <li>{p}</li>)}
+        </ul>
+        <div class="am__try">
+          <p>{copy.ctaTryYours}</p>
+          <a href={contactHref} class="btn-primary">{copy.ctaBtn} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaFooter locale={locale} sectionNumber="03" />
+</BaseLayout>
+
+<script is:inline define:vars={{
+  projectsJson, recordGroupsJson, channelMetaJson,
+  labels: {
+    assignedTo: copy.assignedTo,
+    regenerate: copy.regenerate,
+    regenerating: copy.regenerating,
+    stateIdle: copy.pipeIdle,
+    stateWorking: copy.pipeWorking,
+    stateDone: copy.pipeDone,
+    whySep: zh ? '：' : ': ',
+  },
+}}>
+  function initAgencyMemory() {
+    var section = document.querySelector('.am');
+    if (!section || section.getAttribute('data-init') === '1') return;
+    section.setAttribute('data-init', '1');
+
+    var projChips = document.getElementById('am-projects');
+    var treeRoot = document.getElementById('am-tree-root');
+    var brief = document.getElementById('am-brief');
+    var recordsEl = document.getElementById('am-records');
+    var out = document.getElementById('am-out');
+    var writing = document.getElementById('am-writing');
+    var regenBtn = document.getElementById('am-regen');
+    var brain = document.getElementById('am-brain');
+    var stateEl = document.getElementById('am-state');
+    var pipe = document.querySelector('.am__pipe');
+    var capsRow = document.querySelector('.am__caps');
+    if (!out || !recordsEl) return;
+
+    var PROJECTS = JSON.parse(projectsJson);
+    var GROUPS = JSON.parse(recordGroupsJson);
+    var CHANNELS = JSON.parse(channelMetaJson);
+    var byId = {};
+    PROJECTS.forEach(function (p) { byId[p.id] = p; });
+
+    var currentId = PROJECTS[0].id;
+    var busy = false;
+    var timers = [];
+
+    function t(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearTimers() { timers.forEach(clearTimeout); timers.length = 0; }
+
+    function setBrief(p) {
+      function set(name, val) {
+        var el = brief ? brief.querySelector('[data-brief="' + name + '"]') : null;
+        if (el) el.textContent = val;
+      }
+      set('positioning', p.brief.positioning);
+      set('buyer', p.brief.buyer);
+      set('tone', p.brief.tone);
+      var sell = brief ? brief.querySelector('[data-brief="sell"]') : null;
+      if (sell) {
+        sell.innerHTML = '';
+        p.brief.sell.forEach(function (s) {
+          var li = document.createElement('li');
+          li.textContent = s;
+          sell.appendChild(li);
+        });
+      }
+    }
+
+    function renderRecords(p) {
+      recordsEl.innerHTML = '';
+      GROUPS.forEach(function (g) {
+        var rows = p.records[g.id] || [];
+        var group = document.createElement('div');
+        group.className = 'am__rgroup';
+        group.setAttribute('data-group', g.id);
+
+        var head = document.createElement('div');
+        head.className = 'am__rgroup-head';
+        head.textContent = g.icon + ' ' + g.label;
+        group.appendChild(head);
+
+        rows.forEach(function (r) {
+          var row = document.createElement('div');
+          row.className = 'am__rrow';
+          var txt = document.createElement('span');
+          txt.className = 'am__rrow-text';
+          txt.textContent = r.text;
+          row.appendChild(txt);
+          if (r.tags && r.tags.length) {
+            var tags = document.createElement('span');
+            tags.className = 'am__rtags';
+            r.tags.forEach(function (tg) {
+              var chip = document.createElement('span');
+              chip.className = 'am__rtag';
+              chip.textContent = '#' + tg;
+              tags.appendChild(chip);
+            });
+            row.appendChild(tags);
+          }
+          group.appendChild(row);
+        });
+        recordsEl.appendChild(group);
+      });
+    }
+
+    function lightRecords(on) {
+      var groups = recordsEl.querySelectorAll('.am__rgroup');
+      groups.forEach(function (g) { g.classList.toggle('is-active', on); });
+    }
+
+    function buildChannelCard(meta, text) {
+      var card = document.createElement('div');
+      card.className = 'am__card';
+      card.setAttribute('data-channel', meta.id);
+
+      var head = document.createElement('div');
+      head.className = 'am__card-head';
+      var label = document.createElement('span');
+      label.className = 'am__card-label';
+      label.textContent = meta.icon + ' ' + meta.label;
+      head.appendChild(label);
+      card.appendChild(head);
+
+      var body = document.createElement('div');
+      body.className = 'am__card-body am__card-text';
+      body.textContent = text;
+      card.appendChild(body);
+      return card;
+    }
+
+    function buildFollowUpsCard(p) {
+      var card = document.createElement('div');
+      card.className = 'am__card am__card--follow';
+      card.setAttribute('data-channel', 'follow-ups');
+
+      var head = document.createElement('div');
+      head.className = 'am__card-head';
+      var label = document.createElement('span');
+      label.className = 'am__card-label';
+      label.textContent = '📌 follow-ups.md · ' + (labels.assignedTo === 'To' ? 'AI follow-ups' : 'AI 派跟进');
+      head.appendChild(label);
+      card.appendChild(head);
+
+      var body = document.createElement('div');
+      body.className = 'am__card-body';
+      p.followUps.forEach(function (f) {
+        var task = document.createElement('div');
+        task.className = 'am__task' + (f.level === 'hot' ? ' is-hot' : '');
+        var th = document.createElement('div');
+        th.className = 'am__task-head';
+        var to = document.createElement('span');
+        to.className = 'am__task-to';
+        to.textContent = '🧠 ' + labels.assignedTo + ' ' + f.to;
+        th.appendChild(to);
+        if (f.level === 'hot') {
+          var hot = document.createElement('span');
+          hot.className = 'am__task-flag';
+          hot.textContent = '🔴';
+          th.appendChild(hot);
+        }
+        task.appendChild(th);
+        var tt = document.createElement('div');
+        tt.className = 'am__task-text';
+        tt.textContent = f.text;
+        task.appendChild(tt);
+        var tw = document.createElement('div');
+        tw.className = 'am__task-why';
+        tw.textContent = f.why;
+        task.appendChild(tw);
+        body.appendChild(task);
+      });
+      card.appendChild(body);
+      return card;
+    }
+
+    function buildAllCards(p) {
+      var cards = [];
+      CHANNELS.forEach(function (meta) {
+        cards.push(buildChannelCard(meta, p.generated[meta.id]));
+      });
+      cards.push(buildFollowUpsCard(p));
+      return cards;
+    }
+
+    function activateCap(id) {
+      if (!capsRow) return;
+      var cap = capsRow.querySelector('.am__cap[data-cap="' + id + '"]');
+      if (cap) cap.classList.add('is-active');
+    }
+    function clearCaps() {
+      if (!capsRow) return;
+      capsRow.querySelectorAll('.am__cap.is-active').forEach(function (c) { c.classList.remove('is-active'); });
+    }
+
+    function flow(dir, on) {
+      if (!pipe) return;
+      var l = pipe.querySelector('.pl__link[data-link="' + dir + '"]');
+      if (l) l.classList.toggle('is-flowing', on);
+    }
+
+    // Show the finished generated/ output immediately — visitors land on a result.
+    function renderInstant() {
+      clearTimers();
+      busy = false;
+      if (writing) writing.hidden = true;
+      out.innerHTML = '';
+      var p = byId[currentId];
+      if (!p) return;
+      buildAllCards(p).forEach(function (card) {
+        card.classList.add('is-in');
+        out.appendChild(card);
+      });
+      activateCap('classify'); activateCap('generate'); activateCap('assign');
+      if (stateEl) stateEl.textContent = labels.stateDone;
+    }
+
+    function applyProject(id) {
+      currentId = id;
+      var p = byId[id];
+      if (!p) return;
+      if (treeRoot) treeRoot.textContent = p.chip;
+      setBrief(p);
+      renderRecords(p);
+      renderInstant();
+    }
+
+    // Replay the generation animation: records light → brain works → cards reveal in sequence.
+    function regenerate() {
+      if (busy) return;
+      busy = true;
+      clearTimers();
+      var p = byId[currentId];
+      if (!p) { busy = false; return; }
+
+      out.innerHTML = '';
+      clearCaps();
+      if (writing) writing.hidden = false;
+      if (regenBtn) regenBtn.disabled = true;
+      if (brain) brain.classList.add('is-working');
+      if (stateEl) stateEl.textContent = labels.stateWorking;
+      flow('in', true);
+      lightRecords(true);
+      activateCap('classify');
+
+      t(function () {
+        flow('in', false);
+        flow('out', true);
+        activateCap('generate');
+        if (writing) writing.hidden = true;
+        var cards = buildAllCards(p);
+        var i = 0;
+        function next() {
+          if (i >= cards.length) {
+            lightRecords(false);
+            flow('out', false);
+            if (brain) brain.classList.remove('is-working');
+            if (stateEl) stateEl.textContent = labels.stateDone;
+            activateCap('assign');
+            if (regenBtn) regenBtn.disabled = false;
+            busy = false;
+            return;
+          }
+          var card = cards[i];
+          out.appendChild(card);
+          t(function () { card.classList.add('is-in'); }, 20);
+          out.scrollTop = out.scrollHeight;
+          i += 1;
+          t(next, 520);
+        }
+        next();
+      }, 900);
+    }
+
+    if (projChips) {
+      projChips.addEventListener('click', function (e) {
+        var btn = e.target.closest('.am__proj');
+        if (!btn || busy) return;
+        var id = btn.getAttribute('data-proj');
+        if (id === currentId) return;
+        projChips.querySelectorAll('.am__proj').forEach(function (c) {
+          c.classList.remove('is-on'); c.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('is-on'); btn.setAttribute('aria-selected', 'true');
+        applyProject(id);
+      });
+    }
+
+    if (regenBtn) regenBtn.addEventListener('click', regenerate);
+
+    // Land on the designed example, fully rendered.
+    renderRecords(byId[currentId]);
+    renderInstant();
+  }
+
+  initAgencyMemory();
+  document.addEventListener('astro:after-swap', initAgencyMemory);
+</script>
+
+<style>
+  .am { padding-block: var(--space-7) var(--space-9); }
+  .am__back {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--fs-body-sm);
+    color: var(--text-tertiary); margin-bottom: var(--space-4);
+  }
+  .am__back:hover { color: var(--brand-primary); }
+
+  /* ===== project selector ===== */
+  .am__projects { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+  .am__proj {
+    display: flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-sans); font-size: var(--fs-body-sm); color: var(--text-primary);
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+    cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
+  }
+  .am__proj:hover { border-color: var(--brand-primary); transform: translateY(-1px); }
+  .am__proj.is-on {
+    border-color: var(--brand-primary);
+    background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  }
+  .am__proj-icon { font-size: 1rem; line-height: 1; }
+  .am__proj-name { font-weight: var(--fw-semibold); }
+  .am__proj.is-on .am__proj-name { color: var(--brand-primary); }
+  .am__proj-status {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary);
+    padding-left: var(--space-2); border-left: 1px solid var(--border-hairline);
+  }
+
+  /* ===== pipeline motif (mirrors super-memory pl__) ===== */
+  .am__pipe { border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-3); }
+  .pl { display: flex; flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--space-2); }
+  .pl__you {
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill);
+    background: var(--bg-base); border: 1px solid var(--border-hairline);
+  }
+  .pl__you-icon { font-size: 1.3rem; line-height: 1; }
+  .pl__you-label { font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary); }
+
+  .pl__link { position: relative; }
+  .pl__link--h { width: 3.6rem; height: 1.6rem; }
+  .pl__link--h::before {
+    content: ''; position: absolute; top: 50%; left: 0; right: 0.7rem; height: 2px; margin-top: -1px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--brand-primary) 28%, transparent), color-mix(in srgb, var(--brand-secondary) 28%, transparent));
+    transition: filter var(--dur-normal) var(--ease-out);
+  }
+  .pl__link--h::after {
+    content: ''; position: absolute; top: 50%; right: 0.1rem; margin-top: -0.42rem;
+    width: 0.85rem; height: 0.85rem;
+    border-right: 2px solid color-mix(in srgb, var(--brand-secondary) 40%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--brand-secondary) 40%, transparent);
+    transform: rotate(-45deg);
+    transition: border-color var(--dur-normal) var(--ease-out), filter var(--dur-normal) var(--ease-out);
+  }
+  .pl__link--h i {
+    position: absolute; top: 50%; left: 0; width: 0.8rem; height: 0.8rem; margin-top: -0.4rem;
+    border-right: 2px solid var(--brand-primary); border-bottom: 2px solid var(--brand-primary);
+    transform: rotate(-45deg); opacity: 0;
+  }
+  .pl__link--h i:nth-child(2) { border-color: var(--brand-accent); }
+  .pl__link--h i:nth-child(3) { border-color: var(--brand-secondary); }
+  .pl__link.is-flowing::before { filter: drop-shadow(0 0 8px var(--brand-glow)); }
+  .pl__link.is-flowing::after { border-color: var(--brand-secondary); filter: drop-shadow(0 0 6px var(--brand-glow)); }
+  .pl__link.is-flowing i { animation: am-flow-h 1s ease-in-out infinite; filter: drop-shadow(0 0 5px var(--brand-glow)); }
+  .pl__link.is-flowing i:nth-child(2) { animation-delay: 0.33s; }
+  .pl__link.is-flowing i:nth-child(3) { animation-delay: 0.66s; }
+
+  .pl__brain {
+    display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg);
+    background: var(--bg-elevated); border: 1px solid var(--border-strong);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__brain-icon { font-size: 1.8rem; line-height: 1; }
+  .pl__brain-name { font-weight: var(--fw-semibold); color: var(--text-primary); font-size: var(--fs-body-sm); }
+  .pl__brain-state {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .pl__brain-core {
+    display: inline-flex; align-items: center; gap: 0.3rem; margin: 0.25rem 0 0.1rem;
+    padding: 0.22rem 0.65rem; font-family: var(--font-mono); font-size: var(--fs-micro);
+    font-weight: var(--fw-semibold); letter-spacing: 0.04em; color: var(--text-primary);
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--brand-secondary) 45%, transparent);
+    background: color-mix(in srgb, var(--brand-secondary) 9%, transparent);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .pl__brain-core-spark { color: var(--brand-primary); }
+  .pl__brain-core-note { color: var(--text-tertiary); font-weight: var(--fw-regular); }
+  .pl__brain.is-working { border-color: var(--brand-primary); box-shadow: var(--shadow-glow); animation: am-pulse 1s ease-in-out infinite; }
+  .pl__brain.is-working .pl__brain-state { color: var(--brand-primary); }
+  .pl__brain.is-working .pl__brain-icon { animation: am-spin 1.4s linear infinite; }
+  .pl__brain.is-working .pl__brain-core { border-color: var(--brand-secondary); box-shadow: 0 0 12px -3px var(--brand-glow); }
+  .pl__brain.is-working .pl__brain-core-spark { animation: am-spin 1.4s linear infinite; display: inline-block; }
+
+  /* ===== capability strip ===== */
+  .am__caps { border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-4); }
+  .am__caps-label {
+    display: block; font-family: var(--font-mono); font-size: var(--fs-micro);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: var(--space-2);
+  }
+  .am__caps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+  .am__cap {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline); background: var(--bg-base);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .am__cap.is-active { border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow); }
+  .am__cap-icon { font-size: 1.2rem; line-height: 1; }
+  .am__cap-name { font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+  .am__cap.is-active .am__cap-name { color: var(--brand-primary); }
+  .am__cap-desc { font-size: var(--fs-micro); color: var(--text-tertiary); line-height: 1.3; }
+
+  /* ===== 50/50 stage ===== */
+  .am__stage { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); align-items: stretch; }
+  .am__left, .am__right { border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
+
+  .am__panel-head {
+    display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;
+    padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  }
+  .am__tree-root { font-family: var(--font-mono); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+  .am__panel-tag {
+    font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-tertiary); margin-right: auto;
+  }
+  .am__regen {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--text-secondary);
+    background: none; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm);
+    padding: 0.25rem 0.7rem; cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
+  }
+  .am__regen:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
+  .am__regen:disabled { opacity: 0.5; cursor: default; }
+
+  /* ----- LEFT: file tree ----- */
+  .am__left { padding-bottom: var(--space-3); }
+  .am__file { padding: var(--space-3) var(--space-4) 0; }
+  .am__file-label {
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--brand-primary);
+    margin-bottom: var(--space-2);
+  }
+  .am__brief {
+    border-left: 2px solid var(--border-hairline); padding-left: var(--space-3);
+    display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-2);
+  }
+  .am__brief-row { display: flex; flex-direction: column; gap: 0.2rem; }
+  .am__brief-k {
+    font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-tertiary);
+  }
+  .am__brief-v { font-size: var(--fs-body-sm); color: var(--text-secondary); line-height: 1.5; }
+  .am__sell { margin: 0.1rem 0 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.2rem; }
+  .am__sell li { font-size: var(--fs-body-sm); color: var(--text-secondary); line-height: 1.45; }
+
+  .am__records {
+    border-left: 2px solid var(--border-hairline); padding-left: var(--space-3);
+    display: flex; flex-direction: column; gap: var(--space-3);
+    max-height: 26rem; overflow-y: auto;
+  }
+  .am__rgroup {
+    border-radius: var(--radius-md); border: 1px solid var(--border-hairline);
+    background: var(--bg-base); padding: var(--space-2) var(--space-3);
+    transition: border-color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  }
+  .am__rgroup.is-active { border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-glow); }
+  .am__rgroup-head {
+    font-family: var(--font-mono); font-size: var(--fs-micro); text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--brand-secondary); margin-bottom: var(--space-2);
+  }
+  .am__rrow {
+    display: flex; flex-direction: column; gap: 0.3rem;
+    padding: var(--space-2) 0; border-top: 1px dashed var(--border-hairline);
+  }
+  .am__rrow:first-of-type { border-top: none; padding-top: 0; }
+  .am__rrow-text { font-size: var(--fs-body-sm); color: var(--text-secondary); line-height: 1.45; }
+  .am__rtags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .am__rtag {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-primary);
+    padding: 0.1rem 0.45rem; border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--brand-primary) 9%, transparent);
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, transparent);
+  }
+
+  /* ----- RIGHT: generated output ----- */
+  .am__out {
+    flex: 1; min-height: 22rem; max-height: 46rem; overflow-y: auto;
+    padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3);
+  }
+  .am__writing {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    margin: var(--space-3) var(--space-4) 0;
+    font-family: var(--font-mono); font-size: var(--fs-body-sm); color: var(--brand-primary);
+  }
+  .am__writing-spark { display: inline-block; animation: am-spin 1.4s linear infinite; }
+  .am__dots i {
+    display: inline-block; width: 0.4rem; height: 0.4rem; margin-left: 0.2rem;
+    border-radius: 50%; background: var(--brand-primary); animation: am-blink 1.2s infinite ease-in-out;
+  }
+  .am__dots i:nth-child(2) { animation-delay: 0.2s; }
+  .am__dots i:nth-child(3) { animation-delay: 0.4s; }
+
+  .am__card {
+    border-radius: var(--radius-md); border: 1px solid var(--border-hairline); background: var(--bg-base);
+    overflow: hidden; opacity: 0; transform: translateY(6px);
+    transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  }
+  .am__card.is-in { opacity: 1; transform: none; }
+  .am__card[data-channel="listing"] { border-left: 3px solid var(--brand-secondary); }
+  .am__card[data-channel="xhs"] { border-left: 3px solid #ff4d6d; }
+  .am__card[data-channel="wechat"] { border-left: 3px solid #07c160; }
+  .am__card[data-channel="brochure"] { border-left: 3px solid var(--brand-accent); }
+  .am__card[data-channel="follow-ups"] { border-left: 3px solid var(--brand-primary); }
+  .am__card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+    padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  }
+  .am__card-label { font-family: var(--font-mono); font-size: var(--fs-body-sm); font-weight: var(--fw-semibold); color: var(--text-primary); }
+  .am__card-body { padding: var(--space-3); }
+  .am__card-text { font-size: var(--fs-body-sm); line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; }
+
+  /* follow-ups card */
+  .am__card--follow .am__card-body { display: flex; flex-direction: column; gap: var(--space-2); }
+  .am__task {
+    display: flex; flex-direction: column; gap: 0.3rem;
+    padding: var(--space-3); border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--brand-secondary) 28%, transparent);
+    border-left: 3px solid var(--brand-secondary);
+    background: color-mix(in srgb, var(--brand-secondary) 6%, transparent);
+  }
+  .am__task.is-hot {
+    border-color: color-mix(in srgb, var(--brand-primary) 40%, transparent);
+    border-left-color: var(--brand-primary);
+    background: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+  }
+  .am__task-head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .am__task-to {
+    font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--brand-secondary);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .am__task.is-hot .am__task-to { color: var(--brand-primary); }
+  .am__task-flag { font-size: 0.7rem; line-height: 1; }
+  .am__task-text { font-size: var(--fs-body-sm); color: var(--text-primary); line-height: 1.5; }
+  .am__task-why { font-size: var(--fs-micro); color: var(--text-tertiary); line-height: 1.5; font-style: italic; }
+
+  .am__appfoot {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-hairline);
+  }
+  .am__disclaimer { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--text-muted); }
+
+  /* clone note */
+  .am__clone {
+    margin: var(--space-4) 0 0; padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md); border: 1px dashed color-mix(in srgb, var(--brand-primary) 35%, transparent);
+    background: color-mix(in srgb, var(--brand-primary) 6%, transparent);
+    font-size: var(--fs-body-sm); color: var(--text-secondary); line-height: 1.55;
+  }
+
+  /* explainer */
+  .am__explain { max-width: 64rem; margin-top: var(--space-7); }
+  .am__explain-title { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: -0.02em; color: var(--text-primary); margin: var(--space-2) 0 var(--space-4); }
+  .am__points { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .am__points li { position: relative; padding-left: var(--space-5); color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.55; }
+  .am__points li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-primary); font-weight: var(--fw-bold); }
+  .am__try {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6); padding: var(--space-5); border-radius: var(--radius-md);
+    background: var(--bg-glass); border: 1px solid var(--border-hairline);
+  }
+  .am__try p { margin: 0; font-size: var(--fs-body-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
+
+  /* keyframes */
+  @keyframes am-flow-h { 0% { left: -0.3rem; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { left: 2.6rem; opacity: 0; } }
+  @keyframes am-pulse { 0%, 100% { box-shadow: 0 0 0 1px var(--brand-primary), 0 0 12px -2px var(--brand-glow); } 50% { box-shadow: 0 0 0 1px var(--brand-primary), 0 0 22px 2px var(--brand-glow); } }
+  @keyframes am-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  @keyframes am-blink { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
+  /* responsive */
+  @media (max-width: 899px) {
+    .am__stage { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .am__caps-row { grid-template-columns: 1fr; }
+    .am__panel-head { gap: var(--space-2); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .am__card, .pl__brain.is-working, .pl__brain.is-working .pl__brain-icon,
+    .pl__brain.is-working .pl__brain-core-spark, .pl__link.is-flowing i,
+    .am__writing-spark, .am__dots i { animation: none; transition: none; }
+    .am__card { opacity: 1; transform: none; }
+  }
+</style>
