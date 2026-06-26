@@ -1,0 +1,3 @@
+[submodule "proposals"]
+	path = proposals
+	url = https://github.com/Metatree-AI-Lab/proposals.git

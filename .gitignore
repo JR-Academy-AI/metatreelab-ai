@@ -32,9 +32,6 @@ Thumbs.db
 package-lock.json
 yarn.lock
 
-# Client-specific proposals (contain client names, briefs, pricing)
-proposals/
-
 # Post-sale delivery artifacts (kickoff / sprint / status / CO / milestone-gate /
 # handoff / internal retros / financial burn). Contains live client data,
 # milestone fees, change order pricing, and internal-only retros. NEVER commit.
