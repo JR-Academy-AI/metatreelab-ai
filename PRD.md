@@ -153,7 +153,7 @@ Metatree Lab 的官方营销网站，作为对外的门面 + 获客入口。
 ### 4.1 GitHub 仓库（已确定）
 
 ```
-github.com/JR-Academy-AI/metatreelab-ai
+github.com/Metatree-AI-Lab/metatreelab-ai
 ```
 
 放在母公司 `JR-Academy-AI` org 下，与其他 JR Academy 项目保持一致的归属。

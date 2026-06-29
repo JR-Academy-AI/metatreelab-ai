@@ -17,7 +17,7 @@ export const siteConfig = {
   },
 
   url: 'https://metatreelab.ai',
-  repo: 'https://github.com/JR-Academy-AI/metatreelab-ai',
+  repo: 'https://github.com/Metatree-AI-Lab/metatreelab-ai',
 
   parent: {
     name: 'JR Academy',
